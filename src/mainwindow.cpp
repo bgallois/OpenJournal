@@ -13,7 +13,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
  
   // Initialize a default planner page
-  //loadJournalPage(QDate::currentDate());
+  // To investigate => no error on fedora, error with ubuntu
+  page = new JournalPage(db, QDate::currentDate());
 
   // Reads settings
   QSettings settings("OpenJournal", "B&GInc");
