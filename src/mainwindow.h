@@ -11,7 +11,11 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSettings>
+#include <QWebChannel>
+#include <QStringLiteral>
 #include "journalpage.h"
+#include "previewpage.h"
+#include "document.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,6 +32,8 @@ class MainWindow : public QMainWindow {
   QSqlDatabase db;
   JournalPage *page;
   QString plannerName;
+  PreviewPage *previewPage;
+  Document doc;
   Ui::MainWindow *ui;
 
  private slots:

@@ -4,7 +4,18 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  ui->entry->installEventFilter(this);
+
+  // Preview
+  previewPage = new PreviewPage(this);
+  ui->preview->setPage(previewPage);
+  connect(ui->entry, &QPlainTextEdit::textChanged,[this]() { 
+    doc.setText(ui->entry->toPlainText());
+    });
+  QWebChannel *channel = new QWebChannel(this);
+  channel->registerObject(QStringLiteral("content"), &doc);
+  previewPage->setWebChannel(channel);
+  ui->preview->setUrl(QUrl("qrc:/index.html"));
+
 
   // Connect menu bar
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));

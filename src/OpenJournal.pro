@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql webenginewidgets webchannel
 QTPLUGIN += QSQLMYSQL
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets sql
@@ -45,6 +45,8 @@ SOURCES += \
         qmarkdowntextedit.cpp \
         markdownhighlighter.cpp \
         qplaintexteditsearchwidget.cpp \
+        previewpage.cpp \
+        document.cpp \
 
 HEADERS += \
         mainwindow.h \
@@ -52,11 +54,15 @@ HEADERS += \
         qmarkdowntextedit.h \
         markdownhighlighter.h \
         qplaintexteditsearchwidget.h \
+        previewpage.h \
+        document.h \
 
 FORMS += \
         mainwindow.ui\
         qplaintexteditsearchwidget.ui \
 
+RESOURCES = \
+            resources/openjournal.qrc
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

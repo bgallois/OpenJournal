@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>index.html</file>
+        <file>markdown.css</file>
+        <file>marked.js</file>
+        <file>openjournal.svg</file>
+    </qresource>
+</RCC>
+

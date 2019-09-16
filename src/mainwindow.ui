@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>868</width>
-    <height>550</height>
+    <width>1388</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@ selection-color: rgb(88, 120, 154);
 selection-background-color: rgb(143, 143, 143);</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -86,7 +86,11 @@ color: rgb(0, 0, 0);
          </spacer>
         </item>
         <item row="1" column="0" colspan="4">
-         <widget class="QMarkdownTextEdit" name="entry"/>
+         <widget class="QMarkdownTextEdit" name="entry">
+          <property name="styleSheet">
+           <string notr="true">font: 12pt &quot;Sans Serif&quot;;</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -97,20 +101,47 @@ color: rgb(0, 0, 0);
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QCalendarWidget" name="calendar">
-          <property name="styleSheet">
-           <string notr="true">alternate-background-color: rgb(168, 160, 255);
+         <widget class="QSplitter" name="splitter_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="handleWidth">
+           <number>20</number>
+          </property>
+          <widget class="QCalendarWidget" name="calendar">
+           <property name="styleSheet">
+            <string notr="true">alternate-background-color: rgb(168, 160, 255);
 selection-color: rgb(0, 0, 0);
 selection-background-color: rgb(255, 11, 11);</string>
-          </property>
-          <property name="firstDayOfWeek">
-           <enum>Qt::Monday</enum>
-          </property>
-          <property name="gridVisible">
-           <bool>true</bool>
-          </property>
+           </property>
+           <property name="firstDayOfWeek">
+            <enum>Qt::Monday</enum>
+           </property>
+           <property name="gridVisible">
+            <bool>true</bool>
+           </property>
+          </widget>
+          <widget class="QWebEngineView" name="preview">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>2</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="url">
+            <url>
+             <string>about:blank</string>
+            </url>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -124,7 +155,7 @@ selection-background-color: rgb(255, 11, 11);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>868</width>
+     <width>1388</width>
      <height>23</height>
     </rect>
    </property>
@@ -173,6 +204,11 @@ selection-background-color: rgb(255, 11, 11);</string>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
+  </customwidget>
   <customwidget>
    <class>QMarkdownTextEdit</class>
    <extends>QPlainTextEdit</extends>
