@@ -41,14 +41,21 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        journalpage.cpp
+        journalpage.cpp \
+        qmarkdowntextedit.cpp \
+        markdownhighlighter.cpp \
+        qplaintexteditsearchwidget.cpp \
 
 HEADERS += \
         mainwindow.h \
-        journalpage.h
+        journalpage.h \
+        qmarkdowntextedit.h \
+        markdownhighlighter.h \
+        qplaintexteditsearchwidget.h \
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui\
+        qplaintexteditsearchwidget.ui \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

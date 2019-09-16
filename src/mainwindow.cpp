@@ -4,6 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
+  ui->entry->installEventFilter(this);
 
   // Connect menu bar
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
@@ -36,14 +37,14 @@ void MainWindow::loadJournalPage(const QDate date) {
   page = new JournalPage(db, date);
 
   // Sends values from ui to page object
-  connect(ui->entry, &QTextEdit::textChanged, page, [this](){
+  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this](){
     QString entry = ui->entry->toPlainText();
     page->setEntry(entry);
     });
 
   // Gets values from page object to the ui
   connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
-  connect(page, &JournalPage::getEntry, ui->entry, &QTextEdit::setText);
+  connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
   page->readFromDatabase();
 }
 
@@ -110,6 +111,7 @@ void MainWindow::saveSettings() {
   QSettings settings("OpenJournal", "B&GInc");
   settings.setValue("mainwindow/lastJournal", plannerName);
 }
+
 
 MainWindow::~MainWindow() {
   saveSettings();
