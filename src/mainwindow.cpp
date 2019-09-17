@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
   connect(ui->entry, &QPlainTextEdit::textChanged,[this]() { 
-    doc.setText(ui->entry->toPlainText());
+    this->doc.setText(ui->entry->toPlainText());
     });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(refreshTimer, &QTimer::timeout, [this](){
     ui->calendar->setSelectedDate(QDate::currentDate());
     loadJournalPage(QDate::currentDate());
+    backup();
   });
 
 }
@@ -135,7 +136,14 @@ void MainWindow::saveSettings() {
 
 void MainWindow::backup() {
   QFile file(plannerName);
-  file.copy(plannerName + ".back");
+  QFile copy(plannerName + ".back");
+  if(!copy.exists()){
+    file.copy(plannerName + ".back");
+  }
+  else if(copy.exists()){
+    copy.remove();
+    file.copy(plannerName + ".back");
+  }
 }
 
 MainWindow::~MainWindow() {
