@@ -12,6 +12,7 @@
 #include <QSqlQuery>
 #include <QSettings>
 #include <QWebChannel>
+#include <QTimer>
 #include <QStringLiteral>
 #include "journalpage.h"
 #include "previewpage.h"
@@ -35,6 +36,7 @@ class MainWindow : public QMainWindow {
   PreviewPage *previewPage;
   Document doc;
   Ui::MainWindow *ui;
+  QTimer *refreshTimer;
 
  private slots:
   void newJournal();

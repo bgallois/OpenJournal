@@ -34,12 +34,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   if (!lastJournal.isEmpty()) {
     openJournal(lastJournal);
   }
-  else if (QDir(QDir::homePath() + "/OpenJournal.jln").exists()) {
-    openJournal(QDir::homePath() + "/OpenJournal.jln");
+  else if (QDir(QDir::homePath() + "/OpenJournal.jnl").exists()) {
+    openJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
   else {
-    newJournal(QDir::homePath() + "/OpenJournal.jln");
+    newJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
+
+  // Automatic refresh
+  refreshTimer = new QTimer(this);
+  refreshTimer->start(3600000);
+  connect(refreshTimer, &QTimer::timeout, [this](){
+    ui->calendar->setSelectedDate(QDate::currentDate());
+    loadJournalPage(QDate::currentDate());
+  });
+
 }
 
 void MainWindow::loadJournalPage(const QDate date) {
