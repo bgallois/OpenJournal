@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Connect menu bar
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
+  connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
 
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
@@ -31,10 +32,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Reads settings
   QSettings settings("OpenJournal", "B&GInc");
   QString lastJournal = settings.value("mainwindow/lastJournal").toString();
-  if (!lastJournal.isEmpty()) {
+  if (QFile(lastJournal).exists()) {
     openJournal(lastJournal);
   }
-  else if (QDir(QDir::homePath() + "/OpenJournal.jnl").exists()) {
+  else if (QFile(QDir::homePath() + "/OpenJournal.jnl").exists()) {
     openJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
   else {
@@ -132,6 +133,10 @@ void MainWindow::saveSettings() {
   settings.setValue("mainwindow/lastJournal", plannerName);
 }
 
+void MainWindow::backup() {
+  QFile file(plannerName);
+  file.copy(plannerName + ".back");
+}
 
 MainWindow::~MainWindow() {
   saveSettings();

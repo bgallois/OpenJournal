@@ -46,6 +46,7 @@ class MainWindow : public QMainWindow {
   void loadJournalPage(const QDate date);
   void clearJournalPage();
   void saveSettings();
+  void backup();
 };
 
 #endif  // MAINWINDOW_H

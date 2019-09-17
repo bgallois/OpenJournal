@@ -169,6 +169,7 @@ selection-background-color: rgb(255, 11, 11);</string>
     <addaction name="actionOpen_planner"/>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
+    <addaction name="actionBackup"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -199,6 +200,11 @@ selection-background-color: rgb(255, 11, 11);</string>
   <action name="actionExport_planner">
    <property name="text">
     <string>Export planner</string>
+   </property>
+  </action>
+  <action name="actionBackup">
+   <property name="text">
+    <string>Backup</string>
    </property>
   </action>
  </widget>
