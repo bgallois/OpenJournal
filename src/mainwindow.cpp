@@ -5,11 +5,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"));
+  QMenu *trayMenu = new QMenu;
+  QAction *restore = new QAction(tr("Restore"));
+  connect(restore, &QAction::triggered, this, &MainWindow::showNormal);
+  trayMenu->addAction(restore);
+  QAction *close = new QAction(tr("Close"));
+  connect(close, &QAction::triggered, qApp, &QCoreApplication::quit);
+  trayMenu->addAction(close);
+  connect(trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::iconActivated);
+  trayIcon->setContextMenu(trayMenu);
+  trayIcon->show();
+
   // Preview
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
   connect(ui->entry, &QPlainTextEdit::textChanged,[this]() { 
     this->doc.setText(ui->entry->toPlainText());
+    this->reminder(ui->entry->toPlainText(), reminders);
     });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -28,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Initialize a default planner page
   // To investigate => no error on fedora, error with ubuntu
   page = new JournalPage(db, QDate::currentDate());
+  reminders = new QStringList;
 
   // Reads settings
   QSettings settings("OpenJournal", "B&GInc");
@@ -55,8 +69,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 void MainWindow::loadJournalPage(const QDate date) {
   delete page;
+  delete reminders;
   ui->entry->clear();
   page = new JournalPage(db, date);
+  reminders = new QStringList();
 
   // Sends values from ui to page object
   connect(ui->entry, &QPlainTextEdit::textChanged, page, [this](){
@@ -150,3 +166,59 @@ MainWindow::~MainWindow() {
   saveSettings();
   delete ui;
 }
+
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason){
+  switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    {
+      this->setVisible(true);
+      break;
+    }
+    case QSystemTrayIcon::DoubleClick:
+    {
+      break;
+    }
+    default:
+        ;
+  }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event){
+  trayIcon->show();
+  hide();
+  event->ignore();
+}
+
+void MainWindow::reminder(QString text, QStringList *reminders) {
+  if(QDate::currentDate() != ui->calendar->selectedDate()){return;}
+  int end = 0;
+  while (end >= 0) {
+    int start = text.indexOf("setReminder(", end);
+    if( start != -1){
+      end = text.indexOf(");", start);
+      if(end != -1){
+        QStringRef command = text.midRef(start + 12, end - start - 12); 
+        QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
+        if(commands.length() == 2 && !reminders->contains(commands[1].toString())){
+          QVector<QStringRef> timeSet = commands[0].split('h');
+          int time = - QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
+          if(time > 0){
+            qInfo() << commands;
+            QTimer *notification = new QTimer(page);
+            notification->setSingleShot(true);
+            notification->setInterval(time);
+            QString message = commands[1].toString();
+            connect(notification, &QTimer::timeout, [this, message](){
+              trayIcon->showMessage("Notification", message, QIcon(), 214483648);
+            });
+            notification->start();
+          }
+        }
+      }
+    }
+    else{
+      break;
+    }
+  }
+}
+

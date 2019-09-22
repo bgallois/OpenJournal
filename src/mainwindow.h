@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 #include <QDebug>
+#include <QIcon>
 #include <QString>
 #include <QSqlDatabase>
 #include <QSqlDriver>
@@ -14,6 +15,9 @@
 #include <QWebChannel>
 #include <QTimer>
 #include <QStringLiteral>
+#include <QSystemTrayIcon>
+#include <QMessageBox>
+#include <QMap>
 #include "journalpage.h"
 #include "previewpage.h"
 #include "document.h"
@@ -37,6 +41,8 @@ class MainWindow : public QMainWindow {
   Document doc;
   Ui::MainWindow *ui;
   QTimer *refreshTimer;
+  QSystemTrayIcon *trayIcon;
+  QStringList *reminders;
 
  private slots:
   void newJournal();
@@ -47,6 +53,9 @@ class MainWindow : public QMainWindow {
   void clearJournalPage();
   void saveSettings();
   void backup();
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void closeEvent(QCloseEvent *event);
+  void reminder(QString text, QStringList *reminders);
 };
 
 #endif  // MAINWINDOW_H
