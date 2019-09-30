@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMainWindow>
 
+#include <QGraphicsBlurEffect>
 #include <QDebug>
 #include <QIcon>
 #include <QString>
@@ -43,6 +44,7 @@ class MainWindow : public QMainWindow {
   QTimer *refreshTimer;
   QSystemTrayIcon *trayIcon;
   QStringList *reminders;
+  bool isPrivate;
 
  private slots:
   void newJournal();
@@ -56,6 +58,7 @@ class MainWindow : public QMainWindow {
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
   void reminder(QString text, QStringList *reminders);
+  bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif  // MAINWINDOW_H

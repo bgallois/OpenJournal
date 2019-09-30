@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   trayIcon->setContextMenu(trayMenu);
   trayIcon->show();
 
+
   // Preview
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
@@ -65,6 +66,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     backup();
   });
 
+  // Privacy
+  isPrivate = true;
+  QAction* isPrivateAction = new QAction("Private mode");
+  isPrivateAction->setCheckable(true);
+  isPrivateAction->setChecked(true);
+  connect(isPrivateAction, &QAction::triggered, [this](bool state){
+    isPrivate = state;
+  });
+  ui->menuOptions->addAction(isPrivateAction);
+  this->installEventFilter(this);
 }
 
 void MainWindow::loadJournalPage(const QDate date) {
@@ -222,3 +233,17 @@ void MainWindow::reminder(QString text, QStringList *reminders) {
   }
 }
 
+bool MainWindow::eventFilter(QObject *obj, QEvent *event){
+  if(isPrivate){
+    if (event->type() == QEvent::Enter){
+      this->setGraphicsEffect(nullptr);
+    }
+    else if (event->type() == QEvent::HoverLeave){
+      QGraphicsBlurEffect* effect = new QGraphicsBlurEffect(this);
+      effect->setBlurRadius(40);
+      ui->preview->setGraphicsEffect(effect);
+      this->setGraphicsEffect(effect);
+    }
+  }
+  return false;
+}
