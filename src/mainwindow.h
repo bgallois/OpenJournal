@@ -66,6 +66,7 @@ class MainWindow : public QMainWindow {
   void closeEvent(QCloseEvent *event);
   void reminder(QString text, QStringList *reminders);
   bool eventFilter(QObject *obj, QEvent *event);
+  void about();
 
  signals:
   void exportLoadingFinished();

@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+  connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
+
   settings = new QSettings("OpenJournal", "B&GInc");
   this->resize(settings->value("size", QSize(400, 400)).toSize());
   this->move(settings->value("pos", QPoint(200, 200)).toPoint());
@@ -288,4 +291,7 @@ void MainWindow::exportAll() {
   if (!fileName.isEmpty()) {
     ui->preview->page()->printToPdf(fileName);
   }
+}
+void MainWindow::about() {
+  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2020"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
 }
