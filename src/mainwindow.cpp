@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
   connect(ui->actionAddAlarm, &QAction::triggered, [this]() {
+    ui->entry->moveCursor(QTextCursor::End);
     AddAlarm *alarm = new AddAlarm();
     connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
     alarm->exec();
@@ -92,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Privacy
   isPrivate = settings->value("settings/privacy").toBool();
-  QAction *isPrivateAction = new QAction("Private mode");
+  QAction *isPrivateAction = new QAction(tr("Private mode"));
   isPrivateAction->setCheckable(true);
   isPrivateAction->setChecked(isPrivate);
   connect(isPrivateAction, &QAction::triggered, [this](bool state) {
@@ -146,11 +147,11 @@ void MainWindow::newJournal(QString fileName) {
   db.setDatabaseName(fileName);
   if (!db.open()) {
     plannerName = fileName;
-    ui->statusBar->showMessage(plannerName + " journal failed to open");
+    ui->statusBar->showMessage(plannerName + tr(" journal failed to open"));
     return;
   }
   else {
-    ui->statusBar->showMessage(plannerName + " journal is opened");
+    ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
     plannerName = plannerName;
   }
   QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
@@ -170,12 +171,12 @@ void MainWindow::openJournal(QString plannerFile) {
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(plannerFile);
   if (!db.open()) {
-    ui->statusBar->showMessage(plannerFile + " journal failed to open");
+    ui->statusBar->showMessage(plannerFile + tr(" journal failed to open"));
     return;
   }
   else {
     plannerName = plannerFile;
-    ui->statusBar->showMessage(plannerName + " journal is opened");
+    ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   }
 
   ui->calendar->setSelectedDate(QDate::currentDate());
@@ -253,8 +254,8 @@ void MainWindow::reminder(QString text, QStringList *reminders) {
             notification->setSingleShot(true);
             notification->setInterval(time);
             QString message = commands[1].toString();
-            connect(notification, &QTimer::timeout, [this, message]() {
-              trayIcon->showMessage("Notification", message, QIcon(), 214483648);
+            connect(notification, &QTimer::timeout, [this, &message]() {
+              trayIcon->showMessage(tr("Notification"), message, QIcon(), 214483648);
               if (isSonore) {
                 alarmSound->play();
               }
@@ -292,6 +293,7 @@ void MainWindow::exportAll() {
     ui->preview->page()->printToPdf(fileName);
   }
 }
+
 void MainWindow::about() {
-  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2020"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
+  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
 }
