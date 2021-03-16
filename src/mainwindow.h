@@ -61,10 +61,14 @@ class MainWindow : public QMainWindow {
   void clearJournalPage();
   void saveSettings();
   void backup();
+  void exportAll();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
   void reminder(QString text, QStringList *reminders);
   bool eventFilter(QObject *obj, QEvent *event);
+
+ signals:
+  void exportLoadingFinished();
 };
 
 #endif  // MAINWINDOW_H

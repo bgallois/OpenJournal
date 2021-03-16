@@ -71,6 +71,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     newJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
 
+  connect(ui->actionExport_planner, &QAction::triggered, page, &JournalPage::readFromDatabaseAll);
+  connect(page, &JournalPage::getAll, [this](QString data) {
+    doc.setText(data);
+    emit(exportLoadingFinished());
+  });
+  connect(this, &MainWindow::exportLoadingFinished, this, &MainWindow::exportAll);
+
   // Automatic refresh
   refreshTimer = new QTimer(this);
   refreshTimer->start(3600000);
@@ -273,4 +280,12 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
   }
   return false;
+}
+
+void MainWindow::exportAll() {
+  QString fileName = QFileDialog::getSaveFileName(this,
+                                                  tr("Select file"), QDir::homePath(), tr("Pdf Files (*.pdf)"));
+  if (!fileName.isEmpty()) {
+    ui->preview->page()->printToPdf(fileName);
+  }
 }

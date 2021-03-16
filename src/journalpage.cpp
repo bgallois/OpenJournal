@@ -18,7 +18,6 @@ void JournalPage::setDate(QDate d) {
 }
 
 void JournalPage::writeToDatabase() {
-
   // Deletes the previous entry for this date
   QSqlQuery query(db);
   query.prepare("DELETE FROM journalPage WHERE date = ? ");
@@ -48,3 +47,13 @@ void JournalPage::readFromDatabase() {
   }
 }
 
+void JournalPage::readFromDatabaseAll() {
+  QSqlQuery query(db);
+  query.prepare("SELECT * FROM journalPage");
+  query.exec();
+  QString data;
+  while (query.next()) {
+    data.append("# " + query.value(0).toString() + "\n" + query.value(1).toString() + "\n\n");
+  }
+  emit(getAll(data));
+}

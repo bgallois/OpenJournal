@@ -24,10 +24,12 @@ class JournalPage : public QObject {
 
  public:
   void readFromDatabase();
+  void readFromDatabaseAll();
   void writeToDatabase();
 
  signals:
   void getEntry(QString entry);
+  void getAll(QString data);
   void getDate(QString date);
 
  public slots:
