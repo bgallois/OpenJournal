@@ -1,3 +1,3 @@
 ## Special commands
 
-To set a reminder that will show a notification in the tray ```setReminder(02h20, message);```
+To set an alarm that will show a notification in the tray ```setAlarm(02:20, message);```

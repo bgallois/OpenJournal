@@ -4,24 +4,27 @@
 #include <QFileDialog>
 #include <QMainWindow>
 
-#include <QGraphicsBlurEffect>
 #include <QDebug>
+#include <QGraphicsBlurEffect>
 #include <QIcon>
-#include <QString>
+#include <QMap>
+#include <QMessageBox>
+#include <QSettings>
+#include <QSoundEffect>
 #include <QSqlDatabase>
 #include <QSqlDriver>
 #include <QSqlError>
 #include <QSqlQuery>
-#include <QSettings>
-#include <QWebChannel>
-#include <QTimer>
+#include <QString>
 #include <QStringLiteral>
 #include <QSystemTrayIcon>
-#include <QMessageBox>
-#include <QMap>
+#include <QTimer>
+#include <QUrl>
+#include <QWebChannel>
+#include "addalarm.h"
+#include "document.h"
 #include "journalpage.h"
 #include "previewpage.h"
-#include "document.h"
 
 namespace Ui {
 class MainWindow;
@@ -45,6 +48,9 @@ class MainWindow : public QMainWindow {
   QSystemTrayIcon *trayIcon;
   QStringList *reminders;
   bool isPrivate;
+  bool isSonore;
+  QSoundEffect *alarmSound;
+  QSettings *settings;
 
  private slots:
   void newJournal();

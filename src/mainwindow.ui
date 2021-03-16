@@ -156,7 +156,7 @@ selection-background-color: rgb(255, 11, 11);</string>
      <x>0</x>
      <y>0</y>
      <width>1388</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -176,8 +176,15 @@ selection-background-color: rgb(255, 11, 11);</string>
      <string>Options</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuAlarm">
+    <property name="title">
+     <string>Alarm</string>
+    </property>
+    <addaction name="actionAddAlarm"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuAlarm"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -211,6 +218,11 @@ selection-background-color: rgb(255, 11, 11);</string>
   <action name="actionBackup">
    <property name="text">
     <string>Backup</string>
+   </property>
+  </action>
+  <action name="actionAddAlarm">
+   <property name="text">
+    <string>Add</string>
    </property>
   </action>
  </widget>

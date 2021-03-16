@@ -5,6 +5,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  settings = new QSettings("OpenJournal", "B&GInc");
+  this->resize(settings->value("size", QSize(400, 400)).toSize());
+  this->move(settings->value("pos", QPoint(200, 200)).toPoint());
+
   trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"));
   QMenu *trayMenu = new QMenu;
   QAction *restore = new QAction(tr("Restore"));
@@ -17,36 +21,46 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   trayIcon->setContextMenu(trayMenu);
   trayIcon->show();
 
+  alarmSound = new QSoundEffect(this);
+  alarmSound->setSource(QUrl("qrc:/notification_0.wav"));
+  alarmSound->setLoopCount(0);
+  alarmSound->setVolume(0.70);
+  connect(trayIcon, &QSystemTrayIcon::messageClicked, alarmSound, &QSoundEffect::stop);
+  connect(trayIcon, &QSystemTrayIcon::activated, alarmSound, &QSoundEffect::stop);
 
   // Preview
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
-  connect(ui->entry, &QPlainTextEdit::textChanged,[this]() { 
+  connect(ui->entry, &QPlainTextEdit::textChanged, [this]() {
     this->doc.setText(ui->entry->toPlainText());
     this->reminder(ui->entry->toPlainText(), reminders);
-    });
+  });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
   previewPage->setWebChannel(channel);
   ui->preview->setUrl(QUrl("qrc:/index.html"));
 
-
   // Connect menu bar
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
+  connect(ui->actionAddAlarm, &QAction::triggered, [this]() {
+    AddAlarm *alarm = new AddAlarm();
+    connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
+    alarm->exec();
+    delete alarm;
+  });
 
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
- 
+
   // Initialize a default planner page
   // To investigate => no error on fedora, error with ubuntu
   page = new JournalPage(db, QDate::currentDate());
   reminders = new QStringList;
 
   // Reads settings
-  QSettings settings("OpenJournal", "B&GInc");
-  QString lastJournal = settings.value("mainwindow/lastJournal").toString();
+  QString lastJournal = settings->value("mainwindow/lastJournal").toString();
   if (QFile(lastJournal).exists()) {
     openJournal(lastJournal);
   }
@@ -60,21 +74,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Automatic refresh
   refreshTimer = new QTimer(this);
   refreshTimer->start(3600000);
-  connect(refreshTimer, &QTimer::timeout, [this](){
+  connect(refreshTimer, &QTimer::timeout, [this]() {
     ui->calendar->setSelectedDate(QDate::currentDate());
     loadJournalPage(QDate::currentDate());
     backup();
   });
 
   // Privacy
-  isPrivate = true;
-  QAction* isPrivateAction = new QAction("Private mode");
+  isPrivate = settings->value("settings/privacy").toBool();
+  QAction *isPrivateAction = new QAction("Private mode");
   isPrivateAction->setCheckable(true);
-  isPrivateAction->setChecked(true);
-  connect(isPrivateAction, &QAction::triggered, [this](bool state){
+  isPrivateAction->setChecked(isPrivate);
+  connect(isPrivateAction, &QAction::triggered, [this](bool state) {
     isPrivate = state;
   });
   ui->menuOptions->addAction(isPrivateAction);
+  // Sonore
+  isSonore = settings->value("settings/sonore").toBool();
+  QAction *isSonoreAction = new QAction("Alarm Sound");
+  isSonoreAction->setCheckable(true);
+  isSonoreAction->setChecked(isSonore);
+  connect(isSonoreAction, &QAction::triggered, [this](bool state) {
+    isSonore = state;
+  });
+  ui->menuOptions->addAction(isSonoreAction);
   this->installEventFilter(this);
 }
 
@@ -86,10 +109,10 @@ void MainWindow::loadJournalPage(const QDate date) {
   reminders = new QStringList();
 
   // Sends values from ui to page object
-  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this](){
+  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
     QString entry = ui->entry->toPlainText();
     page->setEntry(entry);
-    });
+  });
 
   // Gets values from page object to the ui
   connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
@@ -157,89 +180,93 @@ void MainWindow::clearJournalPage() {
 }
 
 void MainWindow::saveSettings() {
-  QSettings settings("OpenJournal", "B&GInc");
-  settings.setValue("mainwindow/lastJournal", plannerName);
+  settings->setValue("mainwindow/lastJournal", plannerName);
+  settings->setValue("mainwindow/size", this->size());
+  settings->setValue("mainwindow/pos", this->pos());
+  settings->setValue("settings/privacy", isPrivate);
+  settings->setValue("settings/sonore", isSonore);
 }
 
 void MainWindow::backup() {
   QFile file(plannerName);
   QFile copy(plannerName + ".back");
-  if(!copy.exists()){
+  if (!copy.exists()) {
     file.copy(plannerName + ".back");
   }
-  else if(copy.exists()){
+  else if (copy.exists()) {
     copy.remove();
     file.copy(plannerName + ".back");
   }
 }
 
 MainWindow::~MainWindow() {
-  saveSettings();
   delete ui;
 }
 
-void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason){
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
   switch (reason) {
-    case QSystemTrayIcon::Trigger:
-    {
+    case QSystemTrayIcon::Trigger: {
       this->setVisible(true);
       break;
     }
-    case QSystemTrayIcon::DoubleClick:
-    {
+    case QSystemTrayIcon::DoubleClick: {
       break;
     }
-    default:
-        ;
+    default:;
   }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event){
+void MainWindow::closeEvent(QCloseEvent *event) {
   trayIcon->show();
   hide();
   event->ignore();
+  saveSettings();
 }
 
 void MainWindow::reminder(QString text, QStringList *reminders) {
-  if(QDate::currentDate() != ui->calendar->selectedDate()){return;}
+  if (QDate::currentDate() != ui->calendar->selectedDate()) {
+    return;
+  }
   int end = 0;
   while (end >= 0) {
-    int start = text.indexOf("setReminder(", end);
-    if( start != -1){
+    int start = text.indexOf("setAlarm(", end);
+    if (start != -1) {
       end = text.indexOf(");", start);
-      if(end != -1){
-        QStringRef command = text.midRef(start + 12, end - start - 12); 
+      if (end != -1) {
+        QStringRef command = text.midRef(start + 9, end - start - 9);
         QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
-        if(commands.length() == 2 && !reminders->contains(commands[1].toString())){
-          QVector<QStringRef> timeSet = commands[0].split('h');
-          int time = - QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
-          if(time > 0){
-            qInfo() << commands;
+        if (commands.length() == 2 && !reminders->contains(commands[1].toString())) {
+          QVector<QStringRef> timeSet = commands[0].split(':');
+          int time = -QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
+          if (time > 0) {
             QTimer *notification = new QTimer(page);
             notification->setSingleShot(true);
             notification->setInterval(time);
             QString message = commands[1].toString();
-            connect(notification, &QTimer::timeout, [this, message](){
+            connect(notification, &QTimer::timeout, [this, message]() {
               trayIcon->showMessage("Notification", message, QIcon(), 214483648);
+              if (isSonore) {
+                alarmSound->play();
+              }
             });
             notification->start();
           }
         }
       }
     }
-    else{
+    else {
       break;
     }
   }
 }
 
-bool MainWindow::eventFilter(QObject *obj, QEvent *event){
-  if(isPrivate){
-    if (event->type() == QEvent::Enter){
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+  if (isPrivate) {
+    if (event->type() == QEvent::Enter) {
       this->setGraphicsEffect(nullptr);
     }
-    else if (event->type() == QEvent::HoverLeave){
-      QGraphicsBlurEffect* effect = new QGraphicsBlurEffect(this);
+    else if (event->type() == QEvent::HoverLeave) {
+      QGraphicsBlurEffect *effect = new QGraphicsBlurEffect(this);
       effect->setBlurRadius(40);
       ui->preview->setGraphicsEffect(effect);
       this->setGraphicsEffect(effect);

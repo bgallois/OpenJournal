@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql webenginewidgets webchannel
+QT       += core gui sql webenginewidgets webchannel multimedia
 QTPLUGIN += QSQLMYSQL
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets sql
@@ -47,6 +47,7 @@ SOURCES += \
         qplaintexteditsearchwidget.cpp \
         previewpage.cpp \
         document.cpp \
+        addalarm.cpp \
 
 HEADERS += \
         mainwindow.h \
@@ -56,10 +57,12 @@ HEADERS += \
         qplaintexteditsearchwidget.h \
         previewpage.h \
         document.h \
+        addalarm.h \
 
 FORMS += \
         mainwindow.ui\
         qplaintexteditsearchwidget.ui \
+        addalarm.ui \
 
 RESOURCES = \
             ../resources/openjournal.qrc
