@@ -14,58 +14,57 @@
 
 #pragma once
 
-#include <QWidget>
 #include <QPlainTextEdit>
+#include <QWidget>
 
 namespace Ui {
 class QPlainTextEditSearchWidget;
 }
 
-class QPlainTextEditSearchWidget : public QWidget
-{
-    Q_OBJECT
+class QPlainTextEditSearchWidget : public QWidget {
+  Q_OBJECT
 
-public:
-    enum SearchMode {
-        PlainTextMode,
-        WholeWordsMode,
-        RegularExpressionMode
-    };
+ public:
+  enum SearchMode {
+    PlainTextMode,
+    WholeWordsMode,
+    RegularExpressionMode
+  };
 
-    explicit QPlainTextEditSearchWidget(QPlainTextEdit *parent = 0);
-    bool doSearch(bool searchDown = true, bool allowRestartAtTop = true);
-    void setDarkMode(bool enabled);
-    ~QPlainTextEditSearchWidget();
-    void setSearchText(QString &searchText);
-    void setSearchMode(SearchMode searchMode);
-    void activate(bool focus);
+  explicit QPlainTextEditSearchWidget(QPlainTextEdit *parent = 0);
+  bool doSearch(bool searchDown = true, bool allowRestartAtTop = true);
+  void setDarkMode(bool enabled);
+  ~QPlainTextEditSearchWidget();
+  void setSearchText(QString &searchText);
+  void setSearchMode(SearchMode searchMode);
+  void activate(bool focus);
 
-private:
-    Ui::QPlainTextEditSearchWidget *ui;
-    int _searchResultCount;
-    int _currentSearchResult;
+ private:
+  Ui::QPlainTextEditSearchWidget *ui;
+  int _searchResultCount;
+  int _currentSearchResult;
 
-protected:
-    QPlainTextEdit *_textEdit;
-    bool _darkMode;
-    bool eventFilter(QObject *obj, QEvent *event);
+ protected:
+  QPlainTextEdit *_textEdit;
+  bool _darkMode;
+  bool eventFilter(QObject *obj, QEvent *event);
 
-public slots:
-    void activate();
-    void deactivate();
-    void doSearchDown();
-    void doSearchUp();
-    void setReplaceMode(bool enabled);
-    void activateReplace();
-    bool doReplace(bool forAll = false);
-    void doReplaceAll();
-    void reset();
-    void doSearchCount();
+ public slots:
+  void activate();
+  void deactivate();
+  void doSearchDown();
+  void doSearchUp();
+  void setReplaceMode(bool enabled);
+  void activateReplace();
+  bool doReplace(bool forAll = false);
+  void doReplaceAll();
+  void reset();
+  void doSearchCount();
 
-protected slots:
-    void searchLineEditTextChanged(const QString &arg1);
-    void updateSearchCountLabelText();
-private slots:
-    void on_modeComboBox_currentIndexChanged(int index);
-    void on_matchCaseSensitiveButton_toggled(bool checked);
+ protected slots:
+  void searchLineEditTextChanged(const QString &arg1);
+  void updateSearchCountLabelText();
+ private slots:
+  void on_modeComboBox_currentIndexChanged(int index);
+  void on_matchCaseSensitiveButton_toggled(bool checked);
 };

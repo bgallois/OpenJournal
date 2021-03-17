@@ -4,6 +4,9 @@
         <file>markdown.css</file>
         <file>marked.js</file>
         <file>openjournal.svg</file>
+        <file>icon.png</file>
+        <file>icon.ico</file>
+        <file>icon.icns</file>
         <file>notification_0.wav</file>
     </qresource>
 </RCC>

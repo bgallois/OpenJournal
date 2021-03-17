@@ -3,14 +3,13 @@
 
 #include <QWebEnginePage>
 
-class PreviewPage : public QWebEnginePage
-{
-    Q_OBJECT
-public:
-    explicit PreviewPage(QObject *parent = nullptr) : QWebEnginePage(parent) {}
+class PreviewPage : public QWebEnginePage {
+  Q_OBJECT
+ public:
+  explicit PreviewPage(QObject *parent = nullptr) : QWebEnginePage(parent) {}
 
-protected:
-    bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame);
+ protected:
+  bool acceptNavigationRequest(const QUrl &url, NavigationType type, bool isMainFrame);
 };
 
-#endif // PREVIEWPAGE_H
+#endif  // PREVIEWPAGE_H

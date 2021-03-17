@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=OpenJournal
+Comment=A simple notetaking, journal, reminder application.
+Exec=OpenJournal
+Icon=icon
+Categories=Qt;
+X-AppImage-Version=

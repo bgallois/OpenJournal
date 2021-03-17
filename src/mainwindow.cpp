@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->resize(settings->value("size", QSize(400, 400)).toSize());
   this->move(settings->value("pos", QPoint(200, 200)).toPoint());
 
-  trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"));
+  trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"), this);
   QMenu *trayMenu = new QMenu;
   QAction *restore = new QAction(tr("Restore"));
   connect(restore, &QAction::triggered, this, &MainWindow::showNormal);
@@ -254,7 +254,7 @@ void MainWindow::reminder(QString text, QStringList *reminders) {
             notification->setSingleShot(true);
             notification->setInterval(time);
             QString message = commands[1].toString();
-            connect(notification, &QTimer::timeout, [this, &message]() {
+            connect(notification, &QTimer::timeout, [this, message]() {
               trayIcon->showMessage(tr("Notification"), message, QIcon(), 214483648);
               if (isSonore) {
                 alarmSound->play();

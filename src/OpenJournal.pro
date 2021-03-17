@@ -35,7 +35,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 QMAKE_LFLAGS_RELEASE -= -O1
 QMAKE_LFLAGS_RELEASE -= -O2
 QMAKE_LFLAGS_RELEASE += -O3
-QMAKE_CXXFLAGS += -std=c++11 -O3 -fopenmp -g
+QMAKE_CXXFLAGS += -std=c++11 -O3 -g
 CONFIG += c++11
 
 SOURCES += \
@@ -66,6 +66,10 @@ FORMS += \
 
 RESOURCES = \
             ../resources/openjournal.qrc
+
+ICON = ../resources/icon.icns
+RC_ICONS = ../resources/icon.ico
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
