@@ -69,6 +69,7 @@ jobs:
         - name: build
           shell: cmd
           run : |
+               choco install nsis
                cd src/
                qmake OpenJournal.pro -spec win32-msvc "CONFIG+=qtquickcompiler"
                nmake release
@@ -76,11 +77,19 @@ jobs:
                cp build/OpenJournal.exe OpenJournal/OpenJournal.exe
                windeployqt OpenJournal/OpenJournal.exe
                7z a C:\OpenJournal.zip OpenJournal/
+               cd ..
+               makensis.exe /V3 resources/installer.nsi
         - name: Windows artefact
           uses: actions/upload-artifact@v1
           with:
             name: OpenJournalWindows
             path: C:/OpenJournal.zip
+        - name: Windows artefact installer
+          uses: actions/upload-artifact@v1
+          with:
+            name: OpenJournalWindowsInstaller
+            path: C:/OpenJournalInstaller.exe
+
   job_3:
       runs-on: macos-latest
       steps:
@@ -163,6 +172,20 @@ jobs:
             upload_url: ${{ steps.create_release.outputs.upload_url }} 
             asset_path: OpenJournalWindows/penJournal.zip
             asset_name: OpenJournal.zip
+            asset_content_type: application/zip
+        - name: Download Windows Installer
+          uses: actions/download-artifact@v1
+          with:
+            name: OpenJournalWindowsInstaller
+        - name: upload release asset-Win installer
+          id: upload-release-asset-Win-Installer
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }} 
+            asset_path: OpenJournalWindowsInstaller/penJournalInstaller.exe
+            asset_name: OpenJournalInstaller.exe
             asset_content_type: application/zip
         - name: Download Mac
           uses: actions/download-artifact@v1
