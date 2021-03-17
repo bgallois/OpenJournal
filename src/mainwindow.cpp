@@ -230,6 +230,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 void MainWindow::closeEvent(QCloseEvent *event) {
   trayIcon->show();
   hide();
+  trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 3000);
   event->ignore();
   saveSettings();
 }
