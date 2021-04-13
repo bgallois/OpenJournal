@@ -8,6 +8,8 @@
         <file>icon.ico</file>
         <file>icon.icns</file>
         <file>notification_0.wav</file>
+        <file>Lato.ttf</file>
+        <file>Caveat.ttf</file>
     </qresource>
 </RCC>
 
