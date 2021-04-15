@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
   w.setWindowIcon(QIcon(":/openjournal.svg"));
   w.show();
   qApp->setApplicationVersion("0.0.1");
-  QFontDatabase::addApplicationFont(":/assets/Lato.ttf");
-  QFontDatabase::addApplicationFont(":/assets/Caveat.ttf");
+  QFontDatabase::addApplicationFont(":/Lato.ttf");
+  QFontDatabase::addApplicationFont(":/Caveat.ttf");
   w.setStyleSheet("QWidget {font-family: 'Lato', sans-serif;}");
 
   return a.exec();

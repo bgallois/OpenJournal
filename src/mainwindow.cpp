@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  QFontDatabase::addApplicationFont(":/Caveat.ttf");
+  ui->date->setStyleSheet("QLabel{font: 21pt 'Caveat';}");
+
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 

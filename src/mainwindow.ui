@@ -53,17 +53,8 @@ color: rgb(0, 0, 0);
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="1" colspan="2">
          <widget class="QLabel" name="date">
-          <property name="font">
-           <font>
-            <family>Caveat</family>
-            <pointsize>21</pointsize>
-            <weight>50</weight>
-            <italic>false</italic>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="styleSheet">
-           <string notr="true">font: 21pt &quot;Caveat&quot;;</string>
+           <string notr="true"/>
           </property>
           <property name="text">
            <string>Date xx Month xxx</string>
@@ -102,7 +93,7 @@ color: rgb(0, 0, 0);
            <cursorShape>IBeamCursor</cursorShape>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 12pt &quot;Lato&quot;;
+           <string notr="true">font: 12pt;
 border:1px;
 border-style: solid;
 border-radius: 20px;
@@ -144,7 +135,7 @@ border: 0;</string>
 selection-color: rgb(0, 0, 0);
 selection-background-color: #e83d31;
 border: 0px;
-font: italic 12pt &quot;Lato&quot;;
+font: italic 12pt;
 gridline-color: rgb(0, 0, 0);
 color: rgb(0, 0, 0);</string>
            </property>
@@ -161,9 +152,6 @@ color: rgb(0, 0, 0);</string>
              <horstretch>0</horstretch>
              <verstretch>2</verstretch>
             </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">font: 10pt &quot;Lato&quot;;</string>
            </property>
            <property name="url" stdset="0">
             <url>
@@ -202,7 +190,7 @@ color: rgb(0, 0, 0);</string>
 background-color: rgb(87, 87, 102);
 selection-background-color: #349beb;
 border: 0px;
-font: 11pt &quot;Lato&quot;;</string>
+font: 11pt;</string>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -243,7 +231,9 @@ color: #FFFFFF;</string>
     <string>toolBar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(87, 87, 102);</string>
+    <string notr="true">background-color: rgb(87, 87, 102);
+color: #FFFFFF;
+</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
