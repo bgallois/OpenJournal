@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMainWindow>
 
+#include <QAction>
 #include <QDebug>
 #include <QGraphicsBlurEffect>
 #include <QIcon>

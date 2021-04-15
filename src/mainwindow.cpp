@@ -47,13 +47,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
-  connect(ui->actionAddAlarm, &QAction::triggered, [this]() {
+
+  // Toolbar
+  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
+  actionAddAlarm->setToolTip("Add an alarm");
+  connect(actionAddAlarm, &QAction::triggered, [this]() {
     ui->entry->moveCursor(QTextCursor::End);
     AddAlarm *alarm = new AddAlarm();
     connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
     alarm->exec();
     delete alarm;
   });
+  ui->toolBar->addAction(actionAddAlarm);
 
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
