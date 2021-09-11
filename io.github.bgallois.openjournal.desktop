@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=OpenJournal
+Comment=OpenJournal is a simple journal, note-taking, and assistant application supporting Markdown syntax and Markdown rendering.
+Categories=Office;WordProcessor;
+
+Icon=openjournal
+Exec=openjournal

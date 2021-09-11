@@ -7,12 +7,12 @@ on:
 jobs:
 
   job_1:
-      runs-on: ubuntu-16.04
+      runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v2
         - name: install qt5
           run: |
-             sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-xenial
+             sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-bionic
              sudo apt-get update
              sudo apt-get install libgl1-mesa-dev qt515base qt515webengine qt515webchannel qt515multimedia qt515svg 
         - name: build
@@ -27,15 +27,11 @@ jobs:
               cd build
               export QTDIR=/opt/qt515
               export PATH=/opt/qt515/bin:$PATH
-              wget -O deploy.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/7/linuxdeployqt-7-x86_64.AppImage
+              wget -O deploy.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
               chmod +x deploy.AppImage
-              mkdir -p appdir/usr/bin/
-              mv OpenJournal appdir/usr/bin/
-              mkdir -p appdir/usr/share/applications/
-              cp ../OpenJournal.desktop appdir/usr/share/applications/
-              mkdir -p appdir/usr/share/icons/hicolor/256x256/
-              cp ../resources/icon.png appdir/usr/share/icons/hicolor/256x256/
-              ./deploy.AppImage ./appdir/usr/share/applications/OpenJournal.desktop -exclude-libs="libnss3.so,libnssutil3.so" -no-translations -bundle-non-qt-libs -appimage
+              cp ../io.github.bgallois.openjournal.desktop .
+              cp ../resources/openjournal.png .
+              ./deploy.AppImage io.github.bgallois.openjournal.desktop -no-translations -bundle-non-qt-libs -appimage
               mv OpenJournal*.AppImage OpenJournal-x86_64.AppImage
         - name: Linux artefact
           uses: actions/upload-artifact@v1

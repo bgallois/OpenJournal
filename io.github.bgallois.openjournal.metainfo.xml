@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.bgallois.openjournal</id>
+  
+  <name>openjournal</name>
+  <summary>OpenJournal is a simple journal, note-taking, and assistant application supporting Markdown syntax and Markdown rendering.</summary>
+  
+  <metadata_license>MIT</metadata_license>
+  <project_license>GFDL-1.2-only</project_license>
+  
+  <description>
+    <p>
+      OpenJournal is a simple journal, note-taking, and assistant application supporting Markdown syntax and Markdown rendering thanks to qmarkdowntextedit. Write your thoughts, never forget a meeting or simply keep a daily diary.
+    </p>
+  </description>
+  
+  <launchable type="desktop-id">io.github.bgallois.openjournal.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>http://gallois.cc/images/openjournal.png</image>
+    </screenshot>
+  </screenshots>
+</component>

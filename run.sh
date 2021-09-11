@@ -6,7 +6,7 @@ if [ "$1" = "released" ]; then
   make clean
   make
   cd build
-  ./OpenJournal
+  ./openjournal
   cd ..
   make clean
 fi
@@ -16,7 +16,7 @@ if [ "$1" = "debug" ]; then
   qmake CONFIG+=debug src/OpenJournal.pro
   make
   cd build
-  ./OpenJournal
+  ./openjournal
   cd ..
 fi
 
