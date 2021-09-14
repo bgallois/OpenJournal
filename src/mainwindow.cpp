@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
+  connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
+  connect(ui->actionQuit, &QAction::triggered, qApp, &QCoreApplication::quit);
 
   // Toolbar
   QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
@@ -238,7 +240,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 void MainWindow::closeEvent(QCloseEvent *event) {
   trayIcon->show();
   hide();
-  trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 3000);
+  trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
   event->ignore();
   saveSettings();
 }

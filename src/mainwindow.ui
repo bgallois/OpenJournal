@@ -203,6 +203,9 @@ font: 11pt;</string>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
     <addaction name="actionBackup"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -283,6 +286,16 @@ color: #FFFFFF;
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>
