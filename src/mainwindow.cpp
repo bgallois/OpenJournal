@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   QAction *restore = new QAction(tr("Restore"));
   connect(restore, &QAction::triggered, this, &MainWindow::showNormal);
   trayMenu->addAction(restore);
-  QAction *close = new QAction(tr("Close"));
+  QAction *close = new QAction(tr("Quit"));
   connect(close, &QAction::triggered, qApp, &QCoreApplication::quit);
   trayMenu->addAction(close);
   connect(trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::iconActivated);
