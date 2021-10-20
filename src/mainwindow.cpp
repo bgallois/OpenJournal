@@ -108,6 +108,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   isPrivateAction->setCheckable(true);
   isPrivateAction->setChecked(isPrivate);
   connect(isPrivateAction, &QAction::triggered, [this](bool state) {
+    this->setGraphicsEffect(nullptr);
     isPrivate = state;
   });
   ui->menuOptions->addAction(isPrivateAction);
