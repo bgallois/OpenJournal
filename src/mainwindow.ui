@@ -146,14 +146,14 @@ color: rgb(0, 0, 0);</string>
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="QWebEngineView" name="preview">
+          <widget class="QWebEngineView" name="preview" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>2</verstretch>
             </sizepolicy>
            </property>
-           <property name="url">
+           <property name="url" stdset="0">
             <url>
              <string>about:blank</string>
             </url>
@@ -173,7 +173,7 @@ color: rgb(0, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -200,12 +200,12 @@ font: 11pt;</string>
     <addaction name="separator"/>
     <addaction name="actionNew_planner"/>
     <addaction name="actionOpen_planner"/>
+    <addaction name="actionConnect_planner"/>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
     <addaction name="actionBackup"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
-    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -253,12 +253,12 @@ color: #FFFFFF;
   </widget>
   <action name="actionNew_planner">
    <property name="text">
-    <string>New planner</string>
+    <string>&amp;New planner</string>
    </property>
   </action>
   <action name="actionOpen_planner">
    <property name="text">
-    <string>Open planner</string>
+    <string>&amp;Open planner</string>
    </property>
   </action>
   <action name="actionSave_planner">
@@ -268,12 +268,12 @@ color: #FFFFFF;
   </action>
   <action name="actionExport_planner">
    <property name="text">
-    <string>Export planner</string>
+    <string>&amp;Export planner</string>
    </property>
   </action>
   <action name="actionBackup">
    <property name="text">
-    <string>Backup</string>
+    <string>&amp;Backup</string>
    </property>
   </action>
   <action name="actionAddAlarm">
@@ -296,12 +296,17 @@ color: #FFFFFF;
   </action>
   <action name="actionClose">
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionConnect_planner">
+   <property name="text">
+    <string>&amp;Connect to remote planner</string>
    </property>
   </action>
  </widget>

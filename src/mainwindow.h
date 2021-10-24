@@ -8,8 +8,10 @@
 #include <QDebug>
 #include <QGraphicsBlurEffect>
 #include <QIcon>
+#include <QInputDialog>
 #include <QMap>
 #include <QMessageBox>
+#include <QRegularExpression>
 #include <QSettings>
 #include <QSoundEffect>
 #include <QSqlDatabase>
@@ -58,6 +60,7 @@ class MainWindow : public QMainWindow {
   void newJournal(QString plannerName);
   void openJournal();
   void openJournal(QString plannerName);
+  void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
   void loadJournalPage(const QDate date);
   void clearJournalPage();
   void saveSettings();

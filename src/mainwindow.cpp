@@ -12,16 +12,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 
   settings = new QSettings("OpenJournal", "B&GInc");
-  this->resize(settings->value("size", QSize(400, 400)).toSize());
-  this->move(settings->value("pos", QPoint(200, 200)).toPoint());
+  this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
+  this->move(settings->value("mainwindow/pos", QPoint(200, 200)).toPoint());
 
   trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"), this);
   QMenu *trayMenu = new QMenu;
   QAction *restore = new QAction(tr("Restore"));
-  connect(restore, &QAction::triggered, this, &MainWindow::showNormal);
+  connect(restore, &QAction::triggered, [this]() {
+    this->showNormal();
+    refreshTimer->start();
+  });
   trayMenu->addAction(restore);
   QAction *close = new QAction(tr("Quit"));
-  connect(close, &QAction::triggered, qApp, &QCoreApplication::quit);
+  connect(close, &QAction::triggered, [this]() {
+    saveSettings();
+    qApp->quit();
+  });
   trayMenu->addAction(close);
   connect(trayIcon, &QSystemTrayIcon::activated, this, &MainWindow::iconActivated);
   trayIcon->setContextMenu(trayMenu);
@@ -49,9 +55,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Connect menu bar
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
+  connect(ui->actionConnect_planner, &QAction::triggered, [this]() {
+    bool isOk;
+    QString pass;
+    QString info = QInputDialog::getText(this, tr("Connect to server"),
+                                         tr("username@hostname:port"), QLineEdit::Normal,
+                                         settings->value("settings/host", "username@hostname:port").toString(), &isOk);
+    if (isOk) {
+      pass = QInputDialog::getText(this, tr("JournalName@Password"),
+                                   tr("journal@password \n If journal does not exist it will be created and protected by password."), QLineEdit::Normal,
+                                   "journalname@password", &isOk);
+    }
+    if (isOk && !info.isEmpty() && info.contains(QRegularExpression("\\w+@.+:\\d+")) && info.contains("@")) {
+      settings->setValue("settings/host", info);
+      QStringList tmp = info.split("@");
+      QString username = tmp[0];
+      QStringList host = tmp[1].split(":");
+      QStringList journal = pass.split("@");
+      openJournal(host[0], host[1], username, journal[1], journal[0]);
+    }
+  });
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
   connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionQuit, &QAction::triggered, qApp, &QCoreApplication::quit);
 
   // Toolbar
   QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
@@ -93,13 +118,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(this, &MainWindow::exportLoadingFinished, this, &MainWindow::exportAll);
 
-  // Automatic refresh
+  // Automatic refresh every 5 seconds
   refreshTimer = new QTimer(this);
-  refreshTimer->start(3600000);
+  refreshTimer->start(5000);
   connect(refreshTimer, &QTimer::timeout, [this]() {
+    int cursorPosition = ui->entry->textCursor().position();
     ui->calendar->setSelectedDate(QDate::currentDate());
     loadJournalPage(QDate::currentDate());
-    backup();
+    QTextCursor cursor = ui->entry->textCursor();
+    cursor.setPosition(cursorPosition);
+    ui->entry->setTextCursor(cursor);
   });
 
   // Privacy
@@ -167,7 +195,6 @@ void MainWindow::newJournal(QString fileName) {
     plannerName = plannerName;
   }
   QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
-  query.isActive();
 
   ui->calendar->setSelectedDate(QDate::currentDate());
   loadJournalPage(QDate::currentDate());
@@ -188,9 +215,38 @@ void MainWindow::openJournal(QString plannerFile) {
   }
   else {
     plannerName = plannerFile;
+    ui->calendar->setSelectedDate(QDate::currentDate());
+    loadJournalPage(QDate::currentDate());
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   }
+}
 
+void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
+  clearJournalPage();
+  db = QSqlDatabase::addDatabase("QMARIADB");
+  db.setHostName(hostname);
+  db.setPort(port.toInt());
+  db.setUserName(username);
+  db.setPassword(password);
+  if (!db.open()) {  // Check authentification
+    ui->statusBar->showMessage(plannerFile + tr(" authentification failed"));
+    return;
+  }
+  db.setDatabaseName(plannerFile);
+  if (!db.open()) {  // Create database if not exist
+    db.setDatabaseName("mysql");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare(QString("CREATE DATABASE %1 ").arg(plannerFile));  // Normaly cannot used place holder for database and table name beware sql injection
+    query.exec();
+    db.setDatabaseName(plannerFile);
+    db.open();
+    query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
+    query.exec();
+  }
+
+  plannerName = plannerFile;
+  ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   ui->calendar->setSelectedDate(QDate::currentDate());
   loadJournalPage(QDate::currentDate());
 }
@@ -215,10 +271,12 @@ void MainWindow::backup() {
   QFile copy(plannerName + ".back");
   if (!copy.exists()) {
     file.copy(plannerName + ".back");
+    ui->statusBar->showMessage("Journal was backed up " + plannerName + ".back");
   }
   else if (copy.exists()) {
     copy.remove();
     file.copy(plannerName + ".back");
+    ui->statusBar->showMessage("Cannot back up journal");
   }
 }
 
@@ -229,10 +287,11 @@ MainWindow::~MainWindow() {
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
   switch (reason) {
     case QSystemTrayIcon::Trigger: {
-      this->setVisible(true);
       break;
     }
     case QSystemTrayIcon::DoubleClick: {
+      refreshTimer->start();
+      this->setVisible(true);
       break;
     }
     default:;
@@ -243,8 +302,9 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   trayIcon->show();
   hide();
   trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
-  event->ignore();
+  refreshTimer->stop();
   saveSettings();
+  event->ignore();
 }
 
 void MainWindow::reminder(QString text, QStringList *reminders) {
