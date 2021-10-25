@@ -193,6 +193,7 @@ void MainWindow::newJournal() {
 void MainWindow::newJournal(QString fileName) {
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(fileName);
+  ui->entry->setEnabled(false);
   if (!db.open()) {
     plannerName = fileName;
     ui->statusBar->showMessage(plannerName + tr(" journal failed to open"));
@@ -201,18 +202,21 @@ void MainWindow::newJournal(QString fileName) {
   else {
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
     plannerName = plannerName;
+    ui->entry->setEnabled(true);
+    QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
+    ui->calendar->setSelectedDate(QDate::currentDate());
+    page->setDatabase(db);
+    loadJournalPage(QDate::currentDate());
   }
-  QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
-
-  ui->calendar->setSelectedDate(QDate::currentDate());
-  page->setDatabase(db);
-  loadJournalPage(QDate::currentDate());
 }
 
 void MainWindow::openJournal() {
   clearJournalPage();
+  ui->entry->setEnabled(false);
   plannerName = QFileDialog::getOpenFileName(this, tr("Open journal"), "", tr("Journal (*.jnl)"));
-  openJournal(plannerName);
+  if (!plannerName.isEmpty()) {
+    openJournal(plannerName);
+  }
 }
 
 void MainWindow::openJournal(QString plannerFile) {
@@ -228,11 +232,13 @@ void MainWindow::openJournal(QString plannerFile) {
     page->setDatabase(db);
     loadJournalPage(QDate::currentDate());
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
+    ui->entry->setEnabled(true);
   }
 }
 
 void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
   clearJournalPage();
+  ui->entry->setEnabled(false);
   db = QSqlDatabase::addDatabase("QMARIADB");
   db.setHostName(hostname);
   db.setPort(port.toInt());
@@ -257,6 +263,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
 
   plannerName = plannerFile;
   ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
+  ui->entry->setEnabled(true);
   ui->calendar->setSelectedDate(QDate::currentDate());
   page->setDatabase(db);
   loadJournalPage(QDate::currentDate());
