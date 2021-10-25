@@ -14,13 +14,17 @@
 class JournalPage : public QObject {
   Q_OBJECT
  public:
-  JournalPage(QSqlDatabase &database, QDate date, QObject *parent = nullptr);
+  JournalPage() = default;
+  JournalPage(QSqlDatabase &database, QDate date, bool isReadOnly = false, QObject *parent = nullptr);
+  JournalPage(const JournalPage &) = delete;
+  JournalPage &operator=(const JournalPage &) = delete;
   ~JournalPage();
 
  private:
   QString entry;
   QSqlDatabase db;
   QDate date;
+  bool isReadOnly;
 
  public:
   void readFromDatabase();
@@ -35,6 +39,8 @@ class JournalPage : public QObject {
  public slots:
   void setEntry(QString entry);
   void setDate(QDate date);
+  void setDatabase(QSqlDatabase &databasebool, bool isReadOnly = false);
+  void setReadOnly(bool isLocked);
 };
 
 #endif

@@ -1,8 +1,9 @@
 #include "journalpage.h"
 
-JournalPage::JournalPage(QSqlDatabase &database, QDate date, QObject *parent) : QObject(parent) {
-  db = database;
+JournalPage::JournalPage(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *parent) : QObject(parent) {
+  setDatabase(database);
   setDate(date);
+  setReadOnly(isReadOnly);
 }
 
 JournalPage::~JournalPage() {
@@ -13,11 +14,23 @@ void JournalPage::setEntry(QString e) {
   writeToDatabase();
 }
 
+void JournalPage::setDatabase(QSqlDatabase &database, bool isReadOnly) {
+  db = database;
+  setReadOnly(isReadOnly);
+}
+
 void JournalPage::setDate(QDate d) {
   date = d;
 }
 
+void JournalPage::setReadOnly(bool isLocked) {
+  isReadOnly = isLocked;
+}
+
 void JournalPage::writeToDatabase() {
+  if (isReadOnly) {
+    return;
+  }
   // Deletes the previous entry for this date
   QSqlQuery query(db);
   query.prepare("DELETE FROM journalPage WHERE date = ? ");

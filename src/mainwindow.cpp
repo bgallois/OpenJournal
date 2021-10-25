@@ -11,10 +11,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 
+  // Window geometry
   settings = new QSettings("OpenJournal", "B&GInc");
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
   this->move(settings->value("mainwindow/pos", QPoint(200, 200)).toPoint());
 
+  // Tray integration
   trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"), this);
   QMenu *trayMenu = new QMenu;
   QAction *restore = new QAction(tr("Restore"));
@@ -33,19 +35,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   trayIcon->setContextMenu(trayMenu);
   trayIcon->show();
 
-  alarmSound = new QSoundEffect(this);
-  alarmSound->setSource(QUrl("qrc:/notification_0.wav"));
-  alarmSound->setLoopCount(0);
-  alarmSound->setVolume(0.70);
-  connect(trayIcon, &QSystemTrayIcon::messageClicked, alarmSound, &QSoundEffect::stop);
-  connect(trayIcon, &QSystemTrayIcon::activated, alarmSound, &QSoundEffect::stop);
-
   // Preview
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
   connect(ui->entry, &QPlainTextEdit::textChanged, [this]() {
     this->doc.setText(ui->entry->toPlainText());
     this->reminder(ui->entry->toPlainText(), reminders);
+    qInfo() << reminders;
   });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -94,12 +90,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
 
-  // Initialize a default planner page
-  // To investigate => no error on fedora, error with ubuntu
-  page = new JournalPage(db, QDate::currentDate());
+  // Journal page
+  page = new JournalPage();
+  // Sends values from ui to page object
+  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
+    QString entry = ui->entry->toPlainText();
+    page->setEntry(entry);
+  });
+  // Gets values from page object to the ui
+  connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
+  connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
+
+  // Reminders
   reminders = new QStringList;
 
-  // Reads settings
+  // Reads journal settings
   QString lastJournal = settings->value("mainwindow/lastJournal").toString();
   if (QFile(lastJournal).exists()) {
     openJournal(lastJournal);
@@ -123,8 +128,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   refreshTimer->start(5000);
   connect(refreshTimer, &QTimer::timeout, [this]() {
     int cursorPosition = ui->entry->textCursor().position();
-    ui->calendar->setSelectedDate(QDate::currentDate());
-    loadJournalPage(QDate::currentDate());
+    loadJournalPage(ui->calendar->selectedDate());
     QTextCursor cursor = ui->entry->textCursor();
     cursor.setPosition(cursorPosition);
     ui->entry->setTextCursor(cursor);
@@ -140,6 +144,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     isPrivate = state;
   });
   ui->menuOptions->addAction(isPrivateAction);
+
+  // Alarm for notification
+  alarmSound = new QSoundEffect(this);
+  alarmSound->setSource(QUrl("qrc:/notification_0.wav"));
+  alarmSound->setLoopCount(0);
+  alarmSound->setVolume(0.70);
+  connect(trayIcon, &QSystemTrayIcon::messageClicked, alarmSound, &QSoundEffect::stop);
+  connect(trayIcon, &QSystemTrayIcon::activated, alarmSound, &QSoundEffect::stop);
+
   // Sonore
   isSonore = settings->value("settings/sonore").toBool();
   QAction *isSonoreAction = new QAction("Alarm Sound");
@@ -153,21 +166,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 void MainWindow::loadJournalPage(const QDate date) {
-  delete page;
   delete reminders;
+  page->setReadOnly(true);  // Prevent erasing old entry
   ui->entry->clear();
-  page = new JournalPage(db, date);
+  page->setReadOnly(false);
+  page->setDate(date);
   reminders = new QStringList();
-
-  // Sends values from ui to page object
-  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
-    QString entry = ui->entry->toPlainText();
-    page->setEntry(entry);
-  });
-
-  // Gets values from page object to the ui
-  connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
-  connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
   page->readFromDatabase();
 }
 
@@ -197,6 +201,7 @@ void MainWindow::newJournal(QString fileName) {
   QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
 
   ui->calendar->setSelectedDate(QDate::currentDate());
+  page->setDatabase(db);
   loadJournalPage(QDate::currentDate());
 }
 
@@ -216,6 +221,7 @@ void MainWindow::openJournal(QString plannerFile) {
   else {
     plannerName = plannerFile;
     ui->calendar->setSelectedDate(QDate::currentDate());
+    page->setDatabase(db);
     loadJournalPage(QDate::currentDate());
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   }
@@ -248,6 +254,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   plannerName = plannerFile;
   ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   ui->calendar->setSelectedDate(QDate::currentDate());
+  page->setDatabase(db);
   loadJournalPage(QDate::currentDate());
 }
 
