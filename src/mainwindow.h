@@ -49,7 +49,7 @@ class MainWindow : public QMainWindow {
   Ui::MainWindow *ui;
   QTimer *refreshTimer;
   QSystemTrayIcon *trayIcon;
-  QStringList *reminders;
+  QMap<QString, QTimer *> reminders;
   bool isPrivate;
   bool isSonore;
   QSoundEffect *alarmSound;
@@ -68,7 +68,7 @@ class MainWindow : public QMainWindow {
   void exportAll();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
-  void reminder(QString text, QStringList *reminders);
+  void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
   bool eventFilter(QObject *obj, QEvent *event);
   void about();
 

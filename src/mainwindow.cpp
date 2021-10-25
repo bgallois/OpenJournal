@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   QAction *restore = new QAction(tr("Restore"));
   connect(restore, &QAction::triggered, [this]() {
     this->showNormal();
+    ui->calendar->setSelectedDate(QDate::currentDate());
     refreshTimer->start();
   });
   trayMenu->addAction(restore);
@@ -40,8 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->preview->setPage(previewPage);
   connect(ui->entry, &QPlainTextEdit::textChanged, [this]() {
     this->doc.setText(ui->entry->toPlainText());
-    this->reminder(ui->entry->toPlainText(), reminders);
-    qInfo() << reminders;
+    this->setTodayReminder(ui->entry->toPlainText(), reminders);
   });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -101,9 +101,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
   connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
 
-  // Reminders
-  reminders = new QStringList;
-
   // Reads journal settings
   QString lastJournal = settings->value("mainwindow/lastJournal").toString();
   if (QFile(lastJournal).exists()) {
@@ -123,9 +120,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(this, &MainWindow::exportLoadingFinished, this, &MainWindow::exportAll);
 
-  // Automatic refresh every 5 seconds
+  // Automatic refresh every 10 seconds
   refreshTimer = new QTimer(this);
-  refreshTimer->start(5000);
   connect(refreshTimer, &QTimer::timeout, [this]() {
     int cursorPosition = ui->entry->textCursor().position();
     loadJournalPage(ui->calendar->selectedDate());
@@ -133,6 +129,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     cursor.setPosition(cursorPosition);
     ui->entry->setTextCursor(cursor);
   });
+  refreshTimer->start(10000);
+
+  // Automatic today focus every hour
+  QTimer *todayTimer = new QTimer(this);
+  connect(
+      todayTimer, &QTimer::timeout, todayTimer, [this]() {
+        ui->calendar->setSelectedDate(QDate::currentDate());
+        loadJournalPage(ui->calendar->selectedDate());
+      });
+  todayTimer->start(36000000);
 
   // Privacy
   isPrivate = settings->value("settings/privacy").toBool();
@@ -166,12 +172,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 void MainWindow::loadJournalPage(const QDate date) {
-  delete reminders;
   page->setReadOnly(true);  // Prevent erasing old entry
   ui->entry->clear();
   page->setReadOnly(false);
   page->setDate(date);
-  reminders = new QStringList();
   page->readFromDatabase();
 }
 
@@ -298,6 +302,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     }
     case QSystemTrayIcon::DoubleClick: {
       refreshTimer->start();
+      ui->calendar->setSelectedDate(QDate::currentDate());
       this->setVisible(true);
       break;
     }
@@ -314,7 +319,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   event->ignore();
 }
 
-void MainWindow::reminder(QString text, QStringList *reminders) {
+void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders) {
   if (QDate::currentDate() != ui->calendar->selectedDate()) {
     return;
   }
@@ -326,11 +331,11 @@ void MainWindow::reminder(QString text, QStringList *reminders) {
       if (end != -1) {
         QStringRef command = text.midRef(start + 9, end - start - 9);
         QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
-        if (commands.length() == 2 && !reminders->contains(commands[1].toString())) {
+        if (commands.length() == 2 && !reminders.contains(command.toString())) {
           QVector<QStringRef> timeSet = commands[0].split(':');
           int time = -QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
           if (time > 0) {
-            QTimer *notification = new QTimer(page);
+            QTimer *notification = new QTimer(this);
             notification->setSingleShot(true);
             notification->setInterval(time);
             QString message = commands[1].toString();
@@ -341,6 +346,7 @@ void MainWindow::reminder(QString text, QStringList *reminders) {
               }
             });
             notification->start();
+            reminders.insert(command.toString(), notification);
           }
         }
       }
