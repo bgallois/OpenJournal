@@ -57,14 +57,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     if (isOk) {
       pass = QInputDialog::getText(this, tr("JournalName@Password"),
                                    tr("journal@password \n If journal does not exist it will be created and protected by password."), QLineEdit::Normal,
-                                   "journalname@password", &isOk);
+                                   settings->value("settings/remote", "journalname").toString() + "@password", &isOk);
     }
     if (isOk && !info.isEmpty() && info.contains(QRegularExpression("\\w+@.+:\\d+")) && info.contains("@")) {
-      settings->setValue("settings/host", info);
       QStringList tmp = info.split("@");
       QString username = tmp[0];
       QStringList host = tmp[1].split(":");
       QStringList journal = pass.split("@");
+      settings->setValue("settings/host", info);
+      settings->setValue("settings/remote", journal[0]);
       openJournal(host[0], host[1], username, journal[1], journal[0]);
     }
   });
