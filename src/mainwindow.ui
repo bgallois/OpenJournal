@@ -200,12 +200,14 @@ font: 11pt;</string>
     <addaction name="separator"/>
     <addaction name="actionNew_planner"/>
     <addaction name="actionOpen_planner"/>
+    <addaction name="separator"/>
     <addaction name="actionConnect_planner"/>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
     <addaction name="actionBackup"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -253,12 +255,18 @@ color: #FFFFFF;
   </widget>
   <action name="actionNew_planner">
    <property name="text">
-    <string>&amp;New planner</string>
+    <string>&amp;New journal</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new local journal.</string>
    </property>
   </action>
   <action name="actionOpen_planner">
    <property name="text">
-    <string>&amp;Open planner</string>
+    <string>&amp;Open journal</string>
+   </property>
+   <property name="toolTip">
+    <string>Open local journal</string>
    </property>
   </action>
   <action name="actionSave_planner">
@@ -268,12 +276,18 @@ color: #FFFFFF;
   </action>
   <action name="actionExport_planner">
    <property name="text">
-    <string>&amp;Export planner</string>
+    <string>&amp;Export journal</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the current journal in pdf</string>
    </property>
   </action>
   <action name="actionBackup">
    <property name="text">
-    <string>&amp;Backup</string>
+    <string>&amp;Backup journal</string>
+   </property>
+   <property name="toolTip">
+    <string>Make a temporary backup for local journal</string>
    </property>
   </action>
   <action name="actionAddAlarm">
@@ -306,7 +320,10 @@ color: #FFFFFF;
   </action>
   <action name="actionConnect_planner">
    <property name="text">
-    <string>&amp;Connect to remote planner</string>
+    <string>&amp;Connect to remote journal</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect to a remote journal</string>
    </property>
   </action>
  </widget>

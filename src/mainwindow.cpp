@@ -3,13 +3,10 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                           ui(new Ui::MainWindow) {
+  // ui set up
   ui->setupUi(this);
-
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
   ui->date->setStyleSheet("QLabel{font: 21pt 'Caveat';}");
-
-  connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
-  connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 
   // Window geometry
   settings = new QSettings("OpenJournal", "B&GInc");
@@ -73,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
   connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
+  connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+  connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 
   // Toolbar
   QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
@@ -92,12 +91,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Journal page
   page = new JournalPage();
-  // Sends values from ui to page object
   connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
     QString entry = ui->entry->toPlainText();
     page->setEntry(entry);
   });
-  // Gets values from page object to the ui
   connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
   connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
 
@@ -113,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     newJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
 
+  // Planner exportation
   connect(ui->actionExport_planner, &QAction::triggered, page, &JournalPage::readFromDatabaseAll);
   connect(page, &JournalPage::getAll, [this](QString data) {
     doc.setText(data);
@@ -203,6 +201,7 @@ void MainWindow::newJournal(QString fileName) {
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
     plannerName = plannerName;
     ui->entry->setEnabled(true);
+    ui->actionBackup->setEnabled(true);
     QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
@@ -232,6 +231,7 @@ void MainWindow::openJournal(QString plannerFile) {
     page->setDatabase(db);
     loadJournalPage(QDate::currentDate());
     ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
+    ui->actionBackup->setEnabled(true);
     ui->entry->setEnabled(true);
   }
 }
@@ -262,6 +262,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   }
 
   plannerName = plannerFile;
+  ui->actionBackup->setEnabled(false);
   ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
   ui->entry->setEnabled(true);
   ui->calendar->setSelectedDate(QDate::currentDate());
@@ -337,6 +338,7 @@ void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &r
       end = text.indexOf(");", start);
       if (end != -1) {
         QStringRef command = text.midRef(start + 9, end - start - 9);
+        // Planner exportation
         QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
         if (commands.length() == 2 && !reminders.contains(command.toString())) {
           QVector<QStringRef> timeSet = commands[0].split(':');
