@@ -7,6 +7,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->setupUi(this);
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
   ui->date->setStyleSheet("QLabel{font: 21pt 'Caveat';}");
+  statusMessage = new QLabel();
+  ui->statusBar->addWidget(statusMessage);
+  clock = new QLCDNumber();
+  clock->setSegmentStyle(QLCDNumber::Flat);
+  ui->statusBar->addPermanentWidget(clock);
 
   // Window geometry
   settings = new QSettings("OpenJournal", "B&GInc");
@@ -49,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionConnect_planner, &QAction::triggered, [this]() {
+    clearJournalPage();
     bool isOk;
     QString pass;
     QString info = QInputDialog::getText(this, tr("Connect to server"),
@@ -59,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
                                    tr("journal@password \n If journal does not exist it will be created and protected by password."), QLineEdit::Normal,
                                    settings->value("settings/remote", "journalname").toString() + "@password", &isOk);
     }
+    else {
+      statusMessage->setText(tr("No journal is opened"));
+    }
     if (isOk && !info.isEmpty() && info.contains(QRegularExpression("\\w+@.+:\\d+")) && info.contains("@")) {
       QStringList tmp = info.split("@");
       QString username = tmp[0];
@@ -67,6 +76,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       settings->setValue("settings/host", info);
       settings->setValue("settings/remote", journal[0]);
       openJournal(host[0], host[1], username, journal[1], journal[0]);
+    }
+    else {
+      statusMessage->setText(tr("No journal is opened"));
     }
   });
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
@@ -121,14 +133,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Automatic refresh every 10 seconds
   refreshTimer = new QTimer(this);
-  connect(refreshTimer, &QTimer::timeout, [this]() {
-    int cursorPosition = ui->entry->textCursor().position();
-    loadJournalPage(ui->calendar->selectedDate());
-    QTextCursor cursor = ui->entry->textCursor();
-    cursor.setPosition(cursorPosition);
-    ui->entry->setTextCursor(cursor);
-  });
+  connect(refreshTimer, &QTimer::timeout, this, &MainWindow::refresh);
   refreshTimer->start(10000);
+  refresh();
 
   // Automatic today focus every hour
   QTimer *todayTimer = new QTimer(this);
@@ -195,7 +202,7 @@ void MainWindow::newJournal(QString fileName) {
   ui->entry->setEnabled(false);
   if (!db.open()) {
     plannerName = fileName;
-    ui->statusBar->showMessage(plannerName + tr(" journal failed to open"));
+    statusMessage->setText(plannerName + tr(" journal cannot be created"));
     return;
   }
   else {
@@ -217,13 +224,16 @@ void MainWindow::openJournal() {
   if (!plannerName.isEmpty()) {
     openJournal(plannerName);
   }
+  else {
+    statusMessage->setText(tr("No journal is opened"));
+  }
 }
 
 void MainWindow::openJournal(QString plannerFile) {
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(plannerFile);
   if (!db.open()) {
-    ui->statusBar->showMessage(plannerFile + tr(" journal failed to open"));
+    statusMessage->setText(plannerFile + tr(" journal failed to open"));
     return;
   }
   else {
@@ -231,7 +241,7 @@ void MainWindow::openJournal(QString plannerFile) {
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
     loadJournalPage(QDate::currentDate());
-    ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
+    statusMessage->setText(plannerName + tr(" journal is opened"));
     ui->actionBackup->setEnabled(true);
     ui->entry->setEnabled(true);
   }
@@ -246,7 +256,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   db.setUserName(username);
   db.setPassword(password);
   if (!db.open()) {  // Check authentification
-    ui->statusBar->showMessage(plannerFile + tr(" authentification failed"));
+    statusMessage->setText(tr("Authentification failed"));
     return;
   }
   db.setDatabaseName(plannerFile);
@@ -257,18 +267,24 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     query.prepare(QString("CREATE DATABASE %1 ").arg(plannerFile));  // Normaly cannot used place holder for database and table name beware sql injection
     query.exec();
     db.setDatabaseName(plannerFile);
-    db.open();
+  }
+  if (db.open()) {  // If database was successfully created
+    QSqlQuery query(db);
+    query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
+    query.exec();
+    plannerName = plannerFile;
+    ui->actionBackup->setEnabled(false);
+    statusMessage->setText(plannerName + tr(" journal is opened"));
+    ui->entry->setEnabled(true);
+    ui->calendar->setSelectedDate(QDate::currentDate());
+    page->setDatabase(db);
+    loadJournalPage(QDate::currentDate());
     query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
     query.exec();
   }
-
-  plannerName = plannerFile;
-  ui->actionBackup->setEnabled(false);
-  ui->statusBar->showMessage(plannerName + tr(" journal is opened"));
-  ui->entry->setEnabled(true);
-  ui->calendar->setSelectedDate(QDate::currentDate());
-  page->setDatabase(db);
-  loadJournalPage(QDate::currentDate());
+  else {
+    statusMessage->setText(tr("No journal is opened"));
+  }
 }
 
 void MainWindow::clearJournalPage() {
@@ -388,6 +404,16 @@ void MainWindow::exportAll() {
   if (!fileName.isEmpty()) {
     ui->preview->page()->printToPdf(fileName);
   }
+}
+
+void MainWindow::refresh() {
+  int cursorPosition = ui->entry->textCursor().position();
+  loadJournalPage(ui->calendar->selectedDate());
+  QTextCursor cursor = ui->entry->textCursor();
+  cursor.setPosition(cursorPosition);
+  ui->entry->setTextCursor(cursor);
+  QTime time = QTime::currentTime();
+  clock->display(time.toString("hh:mm"));
 }
 
 void MainWindow::about() {

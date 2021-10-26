@@ -9,6 +9,7 @@
 #include <QGraphicsBlurEffect>
 #include <QIcon>
 #include <QInputDialog>
+#include <QLCDNumber>
 #include <QMap>
 #include <QMessageBox>
 #include <QRegularExpression>
@@ -54,6 +55,8 @@ class MainWindow : public QMainWindow {
   bool isSonore;
   QSoundEffect *alarmSound;
   QSettings *settings;
+  QLabel *statusMessage;
+  QLCDNumber *clock;
 
  private slots:
   void newJournal();
@@ -65,6 +68,7 @@ class MainWindow : public QMainWindow {
   void clearJournalPage();
   void saveSettings();
   void backup();
+  void refresh();
   void exportAll();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
