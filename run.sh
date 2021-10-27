@@ -2,7 +2,7 @@
 
 if [ "$1" = "released" ]; then
   set -e
-  qmake CONFIG+=released QMAKE_CXXFLAHE+=-DENABLE_DEVTOOL src/OpenJournal.pro
+  qmake CONFIG+=released QMAKE_CXXFLAGS+=-DENABLE_DEVTOOL QMAKE_CXXFLAGS+=-s src/OpenJournal.pro
   make clean
   make
   cd build
