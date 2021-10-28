@@ -57,6 +57,7 @@ class MainWindow : public QMainWindow {
   QSettings *settings;
   QLabel *statusMessage;
   QLCDNumber *clock;
+  bool isHelp;
 
  private slots:
   void newJournal();

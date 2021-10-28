@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   clock = new QLCDNumber();
   clock->setSegmentStyle(QLCDNumber::Flat);
   ui->statusBar->addPermanentWidget(clock);
+  isHelp = true;  // Will display help message the first time app is closed
 
   // Window geometry
   settings = new QSettings("OpenJournal", "B&GInc");
@@ -57,8 +58,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     clearJournalPage();
     bool isOk;
     QString pass;
-    QString info = QInputDialog::getText(this, tr("Connect to server"),
-                                         tr("username@hostname:port"), QLineEdit::Normal,
+    QString info = QInputDialog::getText(this, tr("Connect to a remote server."),
+                                         tr("Connect to a remote (local) database. This is an advanced feature see the manual for help.\ndatabaseusername@hostname:port"), QLineEdit::Normal,
                                          settings->value("settings/host", "username@hostname:port").toString(), &isOk);
     if (isOk) {
       pass = QInputDialog::getText(this, tr("JournalName@Password"),
@@ -338,7 +339,10 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
 void MainWindow::closeEvent(QCloseEvent *event) {
   trayIcon->show();
   hide();
-  trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
+  if (isHelp) {
+    trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
+    isHelp = false;
+  }
   refreshTimer->stop();
   saveSettings();
   event->ignore();
