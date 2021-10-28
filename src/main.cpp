@@ -24,16 +24,18 @@ int main(int argc, char *argv[]) {
   }
 
   lock.open(QIODevice::WriteOnly | QIODevice::Text);
-  MainWindow w;
-  w.setWindowIcon(QIcon(":/openjournal.svg"));
-  w.show();
-  qApp->setApplicationVersion("0.0.1");
+  a.setOrganizationName("Analysabl");
+  a.setApplicationName("OpenJournal");
+  a.setApplicationVersion("1.0.0");
   QFontDatabase::addApplicationFont(":/Lato.ttf");
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
-  w.setStyleSheet("QWidget {font-family: 'Lato', sans-serif;}");
   QObject::connect(&a, &QApplication::aboutToQuit, &lock, [&lock]() {
     lock.remove();
   });
+  MainWindow w;
+  w.setWindowIcon(QIcon(":/openjournal.svg"));
+  w.setStyleSheet("QWidget {font-family: 'Lato', sans-serif;}");
+  w.show();
 
   return a.exec();
 }

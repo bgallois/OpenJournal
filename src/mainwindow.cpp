@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   isHelp = true;  // Will display help message the first time app is closed
 
   // Window geometry
-  settings = new QSettings("OpenJournal", "B&GInc");
+  settings = new QSettings();
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
   this->move(settings->value("mainwindow/pos", QPoint(200, 200)).toPoint());
 
