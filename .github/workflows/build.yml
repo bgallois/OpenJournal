@@ -41,11 +41,17 @@ jobs:
   job_2:
       runs-on: windows-latest
       steps:
+        - name: database
+          shell: cmd
+          run : |
+               choco install wget -y
+               choco install nsis -y
         - uses: actions/checkout@v2
         - uses: ilammy/msvc-dev-cmd@v1
         - uses: jurplel/install-qt-action@v2
           with:
             host: 'windows'
+            version: '5.15.2'
             target: 'desktop'
             arch: 'win64_msvc2019_64'
             dir: '${{ github.workspace }}/Qt/'
@@ -55,26 +61,32 @@ jobs:
         - name: build
           shell: cmd
           run : |
-               choco install nsis
                cd src/
-               qmake OpenJournal.pro -spec win32-msvc "CONFIG+=qtquickcompiler"
+               qmake OpenJournal.pro -spec win32-msvc -config release
                nmake release
                mkdir OpenJournal
                cp build/OpenJournal.exe OpenJournal/OpenJournal.exe
-               windeployqt OpenJournal/OpenJournal.exe
-               7z a C:\OpenJournal.zip OpenJournal/
+               windeployqt OpenJournal/OpenJournal.exe --release 
+               copy C:\Windows\System32\vccorlib140.dll OpenJournal\ 
+               copy C:\Windows\System32\msvcp140.dll OpenJournal\
+               copy C:\Windows\System32\vcruntime140.dll OpenJournal\
+               wget https://github.com/thecodemonkey86/qt_mysql_driver/files/5575770/qsqlmysql.dll_Qt_SQL_driver_5.15.2_MSVC2019_64-bit.zip
+               unzip qsqlmysql.dll_Qt_SQL_driver_5.15.2_MSVC2019_64-bit.zip
+               copy libmysql.dll OpenJournal\
+               copy sqldrivers\* OpenJournal\sqldrivers\
+               7z a C:\OpenJournal.zip OpenJournal\
                cd ..
                makensis.exe /V3 resources/installer.nsi
         - name: Windows artefact
           uses: actions/upload-artifact@v1
           with:
             name: OpenJournalWindows
-            path: C:/OpenJournal.zip
+            path: C:\OpenJournal.zip
         - name: Windows artefact installer
           uses: actions/upload-artifact@v1
           with:
             name: OpenJournalWindowsInstaller
-            path: C:/OpenJournalInstaller.exe
+            path: C:\OpenJournalInstaller.exe
 
   job_3:
       runs-on: macos-latest
