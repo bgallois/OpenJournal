@@ -87,19 +87,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
 
-  // Toolbar
-  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
-  actionAddAlarm->setToolTip("Add an alarm");
-  connect(actionAddAlarm, &QAction::triggered, [this]() {
-    ui->entry->moveCursor(QTextCursor::End);
-    AddAlarm *alarm = new AddAlarm();
-    connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
-    alarm->exec();
-    delete alarm;
-  });
-  ui->toolBar->addAction(actionAddAlarm);
-  addToolBar(Qt::LeftToolBarArea, ui->toolBar);
-
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
 
@@ -123,6 +110,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   else {
     newJournal(QDir::homePath() + "/OpenJournal.jnl");
   }
+
+  // Toolbar
+  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
+  connect(actionAddAlarm, &QAction::triggered, [this]() {
+    ui->entry->moveCursor(QTextCursor::End);
+    AddAlarm *alarm = new AddAlarm();
+    connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
+    alarm->exec();
+    delete alarm;
+  });
+  ui->toolBar->addAction(actionAddAlarm);
+  QAction *actionLock = new QAction(QIcon(":/lock.png"), "Lock journal", this);
+  actionLock->setCheckable(true);
+  actionLock->setChecked(false);
+  connect(actionLock, &QAction::triggered, ui->entry, &QMarkdownTextEdit::setDisabled);
+  connect(actionLock, &QAction::triggered, [this](bool status) {
+    if (status) {
+      ui->statusBar->showMessage("The journal is locked");
+    }
+  });
+  ui->toolBar->addAction(actionLock);
+  addToolBar(Qt::LeftToolBarArea, ui->toolBar);
 
   // Planner exportation
   connect(ui->actionExport_planner, &QAction::triggered, page, &JournalPage::readFromDatabaseAll);

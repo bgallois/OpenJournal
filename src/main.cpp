@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   QString path = QDir::tempPath() + "/OpenJournal.lock";
   QFile lock(path);
   if (lock.exists()) {
-    QMessageBox::information(nullptr, "An instance of OpenJournal is already running", "An instance of OpenJournal is already running.\nIf it is not the case delete" + path + " and restart OpenJournal");
+    QMessageBox::information(nullptr, "An instance of OpenJournal is already running", "An instance of OpenJournal is already running.\nIf it is not the case delete " + path + " and restart OpenJournal");
     return 1;
   }
 
