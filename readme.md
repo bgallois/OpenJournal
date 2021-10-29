@@ -31,6 +31,9 @@ OpenJournal binary is available for Linux, Windows (installer and portable versi
 OpenJournal supports commands that can be directly entered inside the note:
 * Set an alarm `setAlarm(hh:mm,message);`
 
+## LaTeX
+LaTeX equation can be displayed as equation with ` \\[  \\]` or inline by ` \\(  \\)`.
+
 ## Remote access
 OpenJournal can access remotely created journals that are hosted on a mysqsl server (locally, do not expose database to the internet!).
 
