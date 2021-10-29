@@ -219,6 +219,7 @@ font: 11pt;</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
+    <addaction name="actionSource"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -322,6 +323,11 @@ color: #FFFFFF;</string>
    </property>
    <property name="toolTip">
     <string>Connect to a remote journal</string>
+   </property>
+  </action>
+  <action name="actionSource">
+   <property name="text">
+    <string>Show me the code</string>
    </property>
   </action>
  </widget>

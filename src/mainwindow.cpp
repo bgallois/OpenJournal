@@ -86,6 +86,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
   connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
+  connect(ui->actionSource, &QAction::triggered, [this]() {
+    QDesktopServices::openUrl(QUrl("https://github.com/bgallois/OpenJournal", QUrl::TolerantMode));
+  });
 
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);

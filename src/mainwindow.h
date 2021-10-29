@@ -6,6 +6,7 @@
 
 #include <QAction>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QGraphicsBlurEffect>
 #include <QIcon>
 #include <QInputDialog>
