@@ -173,7 +173,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Alarm for notification
   alarmSound = new QSoundEffect(this);
   alarmSound->setSource(QUrl("qrc:/notification_0.wav"));
-  alarmSound->setLoopCount(0);
+  alarmSound->setLoopCount(20);
   alarmSound->setVolume(0.70);
   connect(trayIcon, &QSystemTrayIcon::messageClicked, alarmSound, &QSoundEffect::stop);
   connect(trayIcon, &QSystemTrayIcon::activated, alarmSound, &QSoundEffect::stop);
@@ -382,7 +382,7 @@ void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &r
             notification->setInterval(time);
             QString message = commands[1].toString();
             connect(notification, &QTimer::timeout, [this, message]() {
-              trayIcon->showMessage(tr("Notification"), message, QIcon(), 214483648);
+              trayIcon->showMessage(tr("Notification"), message, QSystemTrayIcon::Information, 214483648);
               if (isSonore) {
                 alarmSound->play();
               }
