@@ -79,6 +79,7 @@ class MainWindow : public QMainWindow {
   void about();
   void insertToDoTemplate();
   void insertTableTemplate();
+  void insertLinkTemplate();
 
  signals:
   void exportLoadingFinished();

@@ -124,6 +124,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     delete alarm;
   });
   ui->toolBar->addAction(actionAddAlarm);
+  ui->toolBar->addSeparator();
 
   QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), "To do list template", this);
   connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
@@ -132,6 +133,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), "Table template", this);
   connect(actionTableTemplate, &QAction::triggered, this, &MainWindow::insertTableTemplate);
   ui->toolBar->addAction(actionTableTemplate);
+
+  QAction *actionLinkTemplate = new QAction(QIcon(":/link.png"), "URL template", this);
+  connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
+  ui->toolBar->addAction(actionLinkTemplate);
+  ui->toolBar->addSeparator();
 
   QAction *actionLock = new QAction(QIcon(":/lock.png"), "Lock journal", this);
   actionLock->setCheckable(true);
@@ -454,5 +460,11 @@ void MainWindow::insertToDoTemplate() {
 void MainWindow::insertTableTemplate() {
   if (ui->entry->isEnabled()) {
     ui->entry->insertPlainText("\nA | B | C\n--- | --- | ---\nA1 | B1 | C1\nA2 | B2 | C2\nA3 | B3 | C3\n\n");
+  }
+}
+
+void MainWindow::insertLinkTemplate() {
+  if (ui->entry->isEnabled()) {
+    ui->entry->insertPlainText(" [Uniform Resource Locator](https://github.com/bgallois/OpenJournal)");
   }
 }
