@@ -78,6 +78,7 @@ class MainWindow : public QMainWindow {
   bool eventFilter(QObject *obj, QEvent *event);
   void about();
   void insertToDoTemplate();
+  void insertTableTemplate();
 
  signals:
   void exportLoadingFinished();

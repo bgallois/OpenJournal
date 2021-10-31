@@ -129,6 +129,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
   ui->toolBar->addAction(actionToDoTemplate);
 
+  QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), "Table template", this);
+  connect(actionTableTemplate, &QAction::triggered, this, &MainWindow::insertTableTemplate);
+  ui->toolBar->addAction(actionTableTemplate);
+
   QAction *actionLock = new QAction(QIcon(":/lock.png"), "Lock journal", this);
   actionLock->setCheckable(true);
   actionLock->setChecked(false);
@@ -444,4 +448,7 @@ void MainWindow::about() {
 void MainWindow::insertToDoTemplate() {
   ui->entry->insertPlainText("\n### To do list\n\n- [x] Task 1\n- [ ] Task 2\n- [ ] Task 3\n");
 }
+
+void MainWindow::insertTableTemplate() {
+  ui->entry->insertPlainText("\nA | B | C\n--- | --- | ---\nA1 | B1 | C1\nA2 | B2 | C2\nA3 | B3 | C3\n\n");
 }
