@@ -27,7 +27,5 @@ jobs:
         echo ${{ github.workspace }}/Qt/5.15.2/gcc_64/bin/ >> $GITHUB_PATH
     - name: test
       run: |
-        cd test/
-        qmake Test.pro
-        make
-        build/Test
+        qmake test/Test.pro
+        make check

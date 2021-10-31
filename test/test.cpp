@@ -14,7 +14,7 @@ class JournalPageTest : public ::testing::Test {
 TEST_F(JournalPageTest, testConst) {
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName("test.jnl");
+  db.setDatabaseName(":/test.jnl");
   if (db.open()) {
     JournalPage testJournal(db, QDate(2021, 10, 31));
     QString entryRef("test31");
@@ -51,7 +51,7 @@ TEST_F(JournalPageTest, testConst) {
 TEST_F(JournalPageTest, testWrite) {
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName("test.jnl");
+  db.setDatabaseName(":/test.jnl");
   if (db.open()) {
     JournalPage testJournal(db, QDate(2021, 10, 31));
     QString entry;

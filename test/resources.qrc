@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>test.jnl</file>
+    </qresource>
+</RCC>
+

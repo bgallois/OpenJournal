@@ -1,4 +1,5 @@
 .qmake.stash
-Makefile
+*Makefile*
 *.pro.user
 build
+*target_wrapper*
