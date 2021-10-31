@@ -80,6 +80,8 @@ class MainWindow : public QMainWindow {
   void insertToDoTemplate();
   void insertTableTemplate();
   void insertLinkTemplate();
+  void insertListTemplate();
+  void insertListNumberedTemplate();
 
  signals:
   void exportLoadingFinished();

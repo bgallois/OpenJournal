@@ -130,6 +130,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
   ui->toolBar->addAction(actionToDoTemplate);
 
+  QAction *actionListNumberedTemplate = new QAction(QIcon(":/listNumbered.png"), "Numbered list", this);
+  connect(actionListNumberedTemplate, &QAction::triggered, this, &MainWindow::insertListNumberedTemplate);
+  ui->toolBar->addAction(actionListNumberedTemplate);
+
+  QAction *actionListTemplate = new QAction(QIcon(":/list.png"), "Unordered list", this);
+  connect(actionListTemplate, &QAction::triggered, this, &MainWindow::insertListTemplate);
+  ui->toolBar->addAction(actionListTemplate);
+
   QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), "Table template", this);
   connect(actionTableTemplate, &QAction::triggered, this, &MainWindow::insertTableTemplate);
   ui->toolBar->addAction(actionTableTemplate);
@@ -466,5 +474,17 @@ void MainWindow::insertTableTemplate() {
 void MainWindow::insertLinkTemplate() {
   if (ui->entry->isEnabled()) {
     ui->entry->insertPlainText(" [Uniform Resource Locator](https://github.com/bgallois/OpenJournal)");
+  }
+}
+
+void MainWindow::insertListNumberedTemplate() {
+  if (ui->entry->isEnabled()) {
+    ui->entry->insertPlainText("\n\n1. Item 1\n2. Item 2\n3. Item 3\n\n");
+  }
+}
+
+void MainWindow::insertListTemplate() {
+  if (ui->entry->isEnabled()) {
+    ui->entry->insertPlainText("\n\n* Item 1\n* Item 2\n* Item 3\n\n");
   }
 }
