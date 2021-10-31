@@ -124,6 +124,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     delete alarm;
   });
   ui->toolBar->addAction(actionAddAlarm);
+
+  QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), "To do list template", this);
+  connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
+  ui->toolBar->addAction(actionToDoTemplate);
+
   QAction *actionLock = new QAction(QIcon(":/lock.png"), "Lock journal", this);
   actionLock->setCheckable(true);
   actionLock->setChecked(false);
@@ -434,4 +439,9 @@ void MainWindow::refresh() {
 
 void MainWindow::about() {
   QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
+}
+
+void MainWindow::insertToDoTemplate() {
+  ui->entry->insertPlainText("\n### To do list\n\n- [x] Task 1\n- [ ] Task 2\n- [ ] Task 3\n");
+}
 }

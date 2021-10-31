@@ -77,6 +77,7 @@ class MainWindow : public QMainWindow {
   void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
   bool eventFilter(QObject *obj, QEvent *event);
   void about();
+  void insertToDoTemplate();
 
  signals:
   void exportLoadingFinished();
