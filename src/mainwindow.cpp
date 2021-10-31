@@ -453,13 +453,13 @@ void MainWindow::about() {
 
 void MainWindow::insertToDoTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText("\n### To do list\n\n- [x] Task 1\n- [ ] Task 2\n- [ ] Task 3\n");
+    ui->entry->insertPlainText("\n\n### To do list\n\n- [x] Task 1\n- [ ] Task 2\n- [ ] Task 3\n\n");
   }
 }
 
 void MainWindow::insertTableTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText("\nA | B | C\n--- | --- | ---\nA1 | B1 | C1\nA2 | B2 | C2\nA3 | B3 | C3\n\n");
+    ui->entry->insertPlainText("\n\nA | B | C\n--- | --- | ---\nA1 | B1 | C1\nA2 | B2 | C2\nA3 | B3 | C3\n\n");
   }
 }
 
