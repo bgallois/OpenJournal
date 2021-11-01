@@ -15,9 +15,33 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   isHelp = true;  // Will display help message the first time app is closed
 
   // Window geometry
-  settings = new QSettings();
+  settings = new QSettings(this);
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
   this->move(settings->value("mainwindow/pos", QPoint(200, 200)).toPoint());
+
+  // Translation
+  lang = settings->value("settings/language", "en").toString();
+  QString appDir = QCoreApplication::applicationDirPath();
+  QStringList translationLocation = {appDir, appDir + "/../Resources/", appDir + "/../share/openjournal/"};  // Windows, Macs bundle, Linux
+  for (auto const &a : translationLocation) {
+    QStringList availableLang = QDir(a).entryList({"*.qm"});
+    if (!availableLang.isEmpty()) {
+      translator.load("openjournal_" + lang, a);
+      qApp->installTranslator(&translator);
+      for (const auto &i : availableLang) {  // Append one action by language
+        QAction *langAction = new QAction(i.mid(12, 2), this);
+        langAction->setCheckable(true);
+        if (lang == i.mid(12, 2)) {
+          langAction->setChecked(true);
+        }
+        connect(langAction, &QAction::triggered, [this, i]() {
+          lang = i.mid(12, 2);
+          reboot();
+        });
+        ui->menuLanguage->addAction(langAction);
+      }
+    }
+  }
 
   // Tray integration
   trayIcon = new QSystemTrayIcon(QIcon(":/openjournal.svg"), this);
@@ -115,7 +139,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   }
 
   // Toolbar
-  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), "Add Alarm", this);
+  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), tr("Add Alarm"), this);
   connect(actionAddAlarm, &QAction::triggered, [this]() {
     ui->entry->moveCursor(QTextCursor::End);
     AddAlarm *alarm = new AddAlarm();
@@ -126,34 +150,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->toolBar->addAction(actionAddAlarm);
   ui->toolBar->addSeparator();
 
-  QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), "To do list template", this);
+  QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), tr("To do list template"), this);
   connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
   ui->toolBar->addAction(actionToDoTemplate);
 
-  QAction *actionListNumberedTemplate = new QAction(QIcon(":/listNumbered.png"), "Numbered list", this);
+  QAction *actionListNumberedTemplate = new QAction(QIcon(":/listNumbered.png"), tr("Numbered list"), this);
   connect(actionListNumberedTemplate, &QAction::triggered, this, &MainWindow::insertListNumberedTemplate);
   ui->toolBar->addAction(actionListNumberedTemplate);
 
-  QAction *actionListTemplate = new QAction(QIcon(":/list.png"), "Unordered list", this);
+  QAction *actionListTemplate = new QAction(QIcon(":/list.png"), tr("Unordered list"), this);
   connect(actionListTemplate, &QAction::triggered, this, &MainWindow::insertListTemplate);
   ui->toolBar->addAction(actionListTemplate);
 
-  QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), "Table template", this);
+  QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), tr("Table template"), this);
   connect(actionTableTemplate, &QAction::triggered, this, &MainWindow::insertTableTemplate);
   ui->toolBar->addAction(actionTableTemplate);
 
-  QAction *actionLinkTemplate = new QAction(QIcon(":/link.png"), "URL template", this);
+  QAction *actionLinkTemplate = new QAction(QIcon(":/link.png"), tr("URL template"), this);
   connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
   ui->toolBar->addAction(actionLinkTemplate);
   ui->toolBar->addSeparator();
 
-  QAction *actionLock = new QAction(QIcon(":/lock.png"), "Lock journal", this);
+  QAction *actionLock = new QAction(QIcon(":/lock.png"), tr("Lock journal"), this);
   actionLock->setCheckable(true);
   actionLock->setChecked(false);
   connect(actionLock, &QAction::triggered, ui->entry, &QMarkdownTextEdit::setDisabled);
   connect(actionLock, &QAction::triggered, [this](bool status) {
     if (status) {
-      ui->statusBar->showMessage("The journal is locked");
+      ui->statusBar->showMessage(tr("The journal is locked"));
     }
   });
   ui->toolBar->addAction(actionLock);
@@ -203,7 +227,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Sonore
   isSonore = settings->value("settings/sonore").toBool();
-  QAction *isSonoreAction = new QAction("Alarm Sound");
+  QAction *isSonoreAction = new QAction(tr("Alarm Sound"));
   isSonoreAction->setCheckable(true);
   isSonoreAction->setChecked(isSonore);
   connect(isSonoreAction, &QAction::triggered, [this](bool state) {
@@ -336,6 +360,7 @@ void MainWindow::saveSettings() {
   settings->setValue("mainwindow/pos", this->pos());
   settings->setValue("settings/privacy", isPrivate);
   settings->setValue("settings/sonore", isSonore);
+  settings->setValue("settings/language", lang);
 }
 
 void MainWindow::backup() {
@@ -343,17 +368,18 @@ void MainWindow::backup() {
   QFile copy(plannerName + ".back");
   if (!copy.exists()) {
     file.copy(plannerName + ".back");
-    ui->statusBar->showMessage("Journal was backed up " + plannerName + ".back");
+    ui->statusBar->showMessage(tr("Journal was backed up ") + plannerName + ".back");
   }
   else if (copy.exists()) {
     copy.remove();
     file.copy(plannerName + ".back");
-    ui->statusBar->showMessage("Cannot back up journal");
+    ui->statusBar->showMessage(tr("Cannot back up journal"));
   }
 }
 
 MainWindow::~MainWindow() {
   delete ui;
+  delete page;
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
@@ -489,4 +515,16 @@ void MainWindow::insertListTemplate() {
   if (ui->entry->isEnabled()) {
     ui->entry->insertPlainText("\n\n* Item 1\n* Item 2\n* Item 3\n\n");
   }
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+  }
+}
+
+void MainWindow::reboot() {
+  saveSettings();
+  qApp->quit();
+  QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }

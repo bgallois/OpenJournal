@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 #include <QAction>
+#include <QActionGroup>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QGraphicsBlurEffect>
@@ -13,6 +14,7 @@
 #include <QLCDNumber>
 #include <QMap>
 #include <QMessageBox>
+#include <QProcess>
 #include <QRegularExpression>
 #include <QSettings>
 #include <QSoundEffect>
@@ -24,6 +26,7 @@
 #include <QStringLiteral>
 #include <QSystemTrayIcon>
 #include <QTimer>
+#include <QTranslator>
 #include <QUrl>
 #include <QWebChannel>
 #include "addalarm.h"
@@ -43,6 +46,7 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
 
  private:
+  QString lang;
   QSqlDatabase db;
   JournalPage *page;
   QString plannerName;
@@ -59,6 +63,10 @@ class MainWindow : public QMainWindow {
   QLabel *statusMessage;
   QLCDNumber *clock;
   bool isHelp;
+  QTranslator translator;
+
+ protected:
+  void changeEvent(QEvent *event) override;
 
  private slots:
   void newJournal();
@@ -82,6 +90,7 @@ class MainWindow : public QMainWindow {
   void insertLinkTemplate();
   void insertListTemplate();
   void insertListNumberedTemplate();
+  void reboot();
 
  signals:
   void exportLoadingFinished();

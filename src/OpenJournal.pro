@@ -13,22 +13,6 @@ unix:macx {
   TARGET = OpenJournal
 }
 
-unix:!macx {
-  TARGET = openjournal
-
-  # custom destination INSTALL_ROOT=$PWD/package_root make install
-  target.path = /usr/bin/
-  desktop.path = /usr/share/applications/
-  desktop.files = io.github.bgallois.openjournal.desktop
-  metainfo.path = /usr/share/metainfo/
-  metainfo.files = io.github.bgallois.openjournal.metainfo.xml
-  icon.path = /usr/share/icons/
-  icon.files = resources/openjournal.png
-  license.path = /usr/share/licenses/openjournal/
-  license.files = LICENSE
-  INSTALLS += target desktop metainfo icon license
-}
-
 DESTDIR=build
 OBJECTS_DIR=build
 MOC_DIR=build
@@ -73,5 +57,35 @@ FORMS += \
 RESOURCES = \
             ../resources/openjournal.qrc
 
+TRANSLATIONS = \
+            ../translations/openjournal_en.ts \
+            ../translations/openjournal_fr.ts
+qtPrepareTool(LRELEASE, lrelease)
+updateqm.input = TRANSLATIONS
+updateqm.output = ${QMAKE_VAR_OBJECTS_DIR}/${QMAKE_FILE_BASE}.qm
+updateqm.commands = $$LRELEASE -silent ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_OUT}
+updateqm.CONFIG += no_link target_predeps
+QMAKE_EXTRA_COMPILERS += updateqm
+
 ICON = ../resources/icon.icns
 RC_ICONS = ../resources/icon.ico
+
+unix:!macx {
+  TARGET = openjournal
+
+  # custom destination INSTALL_ROOT=$PWD/package_root make install
+  target.path = /usr/local/bin/
+  desktop.path = /usr/local/share/applications/
+  desktop.files = ../io.github.bgallois.openjournal.desktop
+  metainfo.path = /usr/local/share/metainfo/
+  metainfo.files = ../io.github.bgallois.openjournal.metainfo.xml
+  icon.path = /usr/local/share/icons/
+  icon.files = resources/openjournal.png
+  license.path = /usr/share/local/licenses/openjournal/
+  license.files = ../LICENSE
+  translation.path = /usr/local/share/openjournal/
+  translation.files = $$DESTDIR/*.qm
+  translation.CONFIG += no_check_exist
+  INSTALLS += target desktop metainfo icon license translation
+}
+

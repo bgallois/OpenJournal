@@ -212,6 +212,12 @@ font: 11pt;</string>
     <property name="title">
      <string>Options</string>
     </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+    </widget>
+    <addaction name="menuLanguage"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -328,6 +334,22 @@ color: #FFFFFF;</string>
   <action name="actionSource">
    <property name="text">
     <string>Show me the code</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionFrench">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>French</string>
    </property>
   </action>
  </widget>

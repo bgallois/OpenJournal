@@ -21,7 +21,7 @@ OpenJournal uses a database to store and retrieve user notes. This flexible appr
 - [x] Secure journal
 - [x] Lock
 - [x] Keyword searching Ctrl + F
-- [ ] Traduction
+- [x] Traductions
 
 ## Screenshot
 

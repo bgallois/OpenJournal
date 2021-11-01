@@ -14,25 +14,29 @@ jobs:
           run: |
              sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-bionic
              sudo apt-get update
-             sudo apt-get install libgl1-mesa-dev qt515base qt515webengine qt515webchannel qt515multimedia qt515svg 
+             sudo apt-get install libgl1-mesa-dev qt515base qt515webengine qt515webchannel qt515multimedia qt515svg qt515translations qt515tools
         - name: build
           run: |
               export QTDIR=/opt/qt515
               export PATH=/opt/qt515/bin:$PATH
               qmake src/OpenJournal.pro CONFIG+=released
               make
-              make clean
         - name: appimage
           run: |
               cd build
               export QTDIR=/opt/qt515
               export PATH=/opt/qt515/bin:$PATH
-              wget -O deploy.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+              export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/qt515/lib/
+              wget -O deploy.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
               chmod +x deploy.AppImage
               cp ../io.github.bgallois.openjournal.desktop .
               cp ../resources/openjournal.png .
-              ./deploy.AppImage io.github.bgallois.openjournal.desktop -no-translations -bundle-non-qt-libs -appimage
-              mv OpenJournal*.AppImage OpenJournal-x86_64.AppImage
+              ./deploy.AppImage -d io.github.bgallois.openjournal.desktop --appdir AppDir -i openjournal.png -e openjournal
+              mkdir AppDir/usr/share/openjournal/
+              cp *.qm AppDir/usr/share/openjournal
+              wget -O tool.AppImage https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+              chmod +x tool.AppImage
+              ./tool.AppImage AppDir/
         - name: Linux artefact
           uses: actions/upload-artifact@v1
           with:
@@ -66,6 +70,7 @@ jobs:
                nmake release
                mkdir OpenJournal
                cp build/OpenJournal.exe OpenJournal/OpenJournal.exe
+               cp build/*.qm OpenJournal/
                windeployqt OpenJournal/OpenJournal.exe --release 
                copy C:\Windows\System32\vccorlib140.dll OpenJournal\ 
                copy C:\Windows\System32\msvcp140.dll OpenJournal\
@@ -110,6 +115,7 @@ jobs:
               make
               cd build/
               macdeployqt OpenJournal.app -always-overwrite -verbose=0
+              cp *.qm OpenJournal.app/Contents/Resources/
               wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py
               #python2.7 macdeployqtfix.py OpenJournal.app/Contents/MacOS/OpenJournal ../../Qt/5.15.0/
               hdiutil create -volname OpenJournal -srcfolder OpenJournal.app -ov -format UDZO OpenJournal.dmg
