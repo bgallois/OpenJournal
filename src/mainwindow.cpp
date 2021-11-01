@@ -447,9 +447,11 @@ void MainWindow::exportAll() {
 
 void MainWindow::refresh() {
   int cursorPosition = ui->entry->textCursor().position();
+  int cursorAnchor = ui->entry->textCursor().anchor();
   loadJournalPage(ui->calendar->selectedDate());
   QTextCursor cursor = ui->entry->textCursor();
-  cursor.setPosition(cursorPosition);
+  cursor.setPosition(cursorAnchor);
+  cursor.setPosition(cursorPosition, QTextCursor::KeepAnchor);
   ui->entry->setTextCursor(cursor);
   QTime time = QTime::currentTime();
   clock->display(time.toString("hh:mm"));
