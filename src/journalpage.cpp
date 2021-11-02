@@ -52,7 +52,7 @@ void JournalPage::readFromDatabase() {
   query.prepare("SELECT * FROM journalPage WHERE date = ?");
   query.addBindValue(date.toString("yyyy.MM.dd"));
   query.exec();
-  emit(getDate(date.toString("dddd MMMM d yyyy")));
+  emit(getDate(date.toString(Qt::DefaultLocaleLongDate)));
 
   if (query.first()) {
     entry = query.value(1).toString();

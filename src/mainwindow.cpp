@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QStringList availableLang = QDir(a).entryList({"*.qm"});
     if (!availableLang.isEmpty()) {
       translator.load("openjournal_" + lang, a);
+      QLocale::setDefault(QLocale(lang));
+      this->setLocale(QLocale(lang));
       qApp->installTranslator(&translator);
       for (const auto &i : availableLang) {  // Append one action by language
         QAction *langAction = new QAction(i.mid(12, 2), this);
