@@ -108,7 +108,7 @@ jobs:
             extra: '--external 7z'
         - name: install
           run: |
-              brew install sqlite
+              brew install sqlite mariadb
         - name: build
           run: |
               qmake src/OpenJournal.pro
