@@ -84,7 +84,7 @@ unix:!macx {
   license.path = /usr/share/local/licenses/openjournal/
   license.files = ../LICENSE
   translation.path = /usr/local/share/openjournal/
-  translation.files = $$DESTDIR/*.qm
+  translation.files = $$DESTDIR/openjournal_en.qm $$DESTDIR/openjournal_fr.qm
   translation.CONFIG += no_check_exist
   INSTALLS += target desktop metainfo icon license translation
 }
