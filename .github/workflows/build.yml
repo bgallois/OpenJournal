@@ -15,6 +15,8 @@ jobs:
              sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-bionic
              sudo apt-get update
              sudo apt-get install libgl1-mesa-dev qt515base qt515webengine qt515webchannel qt515multimedia qt515svg qt515translations qt515tools
+             sudo apt-get install libxcb-*
+             sudo apt-get install libxkb-*
         - name: build
           run: |
               export QTDIR=/opt/qt515
@@ -31,7 +33,7 @@ jobs:
               chmod +x deploy.AppImage
               cp ../io.github.bgallois.openjournal.desktop .
               cp ../resources/openjournal.png .
-              ./deploy.AppImage -d io.github.bgallois.openjournal.desktop --appdir AppDir -i openjournal.png -e openjournal
+              ./deploy.AppImage -d io.github.bgallois.openjournal.desktop --appdir AppDir -i openjournal.png -e openjournal 
               mkdir AppDir/usr/share/openjournal/
               cp *.qm AppDir/usr/share/openjournal
               wget -O tool.AppImage https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
