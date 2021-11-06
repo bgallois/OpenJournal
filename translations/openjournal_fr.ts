@@ -42,9 +42,8 @@ p, li { white-space: pre-wrap; }
         <translation>OpenJournal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="59"/>
         <source>Date xx Month xxx</source>
-        <translation>Date xx Mois xxx</translation>
+        <translation type="vanished">Date xx Mois xxx</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="157"/>
@@ -177,37 +176,37 @@ p, li { white-space: pre-wrap; }
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="58"/>
+        <location filename="../src/mainwindow.cpp" line="59"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="87"/>
+        <location filename="../src/mainwindow.cpp" line="88"/>
         <source>Connect to a remote server.</source>
         <translation>Connection à un server distant.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="88"/>
+        <location filename="../src/mainwindow.cpp" line="89"/>
         <source>Connect to a remote (local) database. This is an advanced feature see the manual for help.
 databaseusername@hostname:port</source>
         <translation>Connection à une base de donnée. Ceci est une option avancée, voir le manuel pour l&apos;aide.
 databaseusername@hostname:port</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="91"/>
+        <location filename="../src/mainwindow.cpp" line="92"/>
         <source>JournalName@Password</source>
         <translation>JournalName@Password</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="92"/>
+        <location filename="../src/mainwindow.cpp" line="93"/>
         <source>journal@password 
  If journal does not exist it will be created and protected by password.</source>
         <translation>journal@password 
  Si le journal n&apos;existe pas, il sera crée et protéger avec le mot de passe.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="96"/>
-        <location filename="../src/mainwindow.cpp" line="108"/>
+        <location filename="../src/mainwindow.cpp" line="97"/>
+        <location filename="../src/mainwindow.cpp" line="109"/>
         <location filename="../src/mainwindow.cpp" line="251"/>
         <location filename="../src/mainwindow.cpp" line="296"/>
         <location filename="../src/mainwindow.cpp" line="354"/>
@@ -215,42 +214,42 @@ databaseusername@hostname:port</translation>
         <translation>Aucun journal n&apos;est ouvert</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="144"/>
+        <location filename="../src/mainwindow.cpp" line="145"/>
         <source>Add Alarm</source>
         <translation>Ajouter une alarme</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="155"/>
+        <location filename="../src/mainwindow.cpp" line="156"/>
         <source>To do list template</source>
         <translation>Modèle de To do list</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="159"/>
+        <location filename="../src/mainwindow.cpp" line="160"/>
         <source>Numbered list</source>
         <translation>Modèle de liste numérotée</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="163"/>
+        <location filename="../src/mainwindow.cpp" line="164"/>
         <source>Unordered list</source>
         <translation>Modèle de liste non numérotée</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="167"/>
+        <location filename="../src/mainwindow.cpp" line="168"/>
         <source>Table template</source>
         <translation>Modèle de tableau</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="171"/>
+        <location filename="../src/mainwindow.cpp" line="172"/>
         <source>URL template</source>
         <translation>Modèle de lien hypertext</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="176"/>
+        <location filename="../src/mainwindow.cpp" line="177"/>
         <source>Lock journal</source>
         <translation>Verouiller le journal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="182"/>
+        <location filename="../src/mainwindow.cpp" line="183"/>
         <source>The journal is locked</source>
         <translation>Le journal est verouillé</translation>
     </message>

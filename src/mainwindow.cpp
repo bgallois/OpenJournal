@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     this->showNormal();
     ui->calendar->setSelectedDate(QDate::currentDate());
     refreshTimer->start();
+    refresh();
   });
   trayMenu->addAction(restore);
   QAction *close = new QAction(tr("Quit"));
@@ -197,7 +198,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   refreshTimer = new QTimer(this);
   connect(refreshTimer, &QTimer::timeout, this, &MainWindow::refresh);
   refreshTimer->start(10000);
-  refresh();
 
   // Automatic today focus every hour
   QTimer *todayTimer = new QTimer(this);
