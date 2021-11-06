@@ -240,11 +240,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 void MainWindow::loadJournalPage(const QDate date) {
-  page->setReadOnly(true);  // Prevent erasing old entry
-  ui->entry->clear();
-  page->setReadOnly(false);
-  page->setDate(date);
-  page->readFromDatabase();
+  if (db.isOpen()) {
+    page->setReadOnly(true);  // Prevent erasing old entry
+    ui->entry->clear();
+    page->setReadOnly(false);
+    page->setDate(date);
+    page->readFromDatabase();
+  }
+  else {
+    statusMessage->setText(tr("No journal is opened"));
+    ui->entry->setEnabled(false);
+  }
 }
 
 void MainWindow::newJournal() {
