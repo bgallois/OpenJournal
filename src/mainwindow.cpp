@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionNew_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::newJournal));
   connect(ui->actionOpen_planner, &QAction::triggered, this, QOverload<>::of(&MainWindow::openJournal));
   connect(ui->actionConnect_planner, &QAction::triggered, [this]() {
-    clearJournalPage();
+    clearJournal();
     bool isOk;
     QString pass;
     QString info = QInputDialog::getText(this, tr("Connect to a remote server."),
@@ -118,16 +118,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
 
   // Connect calendar
-  connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournalPage);
+  connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournal);
 
   // Journal page
-  page = new JournalPage();
+  page = new Journal();
   connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
     QString entry = ui->entry->toPlainText();
     page->setEntry(entry);
   });
-  connect(page, &JournalPage::getDate, ui->date, &QLabel::setText);
-  connect(page, &JournalPage::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
+  connect(page, &Journal::getDate, ui->date, &QLabel::setText);
+  connect(page, &Journal::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
 
   // Reads journal settings
   QString lastJournal = settings->value("mainwindow/lastJournal").toString();
@@ -187,8 +187,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   addToolBar(Qt::LeftToolBarArea, ui->toolBar);
 
   // Planner exportation
-  connect(ui->actionExport_planner, &QAction::triggered, page, &JournalPage::readFromDatabaseAll);
-  connect(page, &JournalPage::getAll, [this](QString data) {
+  connect(ui->actionExport_planner, &QAction::triggered, page, &Journal::readFromDatabaseAll);
+  connect(page, &Journal::getAll, [this](QString data) {
     doc.setText(data);
     emit(exportLoadingFinished());
   });
@@ -204,7 +204,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(
       todayTimer, &QTimer::timeout, todayTimer, [this]() {
         ui->calendar->setSelectedDate(QDate::currentDate());
-        loadJournalPage(ui->calendar->selectedDate());
+        loadJournal(ui->calendar->selectedDate());
       });
   todayTimer->start(36000000);
 
@@ -239,7 +239,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->installEventFilter(this);
 }
 
-void MainWindow::loadJournalPage(const QDate date) {
+void MainWindow::loadJournal(const QDate date) {
   if (page->isActive()) {
     page->setReadOnly(true);  // Prevent erasing old entry
     ui->entry->clear();
@@ -255,7 +255,7 @@ void MainWindow::loadJournalPage(const QDate date) {
 }
 
 void MainWindow::newJournal() {
-  clearJournalPage();
+  clearJournal();
   plannerName = QFileDialog::getSaveFileName(this, tr("Save new journal"), "", tr("Journal (*.jnl)"));
   if (plannerName.isEmpty()) return;
   // Adds the correct extension if user forgot
@@ -282,12 +282,12 @@ void MainWindow::newJournal(QString fileName) {
     QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournalPage(QDate::currentDate());
+    loadJournal(QDate::currentDate());
   }
 }
 
 void MainWindow::openJournal() {
-  clearJournalPage();
+  clearJournal();
   ui->entry->setEnabled(false);
   plannerName = QFileDialog::getOpenFileName(this, tr("Open journal"), "", tr("Journal (*.jnl)"));
   if (!plannerName.isEmpty()) {
@@ -309,7 +309,7 @@ void MainWindow::openJournal(QString plannerFile) {
     plannerName = plannerFile;
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournalPage(QDate::currentDate());
+    loadJournal(QDate::currentDate());
     statusMessage->setText(plannerName + tr(" journal is opened"));
     ui->actionBackup->setEnabled(true);
     ui->entry->setEnabled(true);
@@ -317,7 +317,7 @@ void MainWindow::openJournal(QString plannerFile) {
 }
 
 void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
-  clearJournalPage();
+  clearJournal();
   ui->entry->setEnabled(false);
   db = QSqlDatabase::addDatabase("QMARIADB");
   db.setHostName(hostname);
@@ -347,7 +347,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     ui->entry->setEnabled(true);
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournalPage(QDate::currentDate());
+    loadJournal(QDate::currentDate());
     query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
     query.exec();
   }
@@ -356,7 +356,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   }
 }
 
-void MainWindow::clearJournalPage() {
+void MainWindow::clearJournal() {
   page->writeToDatabase();
   db.close();
   ui->date->clear();
@@ -483,7 +483,7 @@ void MainWindow::exportAll() {
 void MainWindow::refresh() {
   int cursorPosition = ui->entry->textCursor().position();
   int cursorAnchor = ui->entry->textCursor().anchor();
-  loadJournalPage(ui->calendar->selectedDate());
+  loadJournal(ui->calendar->selectedDate());
   QTextCursor cursor = ui->entry->textCursor();
   cursor.setPosition(cursorAnchor);
   cursor.setPosition(cursorPosition, QTextCursor::KeepAnchor);

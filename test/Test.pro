@@ -15,14 +15,14 @@ RCC_DIR=build
 
 SOURCES += \
         test.cpp \
-        ../src/journalpage.cpp \
+        ../src/journal.cpp \
 
 QMAKE_CXXFLAGS += -std=c++17 -O3 -fopenmp -g
 
 INCLUDEPATH += /usr/include/gtest
 LIBS += -lgtest -lgtest_main
 HEADERS += \
-        ../src/journalpage.h \
+        ../src/journal.h \
         /usr/include/gtest/gtest.h \
 
 RESOURCES += \

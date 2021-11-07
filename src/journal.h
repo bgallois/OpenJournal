@@ -1,5 +1,5 @@
-#ifndef JOURNALPAGE_H
-#define JOURNALPAGE_H
+#ifndef JOURNAL_H
+#define JOURNAL_H
 
 #include <QDate>
 #include <QDebug>
@@ -11,14 +11,14 @@
 #include <QString>
 #include <QStringList>
 
-class JournalPage : public QObject {
+class Journal : public QObject {
   Q_OBJECT
  public:
-  JournalPage() = default;
-  JournalPage(QSqlDatabase &database, QDate date, bool isReadOnly = false, QObject *parent = nullptr);
-  JournalPage(const JournalPage &) = delete;
-  JournalPage &operator=(const JournalPage &) = delete;
-  ~JournalPage();
+  Journal() = default;
+  Journal(QSqlDatabase &database, QDate date, bool isReadOnly = false, QObject *parent = nullptr);
+  Journal(const Journal &) = delete;
+  Journal &operator=(const Journal &) = delete;
+  ~Journal();
 
  private:
   QString entry;

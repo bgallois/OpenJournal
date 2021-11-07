@@ -1,8 +1,8 @@
-#include "../src/journalpage.h"
+#include "../src/journal.h"
 #include "gtest/gtest.h"
 
 namespace {
-class JournalPageTest : public ::testing::Test {
+class JournalTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
   }
@@ -11,15 +11,15 @@ class JournalPageTest : public ::testing::Test {
   }
 };
 
-TEST_F(JournalPageTest, testConst) {
+TEST_F(JournalTest, testConst) {
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(":/test.jnl");
   if (db.open()) {
-    JournalPage testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal(db, QDate(2021, 10, 31));
     QString entryRef("test31");
     QString entry;
-    QObject::connect(&testJournal, &JournalPage::getEntry, [&entry](QString data) {
+    QObject::connect(&testJournal, &Journal::getEntry, [&entry](QString data) {
       entry = data;
     });
     testJournal.readFromDatabase();
@@ -38,7 +38,7 @@ TEST_F(JournalPageTest, testConst) {
     testJournal.readFromDatabase();
     EXPECT_NE(entry, entryRef);
 
-    QObject::connect(&testJournal, &JournalPage::getAll, [&entry](QString data) {
+    QObject::connect(&testJournal, &Journal::getAll, [&entry](QString data) {
       entry = data;
     });
     testJournal.setDate(QDate(2021, 10, 31));
@@ -48,15 +48,15 @@ TEST_F(JournalPageTest, testConst) {
   }
 }
 
-TEST_F(JournalPageTest, testWrite) {
+TEST_F(JournalTest, testWrite) {
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(":/test.jnl");
   if (db.open()) {
-    JournalPage testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal(db, QDate(2021, 10, 31));
     QString entry;
     QString entryRef;
-    QObject::connect(&testJournal, &JournalPage::getEntry, [&entry](QString data) {
+    QObject::connect(&testJournal, &Journal::getEntry, [&entry](QString data) {
       entry = data;
     });
     // Test write
@@ -73,12 +73,12 @@ TEST_F(JournalPageTest, testWrite) {
   }
 }
 
-TEST_F(JournalPageTest, active) {
+TEST_F(JournalTest, active) {
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(":/test.jnl");
   if (db.open()) {
-    JournalPage testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal(db, QDate(2021, 10, 31));
     EXPECT_EQ(testJournal.isActive(), true);
     db.close();
     EXPECT_EQ(testJournal.isActive(), false);

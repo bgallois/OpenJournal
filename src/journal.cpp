@@ -1,33 +1,33 @@
-#include "journalpage.h"
+#include "journal.h"
 
-JournalPage::JournalPage(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *parent) : QObject(parent) {
+Journal::Journal(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *parent) : QObject(parent) {
   setDatabase(database);
   setDate(date);
   setReadOnly(isReadOnly);
 }
 
-JournalPage::~JournalPage() {
+Journal::~Journal() {
 }
 
-void JournalPage::setEntry(QString e) {
+void Journal::setEntry(QString e) {
   entry = e;
   writeToDatabase();
 }
 
-void JournalPage::setDatabase(QSqlDatabase &database, bool isReadOnly) {
+void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   db = database;
   setReadOnly(isReadOnly);
 }
 
-void JournalPage::setDate(QDate d) {
+void Journal::setDate(QDate d) {
   date = d;
 }
 
-void JournalPage::setReadOnly(bool isLocked) {
+void Journal::setReadOnly(bool isLocked) {
   isReadOnly = isLocked;
 }
 
-void JournalPage::writeToDatabase() {
+void Journal::writeToDatabase() {
   if (isReadOnly) {
     return;
   }
@@ -46,7 +46,7 @@ void JournalPage::writeToDatabase() {
   query.exec();
 }
 
-void JournalPage::readFromDatabase() {
+void Journal::readFromDatabase() {
   // Reads from database the entry at date equal current date
   QSqlQuery query(db);
   query.prepare("SELECT * FROM journalPage WHERE date = ?");
@@ -60,7 +60,7 @@ void JournalPage::readFromDatabase() {
   }
 }
 
-void JournalPage::readFromDatabaseAll() {
+void Journal::readFromDatabaseAll() {
   QSqlQuery query(db);
   query.prepare("SELECT * FROM journalPage");
   query.exec();
@@ -71,7 +71,7 @@ void JournalPage::readFromDatabaseAll() {
   emit(getAll(data));
 }
 
-bool JournalPage::isActive() {
+bool Journal::isActive() {
   QSqlQuery query(db);
   query.prepare("SELECT 1");
   return query.exec();

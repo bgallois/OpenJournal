@@ -31,7 +31,7 @@
 #include <QWebChannel>
 #include "addalarm.h"
 #include "document.h"
-#include "journalpage.h"
+#include "journal.h"
 #include "previewpage.h"
 
 namespace Ui {
@@ -48,7 +48,7 @@ class MainWindow : public QMainWindow {
  private:
   QString lang;
   QSqlDatabase db;
-  JournalPage *page;
+  Journal *page;
   QString plannerName;
   PreviewPage *previewPage;
   Document doc;
@@ -74,8 +74,8 @@ class MainWindow : public QMainWindow {
   void openJournal();
   void openJournal(QString plannerName);
   void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
-  void loadJournalPage(const QDate date);
-  void clearJournalPage();
+  void loadJournal(const QDate date);
+  void clearJournal();
   void saveSettings();
   void backup();
   void refresh();

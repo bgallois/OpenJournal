@@ -31,7 +31,7 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        journalpage.cpp \
+        journal.cpp \
         qmarkdowntextedit.cpp \
         markdownhighlighter.cpp \
         qplaintexteditsearchwidget.cpp \
@@ -41,7 +41,7 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
-        journalpage.h \
+        journal.h \
         qmarkdowntextedit.h \
         markdownhighlighter.h \
         qplaintexteditsearchwidget.h \
