@@ -70,3 +70,9 @@ void JournalPage::readFromDatabaseAll() {
   }
   emit(getAll(data));
 }
+
+bool JournalPage::isActive() {
+  QSqlQuery query(db);
+  query.prepare("SELECT 1");
+  return query.exec();
+}

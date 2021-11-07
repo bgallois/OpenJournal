@@ -73,6 +73,18 @@ TEST_F(JournalPageTest, testWrite) {
   }
 }
 
+TEST_F(JournalPageTest, active) {
+  QSqlDatabase db;
+  db = QSqlDatabase::addDatabase("QSQLITE");
+  db.setDatabaseName(":/test.jnl");
+  if (db.open()) {
+    JournalPage testJournal(db, QDate(2021, 10, 31));
+    EXPECT_EQ(testJournal.isActive(), true);
+    db.close();
+    EXPECT_EQ(testJournal.isActive(), false);
+  }
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {

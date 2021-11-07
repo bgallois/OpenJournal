@@ -41,6 +41,7 @@ class JournalPage : public QObject {
   void setDate(QDate date);
   void setDatabase(QSqlDatabase &databasebool, bool isReadOnly = false);
   void setReadOnly(bool isLocked);
+  bool isActive();
 };
 
 #endif
