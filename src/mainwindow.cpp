@@ -142,7 +142,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   }
 
   // Toolbar
-  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), tr("Add Alarm"), this);
+  QKeySequence keySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_A);
+  QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), tr("Add an alarm ") + keySequence.toString(), this);
+  actionAddAlarm->setShortcut(keySequence);
   connect(actionAddAlarm, &QAction::triggered, [this]() {
     ui->entry->moveCursor(QTextCursor::End);
     AddAlarm *alarm = new AddAlarm();
@@ -153,28 +155,40 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->toolBar->addAction(actionAddAlarm);
   ui->toolBar->addSeparator();
 
-  QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), tr("To do list template"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_D);
+  QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), tr("To do list template ") + keySequence.toString(), this);
+  actionToDoTemplate->setShortcut(keySequence);
   connect(actionToDoTemplate, &QAction::triggered, this, &MainWindow::insertToDoTemplate);
   ui->toolBar->addAction(actionToDoTemplate);
 
-  QAction *actionListNumberedTemplate = new QAction(QIcon(":/listNumbered.png"), tr("Numbered list"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_L);
+  QAction *actionListNumberedTemplate = new QAction(QIcon(":/listNumbered.png"), tr("Numbered list ") + keySequence.toString(), this);
+  actionListNumberedTemplate->setShortcut(keySequence);
   connect(actionListNumberedTemplate, &QAction::triggered, this, &MainWindow::insertListNumberedTemplate);
   ui->toolBar->addAction(actionListNumberedTemplate);
 
-  QAction *actionListTemplate = new QAction(QIcon(":/list.png"), tr("Unordered list"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_L);
+  QAction *actionListTemplate = new QAction(QIcon(":/list.png"), tr("Unordered list ") + keySequence.toString(), this);
+  actionListTemplate->setShortcut(keySequence);
   connect(actionListTemplate, &QAction::triggered, this, &MainWindow::insertListTemplate);
   ui->toolBar->addAction(actionListTemplate);
 
-  QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), tr("Table template"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_T);
+  QAction *actionTableTemplate = new QAction(QIcon(":/table.png"), tr("Table template ") + keySequence.toString(), this);
+  actionTableTemplate->setShortcut(keySequence);
   connect(actionTableTemplate, &QAction::triggered, this, &MainWindow::insertTableTemplate);
   ui->toolBar->addAction(actionTableTemplate);
 
-  QAction *actionLinkTemplate = new QAction(QIcon(":/link.png"), tr("URL template"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_U);
+  QAction *actionLinkTemplate = new QAction(QIcon(":/link.png"), tr("URL template ") + keySequence.toString(), this);
+  actionLinkTemplate->setShortcut(keySequence);
   connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
   ui->toolBar->addAction(actionLinkTemplate);
   ui->toolBar->addSeparator();
 
-  QAction *actionLock = new QAction(QIcon(":/lock.png"), tr("Lock journal"), this);
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_Escape);
+  QAction *actionLock = new QAction(QIcon(":/lock.png"), tr("Lock journal ") + keySequence.toString(), this);
+  actionLock->setShortcut(keySequence);
   actionLock->setCheckable(true);
   actionLock->setChecked(false);
   connect(actionLock, &QAction::triggered, ui->entry, &QMarkdownTextEdit::setDisabled);

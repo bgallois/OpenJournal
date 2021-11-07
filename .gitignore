@@ -3,3 +3,4 @@
 *.pro.user
 build
 *target_wrapper*
+*.qm
