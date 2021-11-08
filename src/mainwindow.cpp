@@ -196,6 +196,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     if (status) {
       ui->statusBar->showMessage(tr("The journal is locked"));
     }
+    else {
+      ui->statusBar->showMessage(tr("The journal is unlocked"), 2000);
+    }
   });
   ui->toolBar->addAction(actionLock);
   addToolBar(Qt::LeftToolBarArea, ui->toolBar);

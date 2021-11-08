@@ -37,7 +37,7 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.ui" line="17"/>
-        <location filename="../src/mainwindow.cpp" line="510"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>OpenJournal</source>
         <translation>OpenJournal</translation>
     </message>
@@ -207,9 +207,9 @@ databaseusername@hostname:port</translation>
     <message>
         <location filename="../src/mainwindow.cpp" line="97"/>
         <location filename="../src/mainwindow.cpp" line="109"/>
-        <location filename="../src/mainwindow.cpp" line="265"/>
-        <location filename="../src/mainwindow.cpp" line="311"/>
-        <location filename="../src/mainwindow.cpp" line="369"/>
+        <location filename="../src/mainwindow.cpp" line="268"/>
+        <location filename="../src/mainwindow.cpp" line="314"/>
+        <location filename="../src/mainwindow.cpp" line="372"/>
         <source>No journal is opened</source>
         <translation>Aucun journal n&apos;est ouvert</translation>
     </message>
@@ -282,105 +282,110 @@ databaseusername@hostname:port</translation>
         <translation>Le journal est verrouillé</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="227"/>
+        <location filename="../src/mainwindow.cpp" line="200"/>
+        <source>The journal is unlocked</source>
+        <translation>Le journal est déverrouillé</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="230"/>
         <source>Private mode</source>
         <translation>Mode privé</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="246"/>
+        <location filename="../src/mainwindow.cpp" line="249"/>
         <source>Alarm Sound</source>
         <translation>Sonnerie</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="273"/>
+        <location filename="../src/mainwindow.cpp" line="276"/>
         <source>Save new journal</source>
         <translation>Sauvegarder un nouveau journal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="273"/>
-        <location filename="../src/mainwindow.cpp" line="306"/>
+        <location filename="../src/mainwindow.cpp" line="276"/>
+        <location filename="../src/mainwindow.cpp" line="309"/>
         <source>Journal (*.jnl)</source>
         <translation>Journal (*.jnl)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="288"/>
+        <location filename="../src/mainwindow.cpp" line="291"/>
         <source> journal cannot be created</source>
         <translation> impossible de créer le journal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="292"/>
-        <location filename="../src/mainwindow.cpp" line="327"/>
-        <location filename="../src/mainwindow.cpp" line="360"/>
+        <location filename="../src/mainwindow.cpp" line="295"/>
+        <location filename="../src/mainwindow.cpp" line="330"/>
+        <location filename="../src/mainwindow.cpp" line="363"/>
         <source> journal is opened</source>
         <translation> le journal est ouvert</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="306"/>
+        <location filename="../src/mainwindow.cpp" line="309"/>
         <source>Open journal</source>
         <translation>Ouvrir un journal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="319"/>
+        <location filename="../src/mainwindow.cpp" line="322"/>
         <source> journal failed to open</source>
         <translation> impossible d&apos;ouvrir le journal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="342"/>
+        <location filename="../src/mainwindow.cpp" line="345"/>
         <source>Authentification failed</source>
         <translation>Erreur d&apos;authentification</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="394"/>
+        <location filename="../src/mainwindow.cpp" line="397"/>
         <source>Journal was backed up </source>
         <translation>Le journal a été sauvegardé </translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="399"/>
+        <location filename="../src/mainwindow.cpp" line="402"/>
         <source>Cannot back up journal</source>
         <translation>Le journal n&apos;a pas pu être sauvegardé</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="427"/>
+        <location filename="../src/mainwindow.cpp" line="430"/>
         <source>Hey!</source>
         <translation>Salut!</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="427"/>
+        <location filename="../src/mainwindow.cpp" line="430"/>
         <source>I&apos;m there</source>
         <translation>Je suis là</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="457"/>
+        <location filename="../src/mainwindow.cpp" line="460"/>
         <source>Notification</source>
         <translation>Notification</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="491"/>
+        <location filename="../src/mainwindow.cpp" line="494"/>
         <source>Select file</source>
         <translation>Selectionner le fichier</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="491"/>
+        <location filename="../src/mainwindow.cpp" line="494"/>
         <source>Pdf Files (*.pdf)</source>
         <translation>Fichiers pdf (*.pdf)</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="510"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>About OpenJournal</source>
         <translation>A propos d&apos;OpenJournal</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="510"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>A simple note taking journal, planner, reminder.</source>
         <translation>Un simple agenda, journal et aide-mémoire.</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="510"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>Copyright &amp;copy; 2019-%1 Benjamin Gallois</source>
         <translation>Copyright &amp;copy; 2019-%1 Benjamin Gallois</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="510"/>
+        <location filename="../src/mainwindow.cpp" line="513"/>
         <source>Released under the &lt;a href=%1&gt;GPL 3&lt;/a&gt; license</source>
         <translation>Released under the &lt;a href=%1&gt;GPL 3&lt;/a&gt; license</translation>
     </message>
