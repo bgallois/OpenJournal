@@ -29,16 +29,18 @@ jobs:
               export QTDIR=/opt/qt515
               export PATH=/opt/qt515/bin:$PATH
               export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/qt515/lib/
-              wget -O deploy.AppImage https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+              wget -O deploy.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
               chmod +x deploy.AppImage
-              cp ../io.github.bgallois.openjournal.desktop .
-              cp ../resources/openjournal.png .
-              ./deploy.AppImage -d io.github.bgallois.openjournal.desktop --appdir AppDir -i openjournal.png -e openjournal 
-              mkdir AppDir/usr/share/openjournal/
-              cp *.qm AppDir/usr/share/openjournal
+              mkdir appdir
+              cp ../io.github.bgallois.openjournal.desktop appdir/
+              cp ../resources/openjournal.png appdir
+              cp openjournal appdir/
+              ./deploy.AppImage appdir/openjournal -no-translations -bundle-non-qt-libs -extra-plugins=platforms,sqldrivers/
+              mkdir -p appdir/usr/share/openjournal/
+              cp *.qm appdir/usr/share/openjournal
               wget -O tool.AppImage https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
               chmod +x tool.AppImage
-              ./tool.AppImage AppDir/
+              ./tool.AppImage appdir/
         - name: Linux artefact
           uses: actions/upload-artifact@v1
           with:
