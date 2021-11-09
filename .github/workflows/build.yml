@@ -77,9 +77,9 @@ jobs:
                copy C:\Windows\System32\vccorlib140.dll OpenJournal\ 
                copy C:\Windows\System32\msvcp140.dll OpenJournal\
                copy C:\Windows\System32\vcruntime140.dll OpenJournal\
-               wget https://github.com/thecodemonkey86/qt_mysql_driver/files/5575770/qsqlmysql.dll_Qt_SQL_driver_5.15.2_MSVC2019_64-bit.zip
-               unzip qsqlmysql.dll_Qt_SQL_driver_5.15.2_MSVC2019_64-bit.zip
-               copy libmysql.dll OpenJournal\
+               wget https://github.com/bgallois/QMYSQL_driver_prebuilt/releases/download/5.15.2/QMYSQL_MSVC2019_5.15.2.zip
+               unzip QMYSQL_MSVC2019_5.15.2.zip
+               copy libmariadb.dll OpenJournal\
                copy sqldrivers\* OpenJournal\sqldrivers\
                7z a C:\OpenJournal.zip OpenJournal\
                cd ..
@@ -128,4 +128,3 @@ jobs:
           with:
             name: OpenJournalMac
             path: ./build/OpenJournal.dmg
-
