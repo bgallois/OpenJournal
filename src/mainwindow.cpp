@@ -416,6 +416,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
     case QSystemTrayIcon::DoubleClick: {
       refreshTimer->start();
       ui->calendar->setSelectedDate(QDate::currentDate());
+      refresh();
       this->setVisible(true);
       break;
     }
