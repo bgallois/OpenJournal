@@ -203,6 +203,7 @@ font: 11pt;</string>
     <addaction name="actionConnect_planner"/>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
+    <addaction name="actionExport_current"/>
     <addaction name="actionBackup"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
@@ -350,6 +351,11 @@ color: #FFFFFF;</string>
    </property>
    <property name="text">
     <string>French</string>
+   </property>
+  </action>
+  <action name="actionExport_current">
+   <property name="text">
+    <string>&amp;Export current entry</string>
    </property>
   </action>
  </widget>

@@ -206,10 +206,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   // Planner exportation
   connect(ui->actionExport_planner, &QAction::triggered, page, &Journal::readFromDatabaseAll);
   connect(page, &Journal::getAll, [this](QString data) {
+    setEnabled(false);
+    refreshTimer->stop();
+    page->setReadOnly(true);
     doc.setText(data);
     emit(exportLoadingFinished());
   });
   connect(this, &MainWindow::exportLoadingFinished, this, &MainWindow::exportAll);
+
+  // Current entry exportation
+  connect(ui->actionExport_current, &QAction::triggered, this, &MainWindow::exportCurrent);
 
   // Automatic refresh every 10 seconds
   refreshTimer = new QTimer(this);
@@ -494,8 +500,25 @@ void MainWindow::exportAll() {
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Select file"), QDir::homePath(), tr("Pdf Files (*.pdf)"));
   if (!fileName.isEmpty()) {
-    ui->preview->page()->printToPdf(fileName);
+    ui->preview->page()->printToPdf(fileName, QPageLayout(QPageSize(ui->preview->page()->contentsSize().toSize()), QPageLayout::Portrait, QMarginsF(10, 20, 10, 20)));
   }
+  setEnabled(true);
+  refreshTimer->start();
+  refresh();
+  page->setReadOnly(false);
+}
+
+void MainWindow::exportCurrent() {
+  QString fileName = QFileDialog::getSaveFileName(this,
+                                                  tr("Select file"), QDir::homePath(), tr("Pdf Files (*.pdf)"));
+  refreshTimer->stop();
+  page->setReadOnly(true);
+  if (!fileName.isEmpty()) {
+    ui->preview->page()->printToPdf(fileName, QPageLayout(QPageSize(ui->preview->page()->contentsSize().toSize()), QPageLayout::Portrait, QMarginsF(10, 20, 10, 20)));
+  }
+  refreshTimer->start();
+  refresh();
+  page->setReadOnly(false);
 }
 
 void MainWindow::refresh() {

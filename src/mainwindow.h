@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow {
   void backup();
   void refresh();
   void exportAll();
+  void exportCurrent();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
   void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
