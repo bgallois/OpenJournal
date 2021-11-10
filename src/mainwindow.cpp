@@ -118,7 +118,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
 
   // Connect calendar
-  connect(ui->calendar, &QCalendarWidget::clicked, this, &MainWindow::loadJournal);
+  connect(ui->calendar, &QCalendarWidget::selectionChanged, [this]() {
+    loadJournal(ui->calendar->selectedDate());
+  });
 
   // Journal page
   page = new Journal();
