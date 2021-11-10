@@ -38,12 +38,14 @@ void Journal::writeToDatabase() {
   query.exec();
 
   // Inserts the new entry
-  query.prepare(
-      "INSERT INTO journalPage (date, entry) "
-      "VALUES (?, ?)");
-  query.bindValue(0, date.toString("yyyy.MM.dd"));
-  query.bindValue(1, entry);
-  query.exec();
+  if (!entry.isEmpty()) {
+    query.prepare(
+        "INSERT INTO journalPage (date, entry) "
+        "VALUES (?, ?)");
+    query.bindValue(0, date.toString("yyyy.MM.dd"));
+    query.bindValue(1, entry);
+    query.exec();
+  }
 }
 
 void Journal::readFromDatabase() {
