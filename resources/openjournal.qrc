@@ -18,7 +18,7 @@
         <file>notification_0.wav</file>
         <file>Lato.ttf</file>
         <file>Caveat.ttf</file>
-        <file>style.qss</file>
+        <file>openjournal.qss</file>
     </qresource>
 </RCC>
 

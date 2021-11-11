@@ -47,6 +47,7 @@ class MainWindow : public QMainWindow {
 
  private:
   QString lang;
+  QString style;
   QSqlDatabase db;
   Journal *page;
   QString plannerName;

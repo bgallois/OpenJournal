@@ -14,9 +14,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->statusBar->addPermanentWidget(clock);
   isHelp = true;  // Will display help message the first time app is closed
 
-  // Setup style
-  loadStyle(":/style.qss");
-
   // Window geometry
   settings = new QSettings(this);
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
@@ -46,6 +43,31 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
         ui->menuLanguage->addAction(langAction);
       }
     }
+  }
+
+  // Setup style
+  style = settings->value("settings/style", "openjournal").toString();
+  loadStyle(":/" + style + ".qss");
+
+  QStringList styles{"openjournal", "qt"};  // List of available themes in resource
+  QActionGroup *styleGroup = new QActionGroup(this);
+  for (const auto &a : styles) {  // For each theme create and connect the action in the style menu
+    QAction *styleAction = new QAction(a, this);
+    styleGroup->addAction(styleAction);
+    styleAction->setCheckable(true);
+    if (a == style) {
+      styleAction->setChecked(true);
+    }
+    connect(styleAction, &QAction::triggered, [this, styleAction]() {
+      style = styleAction->text();
+      if (style == "qt") {
+        qApp->setStyleSheet(styleSheet());
+      }
+      else {
+        loadStyle(":/" + style + ".qss");
+      }
+    });
+    ui->menuStyle->addAction(styleAction);
   }
 
   // Tray integration
@@ -398,6 +420,7 @@ void MainWindow::saveSettings() {
   settings->setValue("settings/privacy", isPrivate);
   settings->setValue("settings/sonore", isSonore);
   settings->setValue("settings/language", lang);
+  settings->setValue("settings/style", style);
 }
 
 void MainWindow::backup() {
