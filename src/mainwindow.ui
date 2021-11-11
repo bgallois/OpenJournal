@@ -20,13 +20,11 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">gridline-color: rgb(255, 0, 0);
-selection-color: #FFFFFF;
-selection-background-color: #349beb;</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(87, 87, 102);</string>
+    <string notr="true"/>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
@@ -36,12 +34,7 @@ selection-background-color: #349beb;</string>
       </property>
       <widget class="QFrame" name="productivityPage">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);
-border-radius: 0px;
-border:1px;
-color: rgb(0, 0, 0);
-
-</string>
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -69,11 +62,7 @@ color: rgb(0, 0, 0);
            <cursorShape>IBeamCursor</cursorShape>
           </property>
           <property name="styleSheet">
-           <string notr="true">font: 12pt;
-border:1px;
-border-style: solid;
-border-radius: 20px;
-border-color: rgb(206, 206, 206);</string>
+           <string notr="true"/>
           </property>
          </widget>
         </item>
@@ -104,8 +93,7 @@ border-color: rgb(206, 206, 206);</string>
       </widget>
       <widget class="QFrame" name="calendarPage">
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);
-border: 0;</string>
+        <string notr="true"/>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -130,13 +118,7 @@ border: 0;</string>
           </property>
           <widget class="QCalendarWidget" name="calendar">
            <property name="styleSheet">
-            <string notr="true">alternate-background-color: #349beb;
-selection-color: rgb(0, 0, 0);
-selection-background-color: #e83d31;
-border: 0px;
-font: italic 12pt;
-gridline-color: rgb(0, 0, 0);
-color: rgb(0, 0, 0);</string>
+            <string notr="true"/>
            </property>
            <property name="firstDayOfWeek">
             <enum>Qt::Monday</enum>
@@ -185,11 +167,7 @@ color: rgb(0, 0, 0);</string>
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">color: #FFFFFF;
-background-color: rgb(87, 87, 102);
-selection-background-color: #349beb;
-border: 0px;
-font: 11pt;</string>
+    <string notr="true"/>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -234,8 +212,7 @@ font: 11pt;</string>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(87, 87, 102);
-color: #FFFFFF;</string>
+    <string notr="true"/>
    </property>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -243,8 +220,7 @@ color: #FFFFFF;</string>
     <string>toolBar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(87, 87, 102);
-color: #FFFFFF;</string>
+    <string notr="true"/>
    </property>
    <property name="movable">
     <bool>true</bool>

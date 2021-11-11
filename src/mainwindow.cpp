@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->statusBar->addPermanentWidget(clock);
   isHelp = true;  // Will display help message the first time app is closed
 
+  // Setup style
+  loadStyle(":/style.qss");
+
   // Window geometry
   settings = new QSettings(this);
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
@@ -579,4 +582,14 @@ void MainWindow::reboot() {
   saveSettings();
   qApp->quit();
   QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+}
+
+bool MainWindow::loadStyle(const QString path) {
+  QFile stylesheet(path);
+  if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {  // Read the theme file
+    qApp->setStyleSheet(stylesheet.readAll());
+    stylesheet.close();
+    return true;
+  }
+  return false;
 }

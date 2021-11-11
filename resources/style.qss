@@ -1,0 +1,83 @@
+QMainWindow {
+    gridline-color: rgb(255, 0, 0);
+    selection-color: #FFFFFF;
+    selection-background-color: #349beb;
+}
+
+QWidget {
+    background-color: rgb(87, 87, 102);
+    color: #FFFFFF;
+    selection-color: #FFFFFF;
+    selection-background-color: #349beb;
+}
+
+QFrame {
+    background-color: rgb(255, 255, 255);
+    border-radius: 8px;
+    border: 1px;
+    color: rgb(0, 0, 0);
+    border-color:rgb(87, 87, 102);
+}
+
+QSplitter#splitter {
+    background-color: rgb(87, 87, 102);
+    color: #FFFFFF;
+    width: 4px;
+}
+
+QSplitter::handle:horizontal {
+    width: 40px;
+}
+
+QSplitter::handle:vertical {
+    height: 40px;
+}
+QCalendarWidget > QWidget {
+    alternate-background-color: #349beb;
+    selection-color: rgb(0, 0, 0);
+    selection-background-color: #e83d31;
+    border: 0px;
+    font: italic 12pt;
+    gridline-color: rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+}
+
+QMarkdownTextEdit {
+    font: 12pt;
+    border:0px;
+    border-style: solid;
+    border-radius: 20px;
+    border-color: rgb(206, 206, 206);
+}
+
+QMenuBar, QMenu{
+    color: #FFFFFF;
+    background-color: rgb(87, 87, 102);
+    selection-background-color: #349beb;
+    selection-color: #FFFFFF;
+    border: 0px;
+    border-color: #FFFFFF;
+    border-style: inset;
+    font: 11pt;
+}
+
+QStatusBar, QToolBar {
+    background-color: rgb(87, 87, 102);
+    color: #FFFFFF;
+}
+
+QLCDNumber {
+    background-color: rgb(87, 87, 102);
+    color: #FFFFFF;
+}
+
+QLabel#date{
+    background-color: #FFFFFF;
+    color: black;
+    text-decoration: underline;
+}
+
+QLabel {
+    background-color: rgb(87, 87, 102);
+    color: #FFFFFF;
+}
