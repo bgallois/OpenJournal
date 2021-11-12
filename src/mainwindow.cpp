@@ -49,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   style = settings->value("settings/style", "openjournal").toString();
   loadStyle(":/" + style + ".qss");
 
-  QStringList styles{"openjournal", "qt"};  // List of available themes in resource
+  QStringList styles{"openjournal", "qt", "crema"};  // List of available themes in resource
   QActionGroup *styleGroup = new QActionGroup(this);
   for (const auto &a : styles) {  // For each theme create and connect the action in the style menu
     QAction *styleAction = new QAction(a, this);

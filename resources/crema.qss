@@ -1,0 +1,120 @@
+QMainWindow {
+    gridline-color: rgb(255, 0, 0);
+    selection-color: #F27E95;
+    selection-background-color: #F27E95;
+}
+
+QWidget {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
+    selection-color: #FFFFFF;
+    selection-background-color: #349beb;
+    margin: 2px;
+    padding: 2px;
+}
+
+QFrame {
+    background-color: #FAF3F3;
+    border-radius: 8px;
+    border: 1px;
+    color: rgb(0, 0, 0);
+    border-color:#7CB4D6;
+    padding: 0px;
+    margin: 0px;
+}
+
+QSplitter#splitter {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
+    width: 4px;
+    height: 4px;
+}
+
+QSplitter::handle:horizontal {
+    width: 40px;
+}
+
+QSplitter::handle:vertical {
+    height: 40px;
+}
+
+QCalendarWidget > QWidget {
+    alternate-background-color: #7CB4D6;
+    selection-color: #FFFFFF;
+    selection-background-color: #F27E95;
+    border: 0px;
+    font: italic 12pt;
+    gridline-color: rgb(0, 0, 0);
+    color: #000000;
+}
+
+QMarkdownTextEdit {
+    font: 12pt;
+    border:0px;
+    border-style: solid;
+    border-radius: 20px;
+    border-color: rgb(206, 206, 206);
+    background-color: #FFFFFF;
+}
+
+QMenuBar, QMenu{
+    color: #FFFFFF;
+    background-color: #7CB4D6;
+    selection-background-color: #F27E95;
+    selection-color: #FFFFFF;
+    font: 11pt;
+}
+
+QMenu {
+    border: 1px;
+    border-color: #DBE6FF;
+    border-style: solid;
+}
+
+QStatusBar, QToolBar {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
+    border: 1px;
+    border-radius: 4px;
+    border-color: #DBE6FF;
+    border-style: solid;
+}
+
+QMenuBar::item {
+    border: 1px;
+    border-radius: 2px;
+    border-color: #DBE6FF;
+    border-style: solid;
+    padding: 4px;
+}
+
+QMenuBar::item:hover {
+    background-color: #F27E95;
+    color: #FFFFFF;
+}
+
+QMenu::separator, QToolBar::separator {
+background-color: #FFFFFF;
+    width: 1px;
+    height: 1px;
+}
+
+QToolButton:hover {
+    background-color: #F27E95;
+}
+
+QLCDNumber {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
+}
+
+QLabel#date{
+    background-color: #FAF3F3;
+    color: black;
+    text-decoration: underline;
+}
+
+QLabel {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
+}
