@@ -20,6 +20,7 @@
         <file>Caveat.ttf</file>
         <file>openjournal.qss</file>
         <file>crema.qss</file>
+        <file>macos.qss</file>
     </qresource>
 </RCC>
 
