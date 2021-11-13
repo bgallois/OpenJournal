@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->resize(settings->value("mainwindow/size", QSize(400, 400)).toSize());
   this->move(settings->value("mainwindow/pos", QPoint(200, 200)).toPoint());
 
+  // Splitters geometry
+  ui->splitter->setSizes(settings->value("mainwindow/splitter", QVariant::fromValue(QList<int>{619, 350})).value<QList<int>>());
+  ui->splitter_2->setSizes(settings->value("mainwindow/splitter_2", QVariant::fromValue(QList<int>{194, 483})).value<QList<int>>());
+
   // Translation
   lang = settings->value("settings/language", "en").toString();
   QString appDir = QCoreApplication::applicationDirPath();
@@ -417,6 +421,8 @@ void MainWindow::saveSettings() {
   settings->setValue("mainwindow/lastJournal", plannerName);
   settings->setValue("mainwindow/size", this->size());
   settings->setValue("mainwindow/pos", this->pos());
+  settings->setValue("mainwindow/splitter", QVariant::fromValue(ui->splitter->sizes()));
+  settings->setValue("mainwindow/splitter_2", QVariant::fromValue(ui->splitter_2->sizes()));
   settings->setValue("settings/privacy", isPrivate);
   settings->setValue("settings/sonore", isSonore);
   settings->setValue("settings/language", lang);
