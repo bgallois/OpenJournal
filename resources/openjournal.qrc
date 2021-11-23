@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>index.html</file>
-        <file>tex-mml-chtml.js</file>
         <file>markdown.css</file>
         <file>marked.js</file>
         <file>openjournal.svg</file>
@@ -22,6 +21,40 @@
         <file>openjournal.qss</file>
         <file>crema.qss</file>
         <file>macos.qss</file>
+        <file>MathJax/a11y/assistive-mml.js</file>
+        <file>MathJax/a11y/complexity.js</file>
+        <file>MathJax/a11y/explorer.js</file>
+        <file>MathJax/a11y/semantic-enrich.js</file>
+        <file>MathJax/adaptors/liteDOM.js</file>
+        <file>MathJax/input/mml/extensions/mml3.js</file>
+        <file>MathJax/input/mml/extensions/mml3.sef.json</file>
+        <file>MathJax/input/mml/entities.js</file>
+        <file>MathJax/input/mml.js</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Math-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff</file>
+        <file>MathJax/output/chtml/fonts/woff-v2/MathJax_Zero.woff</file>
+        <file>MathJax/output/chtml/fonts/tex.js</file>
+        <file>MathJax/output/chtml.js</file>
+        <file>MathJax/tex-mml-chtml.js</file>
     </qresource>
 </RCC>
-

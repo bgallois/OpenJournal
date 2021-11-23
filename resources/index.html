@@ -1,11 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<meta charset="utf-8">
 <head>
+  <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="markdown.css">
   <script src="marked.js"></script>
   <script src="qrc:/qtwebchannel/qwebchannel.js"></script>
-  <script type="text/javascript" src="tex-mml-chtml.js"></script>
+  <script type="text/javascript" src="MathJax/tex-mml-chtml.js"></script>
+  <title></title>
 </head>
 <body>
   <div id="placeholder" class="markdown-body"></div>
@@ -15,7 +16,7 @@
   var placeholder = document.getElementById('placeholder');
   var updateText = function(text) {
       placeholder.innerHTML = marked(text);
-MathJax.typeset()
+  MathJax.typeset()
   }
 
   new QWebChannel(qt.webChannelTransport,
@@ -28,7 +29,3 @@ MathJax.typeset()
   </script>
 </body>
 </html>
-
-
-
-
