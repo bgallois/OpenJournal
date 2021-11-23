@@ -573,7 +573,10 @@ void MainWindow::about() {
 
 void MainWindow::insertToDoTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText("\n\n### To do list\n\n- [x] Task 1\n- [ ] Task 2\n- [ ] Task 3\n\n");
+    QTextCursor cursor = ui->entry->textCursor();
+    ui->entry->insertPlainText("\n\n### To do list\n\n- [ ] Task_1");
+    cursor.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+    ui->entry->setTextCursor(cursor);
   }
 }
 
@@ -600,13 +603,19 @@ void MainWindow::insertLinkTemplate() {
 
 void MainWindow::insertListNumberedTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText("\n\n1. Item 1\n2. Item 2\n3. Item 3\n\n");
+    QTextCursor cursor = ui->entry->textCursor();
+    ui->entry->insertPlainText("\n\n1. Item_1");
+    cursor.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+    ui->entry->setTextCursor(cursor);
   }
 }
 
 void MainWindow::insertListTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText("\n\n* Item 1\n* Item 2\n* Item 3\n\n");
+    QTextCursor cursor = ui->entry->textCursor();
+    ui->entry->insertPlainText("\n\n* Item_1");
+    cursor.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+    ui->entry->setTextCursor(cursor);
   }
 }
 
