@@ -12,7 +12,7 @@ OpenJournal uses a database to store and retrieve user notes. This flexible appr
 
 - [x] Alarms
 - [x] Live markdown renderer
-- [x] Markdown highlinkting
+- [x] Markdown highlighting
 - [x] Latex renderer
 - [x] Privacy mode
 - [x] Journal exportation in pdf
@@ -22,6 +22,7 @@ OpenJournal uses a database to store and retrieve user notes. This flexible appr
 - [x] Lock
 - [x] Keyword searching Ctrl + F
 - [x] Traductions
+- [x] Mardown editor
 
 ## Screenshot
 

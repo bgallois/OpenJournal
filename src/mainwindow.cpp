@@ -253,6 +253,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Current entry exportation
   connect(ui->actionExport_current, &QAction::triggered, this, &MainWindow::exportCurrent);
+  connect(ui->actionSave_current, &QAction::triggered, this, &MainWindow::saveCurrent);
+  connect(ui->actionImport_entry, &QAction::triggered, this, &MainWindow::importEntry);
+  saveDir = QDir::homePath();
 
   // Automatic refresh every 10 seconds
   refreshTimer = new QTimer(this);
@@ -538,9 +541,10 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
 
 void MainWindow::exportAll() {
   QString fileName = QFileDialog::getSaveFileName(this,
-                                                  tr("Select file"), QDir::homePath(), tr("Pdf Files (*.pdf)"));
+                                                  tr("Select file"), saveDir, tr("Pdf Files (*.pdf)"));
   if (!fileName.isEmpty()) {
     ui->preview->page()->printToPdf(fileName, QPageLayout(QPageSize(ui->preview->page()->contentsSize().toSize()), QPageLayout::Portrait, QMarginsF(10, 20, 10, 20)));
+    saveDir = fileName;
   }
   setEnabled(true);
   refreshTimer->start();
@@ -550,15 +554,48 @@ void MainWindow::exportAll() {
 
 void MainWindow::exportCurrent() {
   QString fileName = QFileDialog::getSaveFileName(this,
-                                                  tr("Select file"), QDir::homePath(), tr("Pdf Files (*.pdf)"));
+                                                  tr("Save file"), saveDir, tr("Pdf Files (*.pdf)"));
   refreshTimer->stop();
   page->setReadOnly(true);
   if (!fileName.isEmpty()) {
     ui->preview->page()->printToPdf(fileName, QPageLayout(QPageSize(ui->preview->page()->contentsSize().toSize()), QPageLayout::Portrait, QMarginsF(10, 20, 10, 20)));
+    saveDir = fileName;
   }
   refreshTimer->start();
   refresh();
   page->setReadOnly(false);
+}
+
+void MainWindow::saveCurrent() {
+  QString fileName = QFileDialog::getSaveFileName(this,
+                                                  tr("Select file"), saveDir, tr("Markdown Files (*.md)"));
+  refreshTimer->stop();
+  page->setReadOnly(true);
+  QFile file(fileName);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    QTextStream stream(&file);
+    stream << ui->entry->toPlainText();
+    file.close();
+    saveDir = fileName;
+  }
+  refreshTimer->start();
+  refresh();
+  page->setReadOnly(false);
+}
+
+void MainWindow::importEntry() {
+  QString fileName = QFileDialog::getOpenFileName(this,
+                                                  tr("Open file"), saveDir, tr("Markdown Files (*.md)"));
+  refreshTimer->stop();
+  QFile file(fileName);
+  if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    QTextStream in(&file);
+    ui->entry->appendPlainText(in.readAll());
+    file.close();
+    saveDir = fileName;
+  }
+  refreshTimer->start();
+  refresh();
 }
 
 void MainWindow::refresh() {
@@ -574,7 +611,7 @@ void MainWindow::refresh() {
 }
 
 void MainWindow::about() {
-  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
+  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
 }
 
 void MainWindow::insertToDoTemplate() {

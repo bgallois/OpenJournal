@@ -8,6 +8,7 @@
 #include <QActionGroup>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QFile>
 #include <QGraphicsBlurEffect>
 #include <QIcon>
 #include <QInputDialog>
@@ -25,6 +26,7 @@
 #include <QString>
 #include <QStringLiteral>
 #include <QSystemTrayIcon>
+#include <QTextStream>
 #include <QTimer>
 #include <QTranslator>
 #include <QUrl>
@@ -48,6 +50,7 @@ class MainWindow : public QMainWindow {
  private:
   QString lang;
   QString style;
+  QString saveDir;
   QSqlDatabase db;
   Journal *page;
   QString plannerName;
@@ -82,6 +85,8 @@ class MainWindow : public QMainWindow {
   void refresh();
   void exportAll();
   void exportCurrent();
+  void saveCurrent();
+  void importEntry();
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
   void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);

@@ -181,8 +181,11 @@
     <addaction name="actionConnect_planner"/>
     <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
-    <addaction name="actionExport_current"/>
     <addaction name="actionBackup"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_entry"/>
+    <addaction name="actionSave_current"/>
+    <addaction name="actionExport_current"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
@@ -337,12 +340,22 @@
   </action>
   <action name="actionExport_current">
    <property name="text">
-    <string>&amp;Export current entry</string>
+    <string>&amp;Export current entry as Pdf</string>
    </property>
   </action>
   <action name="actiond">
    <property name="text">
     <string>d</string>
+   </property>
+  </action>
+  <action name="actionSave_current">
+   <property name="text">
+    <string>&amp;Save current entry as Markdown</string>
+   </property>
+  </action>
+  <action name="actionImport_entry">
+   <property name="text">
+    <string>&amp;Import Markdown file</string>
    </property>
   </action>
  </widget>
