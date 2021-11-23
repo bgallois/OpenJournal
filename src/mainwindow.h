@@ -92,6 +92,7 @@ class MainWindow : public QMainWindow {
   void insertLinkTemplate();
   void insertListTemplate();
   void insertListNumberedTemplate();
+  void insertFormulaTemplate();
   void reboot();
   bool loadStyle(const QString path);
 

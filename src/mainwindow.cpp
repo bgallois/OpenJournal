@@ -215,6 +215,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   actionLinkTemplate->setShortcut(keySequence);
   connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
   ui->toolBar->addAction(actionLinkTemplate);
+
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_F);
+  QAction *actionFormulaTemplate = new QAction(QIcon(":/formula.png"), tr("Formula template ") + keySequence.toString(), this);
+  actionFormulaTemplate->setShortcut(keySequence);
+  connect(actionFormulaTemplate, &QAction::triggered, this, &MainWindow::insertFormulaTemplate);
+  ui->toolBar->addAction(actionFormulaTemplate);
   ui->toolBar->addSeparator();
 
   keySequence = QKeySequence(Qt::CTRL + Qt::Key_Escape);
@@ -615,6 +621,20 @@ void MainWindow::insertListTemplate() {
     QTextCursor cursor = ui->entry->textCursor();
     ui->entry->insertPlainText("\n\n* Item_1");
     cursor.movePosition(QTextCursor::StartOfWord, QTextCursor::KeepAnchor);
+    ui->entry->setTextCursor(cursor);
+  }
+}
+
+void MainWindow::insertFormulaTemplate() {
+  if (ui->entry->isEnabled()) {
+    QTextCursor cursor = ui->entry->textCursor();
+    if (cursor.hasSelection()) {
+      ui->entry->insertPlainText(QString("\\\\[ %1 \\\\]").arg(cursor.selectedText()));
+    }
+    else {
+      ui->entry->insertPlainText("\\\\[  \\\\]");
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 4);
+    }
     ui->entry->setTextCursor(cursor);
   }
 }
