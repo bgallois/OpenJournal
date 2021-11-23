@@ -1,22 +1,22 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QFileDialog>
-#include <QMainWindow>
-
 #include <QAction>
 #include <QActionGroup>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFile>
+#include <QFileDialog>
 #include <QGraphicsBlurEffect>
 #include <QIcon>
 #include <QInputDialog>
 #include <QLCDNumber>
+#include <QMainWindow>
 #include <QMap>
 #include <QMessageBox>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QScrollBar>
 #include <QSettings>
 #include <QSoundEffect>
 #include <QSqlDatabase>
