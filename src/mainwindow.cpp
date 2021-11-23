@@ -585,7 +585,16 @@ void MainWindow::insertTableTemplate() {
 
 void MainWindow::insertLinkTemplate() {
   if (ui->entry->isEnabled()) {
-    ui->entry->insertPlainText(" [Uniform Resource Locator](https://github.com/bgallois/OpenJournal)");
+    QTextCursor cursor = ui->entry->textCursor();
+    if (cursor.hasSelection()) {
+      ui->entry->insertPlainText(QString(" [%1]()").arg(cursor.selectedText()));
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+    }
+    else {
+      ui->entry->insertPlainText(" [](http://)");
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 10);
+    }
+    ui->entry->setTextCursor(cursor);
   }
 }
 
