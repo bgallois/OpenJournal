@@ -56,6 +56,9 @@ class Journal : public QObject {
   void setDatabase(QSqlDatabase &databasebool, bool isReadOnly = false);
   void setReadOnly(bool isLocked);
   bool isActive();
+  void insertImage(QString name, QByteArray imageData);
+  void clearUnusedImages();
+  QByteArray retrieveImage(QString name);
 };
 
 #endif

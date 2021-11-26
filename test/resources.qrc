@@ -1,6 +1,7 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource>
         <file>test.jnl</file>
+        <file>Lenna.png</file>
     </qresource>
 </RCC>
 

@@ -102,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   QAction *close = new QAction(tr("Quit"));
   connect(close, &QAction::triggered, [this]() {
     saveSettings();
+    clearTemporaryFiles();
+    page->clearUnusedImages();
     qApp->quit();
   });
   trayMenu->addAction(close);
@@ -115,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->entry, &QPlainTextEdit::textChanged, [this]() {
     this->doc.setText(ui->entry->toPlainText());
     this->setTodayReminder(ui->entry->toPlainText(), reminders);
+    this->addImage(ui->entry->toPlainText());
   });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -438,6 +441,7 @@ void MainWindow::clearJournal() {
   db.close();
   ui->date->clear();
   ui->entry->clear();
+  clearTemporaryFiles();
 }
 
 void MainWindow::saveSettings() {
@@ -712,4 +716,68 @@ bool MainWindow::loadStyle(const QString path) {
     return true;
   }
   return false;
+}
+
+void MainWindow::addImage(QString text) {
+  bool isTextChanged = false;
+  int textSize = text.size();
+
+  // Match all the image Markdown balises ![something](void or something)
+  QRegularExpression re("!\\[(.*)\\]\\((.+)\\)");
+  QRegularExpressionMatchIterator matches = re.globalMatch(text);
+  while (matches.hasNext()) {
+    QRegularExpressionMatch match = matches.next();
+    QString imageLabel = match.captured(1);
+    QString imagePath = match.captured(2);
+
+    // If image just added, add it in database and change reference in text
+    if (!imageLabel.contains("OpenJournal_Local_") && !imagePath.contains("http")) {
+      imagePath = imagePath.remove("file://");
+      QFile image(imagePath);
+      QByteArray imageData;
+      if (image.open(QIODevice::ReadOnly)) {
+        imageData = image.readAll();
+        image.close();
+      }
+      QString extension = QFileInfo(imagePath).suffix();
+      if (imageLabel.isEmpty()) {
+        imageLabel = QString::number(QRandomGenerator::global()->generate());
+      }
+      imagePath = "file://" + QDir::tempPath() + "/" + imageLabel + "." + extension;
+      imageLabel.insert(0, "OpenJournal_Local_");
+      text.replace(match.captured(0), QString("![%1](%2)").arg(imageLabel, imagePath));
+      isTextChanged = true;
+      page->insertImage(imageLabel, imageData);
+    }
+
+    // Save image in local temporary files
+    if (!tmpFiles.contains(imagePath)) {
+      QByteArray imageData = page->retrieveImage(imageLabel);
+      QFile image(imagePath.remove("file://"));
+      if (image.open(QIODevice::WriteOnly)) {
+        image.write(imageData);
+        tmpFiles.append(imagePath);
+        image.close();
+      }
+    }
+  }
+
+  // Update the text if changed
+  if (isTextChanged) {
+    ui->entry->blockSignals(true);
+    int cursorPosition = ui->entry->textCursor().position();
+    int offset = text.size() - textSize;
+    ui->entry->setPlainText(text);
+    QTextCursor cursor = ui->entry->textCursor();
+    cursor.setPosition(cursorPosition + offset);
+    ui->entry->setTextCursor(cursor);
+    ui->entry->blockSignals(false);
+  }
+}
+
+void MainWindow::clearTemporaryFiles() {
+  for (const auto &a : tmpFiles) {
+    QFile::remove(a);
+  }
+  tmpFiles.clear();
 }

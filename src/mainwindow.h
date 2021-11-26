@@ -29,6 +29,7 @@ GNU General Public License for more details.
 #include <QMap>
 #include <QMessageBox>
 #include <QProcess>
+#include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QScrollBar>
 #include <QSettings>
@@ -82,6 +83,7 @@ class MainWindow : public QMainWindow {
   QLCDNumber *clock;
   bool isHelp;
   QTranslator translator;
+  QStringList tmpFiles;
 
  protected:
   void changeEvent(QEvent *event) override;
@@ -114,6 +116,8 @@ class MainWindow : public QMainWindow {
   void insertFormulaTemplate();
   void reboot();
   bool loadStyle(const QString path);
+  void addImage(QString path);
+  void clearTemporaryFiles();
 
  signals:
   void exportLoadingFinished();

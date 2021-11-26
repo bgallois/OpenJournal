@@ -30,6 +30,11 @@ void Journal::setEntry(QString e) {
 
 void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   db = database;
+  QSqlQuery query(db);
+  query.prepare("CREATE TABLE IF NOT EXISTS asset ( filename TEXT, imagedata BLOB )");
+  query.exec();
+  query.prepare("CREATE TABLE IF NOT EXISTS journalPage (date TEXT, entry TEXT)");
+  query.exec();
   setReadOnly(isReadOnly);
 }
 
@@ -85,6 +90,49 @@ void Journal::readFromDatabaseAll() {
     data.append("# " + query.value(0).toString() + "\n" + query.value(1).toString() + "\n\n");
   }
   emit(getAll(data));
+}
+
+void Journal::insertImage(QString name, QByteArray imageData) {
+  QSqlQuery query(db);
+  query.prepare(
+      "INSERT INTO asset (filename, imagedata)"
+      "VALUES (?, ?)");
+  query.bindValue(0, name);
+  query.bindValue(1, imageData);
+  query.exec();
+}
+
+QByteArray Journal::retrieveImage(QString name) {
+  QSqlQuery query(db);
+  query.prepare("SELECT imagedata FROM asset WHERE filename = ?");
+  query.addBindValue(name);
+  query.exec();
+  QByteArray imageData;
+  if (query.first()) {
+    imageData = query.value(0).toByteArray();
+  }
+  return imageData;
+}
+
+void Journal::clearUnusedImages() {
+  QSqlQuery query(db);
+  query.prepare("SELECT entry FROM journalPage");
+  query.exec();
+  QString data;
+  while (query.next()) {
+    data.append(query.value(0).toString());
+  }
+
+  query.prepare("SELECT filename FROM asset");
+  query.exec();
+  while (query.next()) {
+    if (!data.contains(query.value(0).toString())) {
+      QSqlQuery delQuery(db);
+      delQuery.prepare("DELETE FROM asset WHERE filename = ?");
+      delQuery.addBindValue(query.value(0).toString());
+      delQuery.exec();
+    }
+  }
 }
 
 bool Journal::isActive() {
