@@ -1,3 +1,5 @@
+#include <QDir>
+#include <QFile>
 #include "../src/journal.h"
 #include "gtest/gtest.h"
 
@@ -12,9 +14,11 @@ class JournalTest : public ::testing::Test {
 };
 
 TEST_F(JournalTest, testConst) {
+  QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
+  QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName(":/test.jnl");
+  db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
     Journal testJournal(db, QDate(2021, 10, 31));
     QString entryRef("test31");
@@ -46,12 +50,18 @@ TEST_F(JournalTest, testConst) {
     entryRef = QString("# 2021.10.29\ntest29\n\n# 2021.10.30\ntest30\n\n# 2021.10.31\ntest31\n\n");
     EXPECT_EQ(entry, entryRef);
   }
+  else {
+    FAIL();
+  }
+  QFile::remove(QDir::tempPath() + "/test.jnl");
 }
 
 TEST_F(JournalTest, testWrite) {
+  QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
+  QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName(":/test.jnl");
+  db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
     Journal testJournal(db, QDate(2021, 10, 31));
     QString entry;
@@ -71,20 +81,29 @@ TEST_F(JournalTest, testWrite) {
     testJournal.readFromDatabase();
     EXPECT_EQ(entry, "test31");
   }
+  else {
+    FAIL();
+  }
+  QFile::remove(QDir::tempPath() + "/test.jnl");
 }
 
 TEST_F(JournalTest, active) {
+  QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
+  QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
   db = QSqlDatabase::addDatabase("QSQLITE");
-  db.setDatabaseName(":/test.jnl");
+  db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
     Journal testJournal(db, QDate(2021, 10, 31));
     EXPECT_EQ(testJournal.isActive(), true);
     db.close();
     EXPECT_EQ(testJournal.isActive(), false);
   }
+  else {
+    FAIL();
+  }
+  QFile::remove(QDir::tempPath() + "/test.jnl");
 }
-
 }  // namespace
 
 int main(int argc, char **argv) {
