@@ -34,6 +34,7 @@ SOURCES += \
         journal.cpp \
         qmarkdowntextedit.cpp \
         markdownhighlighter.cpp \
+        editor.cpp \
         qplaintexteditsearchwidget.cpp \
         previewpage.cpp \
         document.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
         journal.h \
         qmarkdowntextedit.h \
         markdownhighlighter.h \
+        editor.h \
         qplaintexteditsearchwidget.h \
         previewpage.h \
         document.h \

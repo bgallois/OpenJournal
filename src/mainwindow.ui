@@ -57,7 +57,7 @@
          </spacer>
         </item>
         <item row="1" column="0" colspan="4">
-         <widget class="QMarkdownTextEdit" name="entry">
+         <widget class="Editor" name="entry">
           <property name="cursor" stdset="0">
            <cursorShape>IBeamCursor</cursorShape>
           </property>
@@ -367,9 +367,9 @@
    <header location="global">QtWebEngineWidgets/QWebEngineView</header>
   </customwidget>
   <customwidget>
-   <class>QMarkdownTextEdit</class>
+   <class>Editor</class>
    <extends>QPlainTextEdit</extends>
-   <header>qmarkdowntextedit.h</header>
+   <header>editor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
