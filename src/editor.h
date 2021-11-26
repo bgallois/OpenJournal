@@ -15,11 +15,20 @@ GNU General Public License for more details.
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include <QDebug>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QMimeDatabase>
+#include <QMimeType>
 #include "qmarkdowntextedit.h"
 
 class Editor : public QMarkdownTextEdit {
+  Q_OBJECT
  public:
   using QMarkdownTextEdit::QMarkdownTextEdit;
+
+ protected:
+  void dropEvent(QDropEvent *dropEvent) override;
 };
 
 #endif  // EDITOR_H

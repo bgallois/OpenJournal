@@ -22,7 +22,10 @@ OpenJournal uses a database to store and retrieve user notes. This flexible appr
 - [x] Lock
 - [x] Keyword searching Ctrl + F
 - [x] Traductions
-- [x] Mardown editor
+- [x] Markdown editor
+- [x] Local image insertion
+- [x] Drag'n Drop images insertion
+- [x] Drag'n Drop text files insertion
 
 ## Screenshot
 

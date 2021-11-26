@@ -61,6 +61,9 @@
           <property name="cursor" stdset="0">
            <cursorShape>IBeamCursor</cursorShape>
           </property>
+          <property name="acceptDrops">
+           <bool>true</bool>
+          </property>
           <property name="styleSheet">
            <string notr="true"/>
           </property>
