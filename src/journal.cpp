@@ -70,13 +70,13 @@ void Journal::writeToDatabase() {
 void Journal::readFromDatabase() {
   // Reads from database the entry at date equal current date
   QSqlQuery query(db);
-  query.prepare("SELECT * FROM journalPage WHERE date = ?");
+  query.prepare("SELECT entry FROM journalPage WHERE date = ?");
   query.addBindValue(date.toString("yyyy.MM.dd"));
   query.exec();
   emit(getDate(date.toString(Qt::DefaultLocaleLongDate)));
 
   if (query.first()) {
-    entry = query.value(1).toString();
+    entry = query.value(0).toString();
     emit(getEntry(entry));
   }
 }

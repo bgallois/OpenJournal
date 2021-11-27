@@ -365,7 +365,6 @@ void MainWindow::newJournal(QString fileName) {
     plannerName = plannerName;
     ui->entry->setEnabled(true);
     ui->actionBackup->setEnabled(true);
-    QSqlQuery query("CREATE TABLE journalPage (date TEXT, entry TEXT)");
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
     loadJournal(QDate::currentDate());
@@ -424,9 +423,6 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     db.setDatabaseName(plannerFile);
   }
   if (db.open()) {  // If database was successfully created
-    QSqlQuery query(db);
-    query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
-    query.exec();
     plannerName = plannerFile;
     ui->actionBackup->setEnabled(false);
     statusMessage->setText(plannerName + tr(" journal is opened"));
@@ -434,8 +430,6 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
     loadJournal(QDate::currentDate());
-    query.prepare("CREATE TABLE journalPage (date TEXT, entry TEXT)");
-    query.exec();
   }
   else {
     statusMessage->setText(tr("No journal is opened"));
