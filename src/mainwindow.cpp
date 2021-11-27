@@ -736,7 +736,7 @@ void MainWindow::addImage(QString text) {
       if (imagePath.contains("http")) {
         imageData = downloadHttpFile(QUrl(imagePath));
       }
-      else {
+      else if (QFile::exists(imagePath.remove("file://"))) {
         imagePath = imagePath.remove("file://");
         QFile image(imagePath);
         if (image.open(QIODevice::ReadOnly)) {
@@ -744,19 +744,21 @@ void MainWindow::addImage(QString text) {
           image.close();
         }
       }
-      QString extension = QFileInfo(imagePath).suffix();
-      if (imageLabel.isEmpty()) {
-        imageLabel = QString::number(QRandomGenerator::global()->generate());
+      if (!imageData.isEmpty()) {
+        QString extension = QFileInfo(imagePath).suffix();
+        if (imageLabel.isEmpty()) {
+          imageLabel = QString::number(QRandomGenerator::global()->generate());
+        }
+        imagePath = "file://" + QDir::tempPath() + "/" + imageLabel + "." + extension;
+        imageLabel.insert(0, "OpenJournal_Local_");
+        text.replace(match.captured(0), QString("![%1](%2)").arg(imageLabel, imagePath));
+        isTextChanged = true;
+        page->insertImage(imageLabel, imageData);
       }
-      imagePath = "file://" + QDir::tempPath() + "/" + imageLabel + "." + extension;
-      imageLabel.insert(0, "OpenJournal_Local_");
-      text.replace(match.captured(0), QString("![%1](%2)").arg(imageLabel, imagePath));
-      isTextChanged = true;
-      page->insertImage(imageLabel, imageData);
     }
 
     // Save image in local temporary files
-    if (!tmpFiles.contains(imagePath)) {
+    if (!tmpFiles.contains(imagePath) && imageLabel.contains("OpenJournal_Local_")) {
       QByteArray imageData = page->retrieveImage(imageLabel);
       QFile image(imagePath.remove("file://"));
       if (image.open(QIODevice::WriteOnly)) {
@@ -796,6 +798,9 @@ QByteArray MainWindow::downloadHttpFile(QUrl url) {
   QNetworkReply *reply = manager->get(QNetworkRequest(url));
   eventLoop.exec();
   downloadedData = reply->readAll();
+  if (reply->error() != QNetworkReply::NoError) {
+    return QByteArray();
+  }
   reply->deleteLater();
   return downloadedData;
 }
