@@ -731,13 +731,18 @@ void MainWindow::addImage(QString text) {
     QString imagePath = match.captured(2);
 
     // If image just added, add it in database and change reference in text
-    if (!imageLabel.contains("OpenJournal_Local_") && !imagePath.contains("http")) {
-      imagePath = imagePath.remove("file://");
-      QFile image(imagePath);
+    if (!imageLabel.contains("OpenJournal_Local_")) {
       QByteArray imageData;
-      if (image.open(QIODevice::ReadOnly)) {
-        imageData = image.readAll();
-        image.close();
+      if (imagePath.contains("http")) {
+        imageData = downloadHttpFile(QUrl(imagePath));
+      }
+      else {
+        imagePath = imagePath.remove("file://");
+        QFile image(imagePath);
+        if (image.open(QIODevice::ReadOnly)) {
+          imageData = image.readAll();
+          image.close();
+        }
       }
       QString extension = QFileInfo(imagePath).suffix();
       if (imageLabel.isEmpty()) {
@@ -780,4 +785,17 @@ void MainWindow::clearTemporaryFiles() {
     QFile::remove(a);
   }
   tmpFiles.clear();
+}
+
+QByteArray MainWindow::downloadHttpFile(QUrl url) {
+  // Synchronous downloading of a file
+  QByteArray downloadedData;
+  QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+  QEventLoop eventLoop;
+  connect(manager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+  QNetworkReply *reply = manager->get(QNetworkRequest(url));
+  eventLoop.exec();
+  downloadedData = reply->readAll();
+  reply->deleteLater();
+  return downloadedData;
 }

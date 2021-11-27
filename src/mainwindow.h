@@ -28,6 +28,8 @@ GNU General Public License for more details.
 #include <QMainWindow>
 #include <QMap>
 #include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QProcess>
 #include <QRandomGenerator>
 #include <QRegularExpression>
@@ -118,6 +120,7 @@ class MainWindow : public QMainWindow {
   bool loadStyle(const QString path);
   void addImage(QString path);
   void clearTemporaryFiles();
+  QByteArray downloadHttpFile(QUrl url);
 
  signals:
   void exportLoadingFinished();
