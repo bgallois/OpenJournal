@@ -233,6 +233,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
   ui->toolBar->addAction(actionLinkTemplate);
 
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_I);
+  QAction *actionImageTemplate = new QAction(QIcon(":/image.png"), tr("Image template ") + keySequence.toString(), this);
+  actionImageTemplate->setShortcut(keySequence);
+  connect(actionImageTemplate, &QAction::triggered, this, &MainWindow::insertImageTemplate);
+  ui->toolBar->addAction(actionImageTemplate);
+
   keySequence = QKeySequence(Qt::CTRL + Qt::Key_F);
   QAction *actionFormulaTemplate = new QAction(QIcon(":/formula.png"), tr("Formula template ") + keySequence.toString(), this);
   actionFormulaTemplate->setShortcut(keySequence);
@@ -658,6 +664,21 @@ void MainWindow::insertLinkTemplate() {
     }
     else {
       ui->entry->insertPlainText("[](http://)");
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 10);
+    }
+    ui->entry->setTextCursor(cursor);
+  }
+}
+
+void MainWindow::insertImageTemplate() {
+  if (ui->entry->isEnabled()) {
+    QTextCursor cursor = ui->entry->textCursor();
+    if (cursor.hasSelection()) {
+      ui->entry->insertPlainText(QString("![](%1)").arg(cursor.selectedText()));
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+    }
+    else {
+      ui->entry->insertPlainText("![](http://)");
       cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 10);
     }
     ui->entry->setTextCursor(cursor);

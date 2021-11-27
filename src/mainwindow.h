@@ -113,6 +113,7 @@ class MainWindow : public QMainWindow {
   void insertToDoTemplate();
   void insertTableTemplate();
   void insertLinkTemplate();
+  void insertImageTemplate();
   void insertListTemplate();
   void insertListNumberedTemplate();
   void insertFormulaTemplate();
