@@ -57,7 +57,7 @@ QMarkdownTextEdit {
     background-color: #FFFFFF;
 }
 
-QMenuBar, QMenu{
+QMenuBar, QMenu, QComboBox{
     color: #FFFFFF;
     background-color: #7CB4D6;
     selection-background-color: #F27E95;
@@ -69,6 +69,11 @@ QMenu {
     border: 1px;
     border-color: #DBE6FF;
     border-style: solid;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #7CB4D6;
+    color: #FFFFFF;
 }
 
 QStatusBar, QToolBar {
