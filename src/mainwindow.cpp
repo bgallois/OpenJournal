@@ -653,8 +653,16 @@ void MainWindow::insertLinkTemplate() {
   if (ui->entry->isEnabled()) {
     QTextCursor cursor = ui->entry->textCursor();
     if (cursor.hasSelection()) {
-      ui->entry->insertPlainText(QString("[%1]()").arg(cursor.selectedText()));
-      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+      if (cursor.selectedText().contains("http")) {
+        int selectionSize = cursor.selectedText().size();
+        ui->entry->insertPlainText(QString("[](%1)").arg(cursor.selectedText()));
+        cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, selectionSize + 3);
+      }
+      else {
+        ui->entry->insertPlainText(QString("[%1](http://)").arg(cursor.selectedText()));
+        cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
+        cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, 7);
+      }
     }
     else {
       ui->entry->insertPlainText("[](http://)");
