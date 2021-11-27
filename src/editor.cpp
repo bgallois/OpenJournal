@@ -15,6 +15,7 @@ GNU General Public License for more details.
 #include "editor.h"
 
 void Editor::dropEvent(QDropEvent *dropEvent) {
+  // Add functionnalities
   const QMimeData *mimeData = dropEvent->mimeData();
   if (mimeData->hasUrls()) {
     QList<QUrl> urls = mimeData->urls();
@@ -32,4 +33,11 @@ void Editor::dropEvent(QDropEvent *dropEvent) {
       }
     }
   }
+
+  // Call base class dropEvent
+  // This is a workaround to call the base class dropEvent without adding url to text.
+  // If Base::dropEvent is not called, the cursor is not redraw.
+  setReadOnly(true);
+  QPlainTextEdit::dropEvent(dropEvent);
+  setReadOnly(false);
 }
