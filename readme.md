@@ -4,6 +4,8 @@
 
 OpenJournal is a simple journal, note-taking, and assistant application supporting Markdown syntax and Markdown rendering thanks to [qmarkdowntextedit](https://github.com/pbek/qmarkdowntextedit). You can write your thoughts, to-do list and never forget a meeting by setting visual and audible alerts.
 
+See the complete documentation at [https://openjournal.readthedocs.io/en/latest/](https://openjournal.readthedocs.io/en/latest/).
+
 ## Technology
 
 OpenJournal uses a database to store and retrieve user notes. This flexible approach offers several advantages. Local journals can be created using [SQlite](https://www.sqlite.org/index.html) and stored in a single file that the user can copy and move between computers. Remote journals can be accessed using [MariaDB](https://mariadb.org/), first, the user has to create a database server, then OpenJournal can access the database server to store journals. In this way, a user can access its journal locally and add a layer of security by password protection.
