@@ -157,7 +157,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>23</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="font">
@@ -216,7 +216,11 @@
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
+    <addaction name="separator"/>
+    <addaction name="actionDocumentation"/>
+    <addaction name="separator"/>
     <addaction name="actionSource"/>
+    <addaction name="actionReport"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -299,7 +303,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>About OpenJournal</string>
    </property>
   </action>
   <action name="actionClose">
@@ -359,6 +363,19 @@
   <action name="actionImport_entry">
    <property name="text">
     <string>&amp;Import Markdown file</string>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="text">
+    <string>Report an Issue</string>
+   </property>
+  </action>
+  <action name="actionDocumentation">
+   <property name="text">
+    <string>User Manual</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>
