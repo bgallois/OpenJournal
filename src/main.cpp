@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   lock.open(QIODevice::WriteOnly | QIODevice::Text);
   a.setOrganizationName("Analysabl");
   a.setApplicationName("OpenJournal");
-  a.setApplicationVersion("1.1.0");
+  a.setApplicationVersion("1.2.0");
   QFontDatabase::addApplicationFont(":/Lato.ttf");
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
   QObject::connect(&a, &QApplication::aboutToQuit, &lock, [&lock]() {
