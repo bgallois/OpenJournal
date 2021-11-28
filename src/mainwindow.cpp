@@ -640,7 +640,7 @@ void MainWindow::refresh() {
 }
 
 void MainWindow::about() {
-  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 3</a> license").arg("\"http://www.gnu.org/licenses/gpl.html\"")));
+  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 2</a> license").arg("\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\"")));
 }
 
 void MainWindow::insertToDoTemplate() {
