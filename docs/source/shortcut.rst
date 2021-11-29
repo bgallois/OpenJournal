@@ -5,6 +5,30 @@ Keyboard shortcuts
 Markdown features
 -----------------
 
+Bold text
+~~~~~~~~~
+.. code-block:: markdown
+
+	CTRL + Key_B
+
+If a text is selected, it will be set as bold. If no text selected, cursor will be placed between balises.
+
+Italic text
+~~~~~~~~~~~
+.. code-block:: markdown
+
+	CTRL + Key_I
+
+If a text is selected, it will be set as bold. If no text selected, cursor will be placed between balises.
+
+Strikethrough text
+~~~~~~~~~~~~~~~~~~
+.. code-block:: markdown
+
+	CTRL + Key_S
+
+If a text is selected, it will be set as bold. If no text selected, cursor will be placed between balises.
+
 Insert to-do list
 ~~~~~~~~~~~~~~~~~
 .. code-block:: markdown
@@ -41,7 +65,7 @@ Insert image
 ~~~~~~~~~~~~
 .. code-block:: markdown
 
-	CTRL + Key_I
+	CTRL + Key_SHIFT + Key_I
 
 If a text is selected, it will be passed as as path.
 

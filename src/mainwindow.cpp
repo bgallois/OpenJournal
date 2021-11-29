@@ -212,6 +212,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->toolBar->addAction(actionAddAlarm);
   ui->toolBar->addSeparator();
 
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_B);
+  QAction *actionBoldTemplate = new QAction(QIcon(":/bold.png"), tr("Bold ") + keySequence.toString(), this);
+  actionBoldTemplate->setShortcut(keySequence);
+  connect(actionBoldTemplate, &QAction::triggered, [this]() {
+    insertFormattingTemplate("**");
+  });
+  ui->toolBar->addAction(actionBoldTemplate);
+
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_I);
+  QAction *actionItalicTemplate = new QAction(QIcon(":/italic.png"), tr("Italic ") + keySequence.toString(), this);
+  actionItalicTemplate->setShortcut(keySequence);
+  connect(actionItalicTemplate, &QAction::triggered, [this]() {
+    insertFormattingTemplate("*");
+  });
+  ui->toolBar->addAction(actionItalicTemplate);
+
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_S);
+  QAction *actionStrikeTemplate = new QAction(QIcon(":/strikethrough.png"), tr("Strikethrough ") + keySequence.toString(), this);
+  actionStrikeTemplate->setShortcut(keySequence);
+  connect(actionStrikeTemplate, &QAction::triggered, [this]() {
+    insertFormattingTemplate("~~");
+  });
+  ui->toolBar->addAction(actionStrikeTemplate);
+
   keySequence = QKeySequence(Qt::CTRL + Qt::Key_D);
   QAction *actionToDoTemplate = new QAction(QIcon(":/todo.png"), tr("To do list template ") + keySequence.toString(), this);
   actionToDoTemplate->setShortcut(keySequence);
@@ -242,7 +266,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(actionLinkTemplate, &QAction::triggered, this, &MainWindow::insertLinkTemplate);
   ui->toolBar->addAction(actionLinkTemplate);
 
-  keySequence = QKeySequence(Qt::CTRL + Qt::Key_I);
+  keySequence = QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I);
   QAction *actionImageTemplate = new QAction(QIcon(":/image.png"), tr("Image template ") + keySequence.toString(), this);
   actionImageTemplate->setShortcut(keySequence);
   connect(actionImageTemplate, &QAction::triggered, this, &MainWindow::insertImageTemplate);
@@ -641,6 +665,20 @@ void MainWindow::refresh() {
 
 void MainWindow::about() {
   QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 2</a> license").arg("\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\"")));
+}
+
+void MainWindow::insertFormattingTemplate(QString balise) {
+  if (ui->entry->isEnabled()) {
+    QTextCursor cursor = ui->entry->textCursor();
+    if (cursor.hasSelection()) {
+      ui->entry->insertPlainText(balise + cursor.selectedText() + balise);
+    }
+    else {
+      ui->entry->insertPlainText(balise + cursor.selectedText() + balise);
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, balise.size());
+    }
+    ui->entry->setTextCursor(cursor);
+  }
 }
 
 void MainWindow::insertToDoTemplate() {
