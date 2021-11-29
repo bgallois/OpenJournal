@@ -27,5 +27,6 @@ jobs:
         echo ${{ github.workspace }}/Qt/5.15.2/gcc_64/bin/ >> $GITHUB_PATH
     - name: test
       run: |
+        export QT_QPA_PLATFORM=offscreen
         qmake test/Test.pro
         make check

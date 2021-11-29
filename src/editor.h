@@ -17,9 +17,12 @@ GNU General Public License for more details.
 
 #include <QDebug>
 #include <QDropEvent>
+#include <QKeySequence>
 #include <QMimeData>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QStatusBar>
+#include <QToolBar>
 #include "qmarkdowntextedit.h"
 
 class Editor : public QMarkdownTextEdit {
@@ -29,6 +32,16 @@ class Editor : public QMarkdownTextEdit {
 
  protected:
   void dropEvent(QDropEvent *dropEvent) override;
+ public slots:
+  void addToolBarActions(QToolBar *toolBar, QStatusBar *statusBar = nullptr);
+  void insertFormattingTemplate(QString balise);
+  void insertToDoTemplate();
+  void insertTableTemplate();
+  void insertLinkTemplate();
+  void insertImageTemplate();
+  void insertListTemplate();
+  void insertListNumberedTemplate();
+  void insertFormulaTemplate();
 };
 
 #endif  // EDITOR_H

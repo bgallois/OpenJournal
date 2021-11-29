@@ -16,6 +16,13 @@ RCC_DIR=build
 SOURCES += \
         test.cpp \
         ../src/journal.cpp \
+        ../src/qmarkdowntextedit.cpp \
+        ../src/markdownhighlighter.cpp \
+        ../src/editor.cpp \
+        ../src/qplaintexteditsearchwidget.cpp \
+
+FORMS += \
+        ../src/qplaintexteditsearchwidget.ui \
 
 QMAKE_CXXFLAGS += -std=c++17 -O3 -fopenmp -g
 
@@ -23,6 +30,10 @@ INCLUDEPATH += /usr/include/gtest
 LIBS += -lgtest -lgtest_main
 HEADERS += \
         ../src/journal.h \
+        ../src/qmarkdowntextedit.h \
+        ../src/markdownhighlighter.h \
+        ../src/editor.h \
+        ../src/qplaintexteditsearchwidget.h \
         /usr/include/gtest/gtest.h \
 
 RESOURCES += \
