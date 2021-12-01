@@ -37,7 +37,7 @@ void Journal::close() {
 void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   db = database;
   QSqlQuery query(db);
-  query.prepare("CREATE TABLE IF NOT EXISTS asset ( filename TEXT, imagedata BLOB )");
+  query.prepare("CREATE TABLE IF NOT EXISTS asset ( filename TEXT, imagedata LONGBLOB )");
   query.exec();
   query.prepare("CREATE TABLE IF NOT EXISTS journalPage (date TEXT, entry TEXT)");
   query.exec();
