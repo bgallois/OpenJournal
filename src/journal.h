@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include <QSqlQuery>
 #include <QString>
 #include <QStringList>
+#include <QUrl>
 
 class Journal : public QObject {
   Q_OBJECT
@@ -34,16 +35,17 @@ class Journal : public QObject {
   Journal &operator=(const Journal &) = delete;
   ~Journal();
 
- private:
+ protected:
   QString entry;
   QSqlDatabase db;
   QDate date;
   bool isReadOnly;
+  bool isEnable;
 
  public:
-  void readFromDatabase();
-  void readFromDatabaseAll();
-  void writeToDatabase();
+  virtual void readFromDatabase();
+  virtual void readFromDatabaseAll();
+  virtual void writeToDatabase();
 
  signals:
   void getEntry(QString entry);
@@ -52,14 +54,18 @@ class Journal : public QObject {
   void getDate(QString date);
 
  public slots:
+  void setEnabled(bool isEnable);
   void setEntry(QString entry);
   void setDate(QDate date);
-  void setDatabase(QSqlDatabase &databasebool, bool isReadOnly = false);
+  virtual void setDatabase(QSqlDatabase &database, bool isReadOnly = false);
+  virtual void setDatabase(QUrl url, QString user, QString pass, bool readOnly = false){};      // Reserved for runtime polymorphisme
+  virtual void setDatabase(QString path, QString user, QString pass, bool readOnly = false){};  // Reserved for runtime polymorphisme
   void setReadOnly(bool isLocked);
-  bool isActive();
-  void insertImage(QString name, QByteArray imageData);
-  void clearUnusedImages();
-  void retrieveImage(QString name, QString path);
+  virtual bool isActive();
+  virtual void insertImage(QString name, QByteArray imageData);
+  virtual void clearUnusedImages();
+  virtual void retrieveImage(QString name, QString path);
+  virtual void close();
 };
 
 #endif

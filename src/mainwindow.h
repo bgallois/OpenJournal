@@ -44,6 +44,7 @@ GNU General Public License for more details.
 #include <QStringLiteral>
 #include <QSystemTrayIcon>
 #include <QTextStream>
+#include <QThread>
 #include <QTimer>
 #include <QTranslator>
 #include <QUrl>
@@ -51,6 +52,7 @@ GNU General Public License for more details.
 #include "addalarm.h"
 #include "document.h"
 #include "journal.h"
+#include "journal_cloud.h"
 #include "previewpage.h"
 
 namespace Ui {
@@ -70,6 +72,8 @@ class MainWindow : public QMainWindow {
   QString saveDir;
   QSqlDatabase db;
   Journal *page;
+  JournalCloud *pageCloud;
+  Journal *pageLocal;
   QString plannerName;
   PreviewPage *previewPage;
   Document doc;
@@ -86,6 +90,9 @@ class MainWindow : public QMainWindow {
   bool isHelp;
   QTranslator translator;
   QStringList tmpFiles;
+  int cursorPosition;
+  int cursorAnchor;
+  int scrollPosition;
 
  protected:
   void changeEvent(QEvent *event) override;
@@ -95,12 +102,14 @@ class MainWindow : public QMainWindow {
   void newJournal(QString plannerName);
   void openJournal();
   void openJournal(QString plannerName);
+  void openCloud(QString username, QString password, QUrl endpoint);
   void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
   void loadJournal(const QDate date);
   void clearJournal();
   void saveSettings();
   void backup();
   void refresh();
+  void refreshCursor();
   void exportAll();
   void exportCurrent();
   void saveCurrent();
@@ -115,6 +124,7 @@ class MainWindow : public QMainWindow {
   void addImage(QString path);
   void clearTemporaryFiles();
   QByteArray downloadHttpFile(QUrl url);
+  void switchJournalMode(QString mode);
 
  signals:
   void exportLoadingFinished();

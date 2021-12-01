@@ -24,8 +24,14 @@ Journal::~Journal() {
 }
 
 void Journal::setEntry(QString e) {
-  entry = e;
-  writeToDatabase();
+  if (isEnable) {
+    entry = e;
+    writeToDatabase();
+  }
+}
+
+void Journal::close() {
+  db = QSqlDatabase();
 }
 
 void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
@@ -160,4 +166,8 @@ bool Journal::isActive() {
   QSqlQuery query(db);
   query.prepare("SELECT 1");
   return query.exec();
+}
+
+void Journal::setEnabled(bool isEnable) {
+  this->isEnable = isEnable;
 }

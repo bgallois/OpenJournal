@@ -155,6 +155,28 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       statusMessage->setText(tr("No journal is opened"));
     }
   });
+  connect(ui->actionCloud, &QAction::triggered, [this]() {
+    clearJournal();
+    bool isOk;
+    QString pass;
+    QString info = QInputDialog::getText(this, tr("Connect to the cloud."),
+                                         tr("Username"), QLineEdit::Normal,
+                                         "username", &isOk);
+    if (isOk) {
+      pass = QInputDialog::getText(this, tr("Password"),
+                                   tr("Password"), QLineEdit::Password,
+                                   "password", &isOk);
+    }
+    else {
+      statusMessage->setText(tr("No journal is opened"));
+    }
+    if (isOk) {
+      openCloud(info, pass, QUrl("http://127.0.0.1:5000/"));
+    }
+    else {
+      statusMessage->setText(tr("No journal is opened"));
+    }
+  });
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
   connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
@@ -178,14 +200,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
 
   // Journal page
-  page = new Journal();
-  connect(ui->entry, &QPlainTextEdit::textChanged, page, [this]() {
+  pageLocal = new Journal();
+  connect(ui->entry, &QPlainTextEdit::textChanged, pageLocal, [this]() {
     QString entry = ui->entry->toPlainText();
-    page->setEntry(entry);
+    pageLocal->setEntry(entry);
   });
-  connect(page, &Journal::getDate, ui->date, &QLabel::setText);
-  connect(page, &Journal::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
-  connect(page, &Journal::getImage, [this](QByteArray imageData, QString imagePath) {
+  connect(pageLocal, &Journal::getDate, ui->date, &QLabel::setText);
+  connect(pageLocal, &Journal::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
+  connect(pageLocal, &Journal::getEntry, this, &MainWindow::refreshCursor);
+  connect(pageLocal, &Journal::getImage, [this](QByteArray imageData, QString imagePath) {
     QFile image(imagePath);
     if (image.open(QIODevice::WriteOnly)) {
       image.write(imageData);
@@ -193,6 +216,31 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       image.close();
     }
   });
+  pageCloud = new JournalCloud();
+  connect(ui->entry, &QPlainTextEdit::textChanged, pageCloud, [this]() {
+    QString entry = ui->entry->toPlainText();
+    pageCloud->setEntry(entry);
+  });
+  connect(pageCloud, &JournalCloud::getDate, ui->date, &QLabel::setText);
+  connect(pageCloud, &JournalCloud::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
+  connect(pageCloud, &JournalCloud::networkStatus, [this](bool status) {
+    if (status) {
+      statusMessage->setText(tr("Your connected to the cloud as ") + pageCloud->username);
+    }
+    else {
+      statusMessage->setText(tr("The cloud can be reached! Check your credential and the internet connection. Trying with username: ") + pageCloud->username);
+    }
+  });
+  connect(pageCloud, &Journal::getEntry, this, &MainWindow::refreshCursor);
+  connect(pageCloud, &JournalCloud::getImage, [this](QByteArray imageData, QString imagePath) {
+    QFile image(imagePath);
+    if (image.open(QIODevice::WriteOnly)) {
+      image.write(imageData);
+      tmpFiles.append(imagePath);
+      image.close();
+    }
+  });
+  switchJournalMode("local");
 
   // Reads journal settings
   QString lastJournal = settings->value("mainwindow/lastJournal").toString();
@@ -311,6 +359,7 @@ void MainWindow::newJournal() {
 }
 
 void MainWindow::newJournal(QString fileName) {
+  switchJournalMode("local");
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(fileName);
   ui->entry->setEnabled(false);
@@ -343,6 +392,7 @@ void MainWindow::openJournal() {
 }
 
 void MainWindow::openJournal(QString plannerFile) {
+  switchJournalMode("local");
   db = QSqlDatabase::addDatabase("QSQLITE");
   db.setDatabaseName(plannerFile);
   if (!db.open()) {
@@ -360,7 +410,20 @@ void MainWindow::openJournal(QString plannerFile) {
   }
 }
 
+void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
+  switchJournalMode("cloud");
+  clearJournal();
+  ui->entry->setEnabled(false);
+  ui->calendar->setSelectedDate(QDate::currentDate());
+  page->setDatabase(endpoint, username, password);
+  loadJournal(QDate::currentDate());
+  statusMessage->setText(plannerName + tr(" cloud is opened"));
+  ui->actionBackup->setEnabled(false);
+  ui->entry->setEnabled(true);
+}
+
 void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
+  switchJournalMode("local");
   clearJournal();
   ui->entry->setEnabled(false);
   db = QSqlDatabase::addDatabase("QMARIADB");
@@ -397,6 +460,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
 
 void MainWindow::clearJournal() {
   page->writeToDatabase();
+  page->close();
   db.close();
   ui->date->clear();
   ui->entry->clear();
@@ -576,17 +640,24 @@ void MainWindow::importEntry() {
 }
 
 void MainWindow::refresh() {
-  int cursorPosition = ui->entry->textCursor().position();
-  int cursorAnchor = ui->entry->textCursor().anchor();
-  int scrollPosition = ui->entry->verticalScrollBar()->sliderPosition();
+  // Triggered the refresh. It will be completed by refreshCursor when getText signal
+  // is triggered when data has finished loading.
+  // Account for the network delay.
+  cursorPosition = ui->entry->textCursor().position();
+  cursorAnchor = ui->entry->textCursor().anchor();
+  scrollPosition = ui->entry->verticalScrollBar()->sliderPosition();
   loadJournal(ui->calendar->selectedDate());
+  QTime time = QTime::currentTime();
+  clock->display(time.toString("hh:mm"));
+}
+
+void MainWindow::refreshCursor() {
+  // Refresh after entry completely downloaded
   QTextCursor cursor = ui->entry->textCursor();
   cursor.setPosition(cursorAnchor);
   cursor.setPosition(cursorPosition, QTextCursor::KeepAnchor);
   ui->entry->setTextCursor(cursor);
   ui->entry->verticalScrollBar()->setSliderPosition(scrollPosition);
-  QTime time = QTime::currentTime();
-  clock->display(time.toString("hh:mm"));
 }
 
 void MainWindow::about() {
@@ -634,7 +705,6 @@ void MainWindow::addImage(QString text) {
         imageData = downloadHttpFile(QUrl(imagePath));
       }
       else if (QFile::exists(imagePath.remove("file://"))) {
-        imagePath = imagePath.remove("file://");
         QFile image(imagePath);
         if (image.open(QIODevice::ReadOnly)) {
           imageData = image.readAll();
@@ -661,14 +731,15 @@ void MainWindow::addImage(QString text) {
 
   // Update the text if changed
   if (isTextChanged) {
-    ui->entry->blockSignals(true);
-    int cursorPosition = ui->entry->textCursor().position();
-    int offset = text.size() - textSize;
-    ui->entry->setPlainText(text);
-    QTextCursor cursor = ui->entry->textCursor();
-    cursor.setPosition(cursorPosition + offset);
-    ui->entry->setTextCursor(cursor);
-    ui->entry->blockSignals(false);
+    {
+      const QSignalBlocker blocker(ui->entry);
+      int cursorPosition = ui->entry->textCursor().position();
+      int offset = text.size() - textSize;
+      ui->entry->setPlainText(text);
+      QTextCursor cursor = ui->entry->textCursor();
+      cursor.setPosition(cursorPosition + offset);
+      ui->entry->setTextCursor(cursor);
+    }
   }
 }
 
@@ -692,5 +763,23 @@ QByteArray MainWindow::downloadHttpFile(QUrl url) {
     return QByteArray();
   }
   reply->deleteLater();
+  delete manager;
   return downloadedData;
+}
+
+void MainWindow::switchJournalMode(QString mode) {
+  if (mode == "local") {
+    page = pageLocal;
+    pageCloud->blockSignals(true);
+    pageLocal->blockSignals(false);
+    pageCloud->setEnabled(false);
+    pageLocal->setEnabled(true);
+  }
+  else if (mode == "cloud") {
+    page = pageCloud;
+    pageLocal->blockSignals(true);
+    pageCloud->blockSignals(false);
+    pageLocal->setEnabled(false);
+    pageCloud->setEnabled(true);
+  }
 }

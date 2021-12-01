@@ -183,6 +183,8 @@
     <addaction name="separator"/>
     <addaction name="actionConnect_planner"/>
     <addaction name="separator"/>
+    <addaction name="actionCloud"/>
+    <addaction name="separator"/>
     <addaction name="actionExport_planner"/>
     <addaction name="actionBackup"/>
     <addaction name="separator"/>
@@ -376,6 +378,11 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="actionCloud">
+   <property name="text">
+    <string>&amp;Cloud</string>
    </property>
   </action>
  </widget>

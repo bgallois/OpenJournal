@@ -32,6 +32,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         journal.cpp \
+        journal_cloud.cpp \
         qmarkdowntextedit.cpp \
         markdownhighlighter.cpp \
         editor.cpp \
@@ -43,6 +44,7 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
         journal.h \
+        journal_cloud.h \
         qmarkdowntextedit.h \
         markdownhighlighter.h \
         editor.h \
