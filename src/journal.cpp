@@ -35,6 +35,16 @@ void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   query.exec();
   query.prepare("CREATE TABLE IF NOT EXISTS journalPage (date TEXT, entry TEXT)");
   query.exec();
+  // Create a unique index to replace entry
+  // Driver dependente command
+  if (db.driverName() == "QMYSQL" || db.driverName() == "QMARIADB") {
+    query.prepare("ALTER TABLE journalPage ADD CONSTRAINT date_un UNIQUE (date)");
+    query.exec();
+  }
+  else if (db.driverName() == "QSQLITE") {
+    query.prepare("CREATE UNIQUE INDEX date_un ON journalPage(date);");
+    query.exec();
+  }
   setReadOnly(isReadOnly);
 }
 
@@ -50,20 +60,31 @@ void Journal::writeToDatabase() {
   if (isReadOnly) {
     return;
   }
-  // Deletes the previous entry for this date
-  QSqlQuery query(db);
-  query.prepare("DELETE FROM journalPage WHERE date = ? ");
-  query.addBindValue(date.toString("yyyy.MM.dd"));
-  query.exec();
 
-  // Inserts the new entry
-  if (!entry.isEmpty()) {
-    query.prepare(
-        "INSERT INTO journalPage (date, entry) "
-        "VALUES (?, ?)");
-    query.bindValue(0, date.toString("yyyy.MM.dd"));
-    query.bindValue(1, entry);
+  QSqlQuery query(db);
+  if (entry.isEmpty()) {
+    query.prepare("DELETE FROM journalPage WHERE date = ? ");
+    query.addBindValue(date.toString("yyyy.MM.dd"));
     query.exec();
+  }
+  else {
+    if (db.driverName() == "QMYSQL" || db.driverName() == "QMARIADB") {
+      query.prepare(
+          "INSERT INTO journalPage (date, entry) "
+          "VALUES (?, ?) ON DUPLICATE KEY UPDATE entry = ? ");
+      query.bindValue(0, date.toString("yyyy.MM.dd"));
+      query.bindValue(1, entry);
+      query.bindValue(2, entry);
+      query.exec();
+    }
+    else if (db.driverName() == "QSQLITE") {
+      query.prepare(
+          "INSERT OR REPLACE INTO journalPage (date, entry) "
+          "VALUES (?, ?)");
+      query.bindValue(0, date.toString("yyyy.MM.dd"));
+      query.bindValue(1, entry);
+      query.exec();
+    }
   }
 }
 
