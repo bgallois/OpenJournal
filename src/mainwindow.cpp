@@ -185,6 +185,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(page, &Journal::getDate, ui->date, &QLabel::setText);
   connect(page, &Journal::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
+  connect(page, &Journal::getImage, [this](QByteArray imageData, QString imagePath) {
+    QFile image(imagePath);
+    if (image.open(QIODevice::WriteOnly)) {
+      image.write(imageData);
+      tmpFiles.append(imagePath);
+      image.close();
+    }
+  });
 
   // Reads journal settings
   QString lastJournal = settings->value("mainwindow/lastJournal").toString();
@@ -635,9 +643,7 @@ void MainWindow::addImage(QString text) {
       }
       if (!imageData.isEmpty()) {
         QString extension = QFileInfo(imagePath).suffix();
-        if (imageLabel.isEmpty()) {
-          imageLabel = QString::number(QRandomGenerator::global()->generate());
-        }
+        imageLabel += QString::number(QRandomGenerator::global()->generate());
         imagePath = "file://" + QDir::tempPath() + "/" + imageLabel + "." + extension;
         imageLabel.insert(0, "OpenJournal_Local_");
         text.replace(match.captured(0), QString("![%1](%2)").arg(imageLabel, imagePath));
@@ -647,14 +653,9 @@ void MainWindow::addImage(QString text) {
     }
 
     // Save image in local temporary files
+    imagePath.remove("file://");
     if (!tmpFiles.contains(imagePath) && imageLabel.contains("OpenJournal_Local_")) {
-      QByteArray imageData = page->retrieveImage(imageLabel);
-      QFile image(imagePath.remove("file://"));
-      if (image.open(QIODevice::WriteOnly)) {
-        image.write(imageData);
-        tmpFiles.append(imagePath);
-        image.close();
-      }
+      page->retrieveImage(imageLabel, imagePath);
     }
   }
 

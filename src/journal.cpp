@@ -123,7 +123,7 @@ void Journal::insertImage(QString name, QByteArray imageData) {
   query.exec();
 }
 
-QByteArray Journal::retrieveImage(QString name) {
+void Journal::retrieveImage(QString name, QString path) {
   QSqlQuery query(db);
   query.prepare("SELECT imagedata FROM asset WHERE filename = ?");
   query.addBindValue(name);
@@ -132,7 +132,7 @@ QByteArray Journal::retrieveImage(QString name) {
   if (query.first()) {
     imageData = query.value(0).toByteArray();
   }
-  return imageData;
+  emit(getImage(imageData, path));
 }
 
 void Journal::clearUnusedImages() {

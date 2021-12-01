@@ -107,7 +107,7 @@ TEST_F(JournalTest, active) {
   QFile::remove(QDir::tempPath() + "/test.jnl");
 }
 
-TEST_F(JournalTest, insert_retieveImage) {
+TEST_F(JournalTest, insert_retrieveImage) {
   QFile image(":/Lenna.png");
   QByteArray imageData;
   if (image.open(QIODevice::ReadOnly)) {
@@ -124,9 +124,15 @@ TEST_F(JournalTest, insert_retieveImage) {
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
     Journal testJournal(db, QDate(2021, 10, 31));
+    QByteArray imageTest;
+    QObject::connect(&testJournal, &Journal::getImage, [&imageTest](QByteArray image, QString name) {
+      imageTest = image;
+    });
     testJournal.insertImage("Lenna.png", imageData);
-    EXPECT_EQ(imageData, testJournal.retrieveImage("Lenna.png"));
-    EXPECT_EQ(QByteArray(), testJournal.retrieveImage("enna.png"));
+    testJournal.retrieveImage("Lenna.png", "");
+    EXPECT_EQ(imageData, imageTest);
+    testJournal.retrieveImage("enna.png", "");
+    EXPECT_EQ(QByteArray(), imageTest);
   }
   else {
     FAIL();
@@ -151,11 +157,17 @@ TEST_F(JournalTest, cleanImage) {
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
     Journal testJournal(db, QDate(2021, 10, 31));
+    QByteArray imageTest;
+    QObject::connect(&testJournal, &Journal::getImage, [&imageTest](QByteArray image, QString name) {
+      imageTest = image;
+    });
     testJournal.insertImage("Lenna.png", imageData);
-    EXPECT_EQ(imageData, testJournal.retrieveImage("Lenna.png"));
+    testJournal.retrieveImage("Lenna.png", "");
+    EXPECT_EQ(imageData, imageTest);
     testJournal.setEntry("test31");
     testJournal.clearUnusedImages();
-    EXPECT_EQ(QByteArray(), testJournal.retrieveImage("Lenna.png"));
+    testJournal.retrieveImage("Lenna.png", "");
+    EXPECT_EQ(QByteArray(), imageTest);
   }
   else {
     FAIL();

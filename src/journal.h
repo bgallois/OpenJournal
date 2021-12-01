@@ -47,6 +47,7 @@ class Journal : public QObject {
 
  signals:
   void getEntry(QString entry);
+  void getImage(QByteArray image, QString path);
   void getAll(QString data);
   void getDate(QString date);
 
@@ -58,7 +59,7 @@ class Journal : public QObject {
   bool isActive();
   void insertImage(QString name, QByteArray imageData);
   void clearUnusedImages();
-  QByteArray retrieveImage(QString name);
+  void retrieveImage(QString name, QString path);
 };
 
 #endif
