@@ -39,12 +39,12 @@ void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   QSqlQuery query(db);
   query.prepare("CREATE TABLE IF NOT EXISTS asset ( filename TEXT, imagedata LONGBLOB )");
   query.exec();
-  query.prepare("CREATE TABLE IF NOT EXISTS journalPage (date TEXT, entry TEXT)");
+  query.prepare("CREATE TABLE IF NOT EXISTS journalPage (date TINYTEXT, entry TEXT)");
   query.exec();
   // Create a unique index to replace entry
   // Driver dependente command
   if (db.driverName() == "QMYSQL" || db.driverName() == "QMARIADB") {
-    query.prepare("ALTER TABLE journalPage ADD CONSTRAINT date_un UNIQUE (date)");
+    query.prepare("ALTER TABLE journalPage ADD CONSTRAINT date_un UNIQUE (date(255))");
     query.exec();
   }
   else if (db.driverName() == "QSQLITE") {
