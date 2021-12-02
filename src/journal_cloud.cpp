@@ -77,11 +77,11 @@ bool JournalCloud::isActive() {
 
 void JournalCloud::httpReply(QNetworkReply *reply) {
   QByteArray replyString = reply->readAll();
-  if (reply->error() == QNetworkReply::ConnectionRefusedError || replyString.isEmpty() || replyString == "500") {
-    emit(networkStatus(false));
+  if (reply->error() == QNetworkReply::ConnectionRefusedError || replyString.isEmpty() || replyString == "500" || replyString == "401") {
+    emit(networkStatus(replyString));
     return;
   }
-  emit(networkStatus(true));
+  emit(networkStatus("SUCCESS"));
   QJsonDocument doc = QJsonDocument::fromJson(replyString);
   QJsonObject replyData = doc.object();
   if (replyData["type"].toString() == "query") {

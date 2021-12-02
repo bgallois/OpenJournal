@@ -157,7 +157,7 @@
      <x>0</x>
      <y>0</y>
      <width>723</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -176,21 +176,28 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menu_Advanced">
+     <property name="title">
+      <string>&amp;Advanced</string>
+     </property>
+     <addaction name="actionConnect_planner"/>
+     <addaction name="actionBackup"/>
+    </widget>
+    <action name=""/>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionNew_planner"/>
     <addaction name="actionOpen_planner"/>
     <addaction name="separator"/>
-    <addaction name="actionConnect_planner"/>
-    <addaction name="separator"/>
     <addaction name="actionCloud"/>
     <addaction name="separator"/>
-    <addaction name="actionExport_planner"/>
-    <addaction name="actionBackup"/>
+    <addaction name="actionExport_current"/>
+    <addaction name="actionSave_current"/>
     <addaction name="separator"/>
     <addaction name="actionImport_entry"/>
-    <addaction name="actionSave_current"/>
-    <addaction name="actionExport_current"/>
+    <addaction name="actionExport_planner"/>
+    <addaction name="separator"/>
+    <addaction name="menu_Advanced"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
@@ -352,11 +359,6 @@
     <string>&amp;Export current entry as Pdf</string>
    </property>
   </action>
-  <action name="actiond">
-   <property name="text">
-    <string>d</string>
-   </property>
-  </action>
   <action name="actionSave_current">
    <property name="text">
     <string>&amp;Save current entry as Markdown</string>
@@ -382,7 +384,7 @@
   </action>
   <action name="actionCloud">
    <property name="text">
-    <string>&amp;Cloud</string>
+    <string>&amp;Cloud connection</string>
    </property>
   </action>
  </widget>

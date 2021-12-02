@@ -55,7 +55,7 @@ class JournalCloud : public Journal {
   QNetworkAccessManager *manager;
 
  signals:
-  void networkStatus(bool status);
+  void networkStatus(QString errorCode);
 };
 
 #endif  // EDITOR_H

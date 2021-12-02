@@ -159,18 +159,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     clearJournal();
     bool isOk;
     QString pass;
-    QString info = QInputDialog::getText(this, tr("Connect to the cloud."),
-                                         tr("Username"), QLineEdit::Normal,
-                                         "username", &isOk);
+    QString info = QInputDialog::getText(this, tr("OpenJournal cloud connection"),
+                                         tr("Connect to the OpenJournal see https://gallois.cc/openjournal/pricing"), QLineEdit::Normal,
+                                         settings->value("settings/cloud", "username").toString(), &isOk);
     if (isOk) {
       pass = QInputDialog::getText(this, tr("Password"),
                                    tr("Password"), QLineEdit::Password,
-                                   "password", &isOk);
+                                   "", &isOk);
     }
     else {
       statusMessage->setText(tr("No journal is opened"));
     }
     if (isOk) {
+      settings->setValue("settings/cloud", info);
       openCloud(info, pass, QUrl("https://openjournal.gallois.cc"));
     }
     else {
@@ -223,12 +224,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(pageCloud, &JournalCloud::getDate, ui->date, &QLabel::setText);
   connect(pageCloud, &JournalCloud::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
-  connect(pageCloud, &JournalCloud::networkStatus, [this](bool status) {
-    if (status) {
+  connect(pageCloud, &JournalCloud::networkStatus, [this](QString error) {
+    if (error == "SUCCESS") {
       statusMessage->setText(tr("Your connected to the cloud as ") + pageCloud->username);
     }
+    else if (error == "401") {
+      statusMessage->setText(tr("The cloud can be reached! Wrong credentials."));
+    }
     else {
-      statusMessage->setText(tr("The cloud can be reached! Check your credential and the internet connection. Trying with username: ") + pageCloud->username);
+      statusMessage->setText(tr("The cloud can be reached! No internet connection. Trying with username: ") + pageCloud->username);
     }
   });
   connect(pageCloud, &Journal::getEntry, this, &MainWindow::refreshCursor);
