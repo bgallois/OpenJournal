@@ -171,7 +171,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       statusMessage->setText(tr("No journal is opened"));
     }
     if (isOk) {
-      openCloud(info, pass, QUrl("http://127.0.0.1:5000/"));
+      openCloud(info, pass, QUrl("https://openjournal.gallois.cc"));
     }
     else {
       statusMessage->setText(tr("No journal is opened"));

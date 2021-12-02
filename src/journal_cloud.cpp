@@ -100,7 +100,7 @@ void JournalCloud::httpRequest(QString type, QString data, QString date, QString
   postData.addQueryItem("user", username);
   postData.addQueryItem("type", type);
   postData.addQueryItem("password", password);
-  postData.addQueryItem("journal", "journal");
+  postData.addQueryItem("journal", username);
   postData.addQueryItem("data", data);
   postData.addQueryItem("identifier", date);
   postData.addQueryItem("content", content);
