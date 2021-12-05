@@ -157,22 +157,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(ui->actionCloud, &QAction::triggered, [this]() {
     clearJournal();
-    bool isOk;
-    QString pass;
-    QString info = QInputDialog::getText(this, tr("OpenJournal cloud connection"),
-                                         tr("Connect to the OpenJournal see https://gallois.cc/openjournal/pricing"), QLineEdit::Normal,
-                                         settings->value("settings/cloud", "username").toString(), &isOk);
-    if (isOk) {
-      pass = QInputDialog::getText(this, tr("Password"),
-                                   tr("Password"), QLineEdit::Password,
-                                   "", &isOk);
-    }
-    else {
-      statusMessage->setText(tr("No journal is opened"));
-    }
-    if (isOk) {
-      settings->setValue("settings/cloud", info);
-      openCloud(info, pass, QUrl("https://openjournal.gallois.cc"));
+    DialogCloud dialog(this);
+    dialog.setValue(settings->value("settings/cloud", "username").toString());
+    if (dialog.exec() == QDialog::Accepted) {
+      QPair<QString, QString> val = dialog.getValues();
+      openCloud(val.first, val.second, QUrl("https://openjournal.gallois.cc"));
+      settings->setValue("settings/cloud", val.first);
     }
     else {
       statusMessage->setText(tr("No journal is opened"));

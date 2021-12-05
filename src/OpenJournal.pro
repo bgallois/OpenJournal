@@ -29,6 +29,7 @@ QMAKE_CXXFLAGS += -std=c++11 -O3 -g
 CONFIG += c++11
 
 SOURCES += \
+    dialog_cloud.cpp \
         main.cpp \
         mainwindow.cpp \
         journal.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
         addalarm.cpp \
 
 HEADERS += \
+    dialog_cloud.h \
         mainwindow.h \
         journal.h \
         journal_cloud.h \
@@ -54,6 +56,7 @@ HEADERS += \
         addalarm.h \
 
 FORMS += \
+    dialog_cloud.ui \
         mainwindow.ui\
         qplaintexteditsearchwidget.ui \
         addalarm.ui \

@@ -50,6 +50,7 @@ GNU General Public License for more details.
 #include <QUrl>
 #include <QWebChannel>
 #include "addalarm.h"
+#include "dialog_cloud.h"
 #include "document.h"
 #include "journal.h"
 #include "journal_cloud.h"
