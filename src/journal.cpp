@@ -107,6 +107,9 @@ void Journal::readFromDatabase() {
     entry = query.value(0).toString();
     emit(getEntry(entry));
   }
+  else {
+    emit(getEntry(QString()));
+  }
 }
 
 void Journal::readFromDatabaseAll() {

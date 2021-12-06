@@ -443,9 +443,6 @@ void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
 void MainWindow::loadJournal(const QDate date) {
   if (page->isActive()) {
     ui->entry->forceBufferChange();
-    page->setReadOnly(true);  // Prevent erasing old entry
-    ui->entry->clear();
-    page->setReadOnly(false);
     page->setDate(date);
     page->readFromDatabase();
   }

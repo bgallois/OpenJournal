@@ -40,6 +40,11 @@ TEST_F(JournalTest, testConst) {
     testJournal.readFromDatabase();
     EXPECT_EQ(entry, entryRef);
 
+    testJournal.setDate(QDate(2021, 11, 30));
+    entryRef = "";
+    testJournal.readFromDatabase();
+    EXPECT_EQ(entry, entryRef);
+
     entryRef = "false";
     testJournal.readFromDatabase();
     EXPECT_NE(entry, entryRef);
