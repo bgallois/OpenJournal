@@ -157,12 +157,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(ui->actionCloud, &QAction::triggered, [this]() {
     clearJournal();
+    ui->entry->setEnabled(false);
     DialogCloud dialog(this);
     dialog.setValue(settings->value("settings/cloud", "username").toString());
     if (dialog.exec() == QDialog::Accepted) {
       QPair<QString, QString> val = dialog.getValues();
       openCloud(val.first, val.second, QUrl("https://openjournal.gallois.cc"));
       settings->setValue("settings/cloud", val.first);
+      statusMessage->setText(plannerName + tr(" cloud is opened"));
+      ui->entry->setEnabled(true);
     }
     else {
       statusMessage->setText(tr("No journal is opened"));
@@ -220,9 +223,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
     else if (error == "401") {
       statusMessage->setText(tr("The cloud can be reached! Wrong credentials."));
+      ui->entry->setEnabled(false);
     }
     else {
       statusMessage->setText(tr("The cloud can be reached! No internet connection. Trying with username: ") + pageCloud->username);
+      ui->entry->setEnabled(false);
     }
   });
   connect(pageCloud, &Journal::getEntry, this, &MainWindow::refreshCursor);
@@ -455,14 +460,10 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
  */
 void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
   switchJournalMode("cloud");
-  clearJournal();
-  ui->entry->setEnabled(false);
   ui->calendar->setSelectedDate(QDate::currentDate());
   page->setDatabase(endpoint, username, password);
   loadJournal(QDate::currentDate());
-  statusMessage->setText(plannerName + tr(" cloud is opened"));
   ui->actionBackup->setEnabled(false);
-  ui->entry->setEnabled(true);
 }
 
 /**
