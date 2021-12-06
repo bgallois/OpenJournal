@@ -326,21 +326,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   this->installEventFilter(this);
 }
 
-void MainWindow::loadJournal(const QDate date) {
-  if (page->isActive()) {
-    page->setReadOnly(true);  // Prevent erasing old entry
-    ui->entry->clear();
-    page->setReadOnly(false);
-    page->setDate(date);
-    page->readFromDatabase();
-  }
-  else {
-    statusMessage->setText(tr("No journal is opened"));
-    ui->entry->setEnabled(false);
-    ui->entry->clear();
-  }
+MainWindow::~MainWindow() {
+  delete ui;
+  delete page;
 }
 
+//////////////// Journal creation, loading and dialog /////////////////////////////////
+
+/**
+ * Open a QFileDialog to select a path where to create a new journal.
+ * Call the journal creation method.
+ */
 void MainWindow::newJournal() {
   clearJournal();
   plannerName = QFileDialog::getSaveFileName(this, tr("Save new journal"), "", tr("Journal (*.jnl)"));
@@ -352,6 +348,9 @@ void MainWindow::newJournal() {
   newJournal(plannerName);
 }
 
+/**
+ * Create an new journal at location fileName.
+ */
 void MainWindow::newJournal(QString fileName) {
   switchJournalMode("local");
   db = QSqlDatabase::addDatabase("QSQLITE");
@@ -373,6 +372,10 @@ void MainWindow::newJournal(QString fileName) {
   }
 }
 
+/**
+ * Open a QFileDialog to select a path where to find a journal.
+ * Call the journal opening method.
+ */
 void MainWindow::openJournal() {
   clearJournal();
   ui->entry->setEnabled(false);
@@ -385,6 +388,9 @@ void MainWindow::openJournal() {
   }
 }
 
+/**
+ * Open a journal at location plannerFile.
+ */
 void MainWindow::openJournal(QString plannerFile) {
   switchJournalMode("local");
   db = QSqlDatabase::addDatabase("QSQLITE");
@@ -404,18 +410,9 @@ void MainWindow::openJournal(QString plannerFile) {
   }
 }
 
-void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
-  switchJournalMode("cloud");
-  clearJournal();
-  ui->entry->setEnabled(false);
-  ui->calendar->setSelectedDate(QDate::currentDate());
-  page->setDatabase(endpoint, username, password);
-  loadJournal(QDate::currentDate());
-  statusMessage->setText(plannerName + tr(" cloud is opened"));
-  ui->actionBackup->setEnabled(false);
-  ui->entry->setEnabled(true);
-}
-
+/**
+ * Open a remote journal.
+ */
 void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
   switchJournalMode("local");
   clearJournal();
@@ -452,6 +449,43 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   }
 }
 
+/**
+ * Open a QFileDialog to enter the OpenJournal cloud credentials.
+ * Connect to the cloud and switch OpenJournal in remote mode.
+ */
+void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
+  switchJournalMode("cloud");
+  clearJournal();
+  ui->entry->setEnabled(false);
+  ui->calendar->setSelectedDate(QDate::currentDate());
+  page->setDatabase(endpoint, username, password);
+  loadJournal(QDate::currentDate());
+  statusMessage->setText(plannerName + tr(" cloud is opened"));
+  ui->actionBackup->setEnabled(false);
+  ui->entry->setEnabled(true);
+}
+
+/**
+ * Load a journal at a given date.
+ */
+void MainWindow::loadJournal(const QDate date) {
+  if (page->isActive()) {
+    page->setReadOnly(true);  // Prevent erasing old entry
+    ui->entry->clear();
+    page->setReadOnly(false);
+    page->setDate(date);
+    page->readFromDatabase();
+  }
+  else {
+    statusMessage->setText(tr("No journal is opened"));
+    ui->entry->setEnabled(false);
+    ui->entry->clear();
+  }
+}
+
+/**
+ * Clear and close the current journal.
+ */
 void MainWindow::clearJournal() {
   page->writeToDatabase();
   page->close();
@@ -461,18 +495,9 @@ void MainWindow::clearJournal() {
   clearTemporaryFiles();
 }
 
-void MainWindow::saveSettings() {
-  settings->setValue("mainwindow/lastJournal", plannerName);
-  settings->setValue("mainwindow/size", this->size());
-  settings->setValue("mainwindow/pos", this->pos());
-  settings->setValue("mainwindow/splitter", QVariant::fromValue(ui->splitter->sizes()));
-  settings->setValue("mainwindow/splitter_2", QVariant::fromValue(ui->splitter_2->sizes()));
-  settings->setValue("settings/privacy", isPrivate);
-  settings->setValue("settings/sonore", isSonore);
-  settings->setValue("settings/language", lang);
-  settings->setValue("settings/style", style);
-}
-
+/**
+ * Perform a backup of the currently opened journal.
+ */
 void MainWindow::backup() {
   QFile file(plannerName);
   QFile copy(plannerName + ".back");
@@ -487,93 +512,31 @@ void MainWindow::backup() {
   }
 }
 
-MainWindow::~MainWindow() {
-  delete ui;
-  delete page;
-}
-
-void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
-  switch (reason) {
-    case QSystemTrayIcon::Trigger: {
-      break;
-    }
-    case QSystemTrayIcon::DoubleClick: {
-      refreshTimer->start();
-      ui->calendar->setSelectedDate(QDate::currentDate());
-      refresh();
-      this->setVisible(true);
-      break;
-    }
-    default:;
+/**
+ * Switch OpenJournal mode to the appropriate backend (local or cloud).
+ */
+void MainWindow::switchJournalMode(QString mode) {
+  if (mode == "local") {
+    page = pageLocal;
+    pageCloud->blockSignals(true);
+    pageLocal->blockSignals(false);
+    pageCloud->setEnabled(false);
+    pageLocal->setEnabled(true);
+  }
+  else if (mode == "cloud") {
+    page = pageCloud;
+    pageLocal->blockSignals(true);
+    pageCloud->blockSignals(false);
+    pageLocal->setEnabled(false);
+    pageCloud->setEnabled(true);
   }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-  trayIcon->show();
-  hide();
-  if (isHelp) {
-    trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
-    isHelp = false;
-  }
-  refreshTimer->stop();
-  saveSettings();
-  event->ignore();
-}
+//////////////// Journal and entry exportation and importation /////////////////////////////////
 
-void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders) {
-  if (QDate::currentDate() != ui->calendar->selectedDate()) {
-    return;
-  }
-  int end = 0;
-  while (end >= 0) {
-    int start = text.indexOf("setAlarm(", end);
-    if (start != -1) {
-      end = text.indexOf(");", start);
-      if (end != -1) {
-        QStringRef command = text.midRef(start + 9, end - start - 9);
-        // Planner exportation
-        QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
-        if (commands.length() == 2 && !reminders.contains(command.toString())) {
-          QVector<QStringRef> timeSet = commands[0].split(':');
-          int time = -QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
-          if (time > 0) {
-            QTimer *notification = new QTimer(this);
-            notification->setSingleShot(true);
-            notification->setInterval(time);
-            QString message = commands[1].toString();
-            connect(notification, &QTimer::timeout, [this, message]() {
-              trayIcon->showMessage(tr("Notification"), message, QSystemTrayIcon::Information, 214483648);
-              if (isSonore) {
-                alarmSound->play();
-              }
-            });
-            notification->start();
-            reminders.insert(command.toString(), notification);
-          }
-        }
-      }
-    }
-    else {
-      break;
-    }
-  }
-}
-
-bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
-  if (isPrivate) {
-    if (event->type() == QEvent::Enter) {
-      this->setGraphicsEffect(nullptr);
-    }
-    else if (event->type() == QEvent::HoverLeave) {
-      QGraphicsBlurEffect *effect = new QGraphicsBlurEffect(this);
-      effect->setBlurRadius(40);
-      ui->preview->setGraphicsEffect(effect);
-      this->setGraphicsEffect(effect);
-    }
-  }
-  return false;
-}
-
+/**
+ * Export the current journal in PDF.
+ */
 void MainWindow::exportAll() {
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Select file"), saveDir, tr("Pdf Files (*.pdf)"));
@@ -587,6 +550,9 @@ void MainWindow::exportAll() {
   page->setReadOnly(false);
 }
 
+/**
+ * Export the current journal entry in PDF.
+ */
 void MainWindow::exportCurrent() {
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save file"), saveDir, tr("Pdf Files (*.pdf)"));
@@ -601,6 +567,9 @@ void MainWindow::exportCurrent() {
   page->setReadOnly(false);
 }
 
+/**
+ * Export the current journal entry in Markdown.
+ */
 void MainWindow::saveCurrent() {
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Select file"), saveDir, tr("Markdown Files (*.md)"));
@@ -618,6 +587,9 @@ void MainWindow::saveCurrent() {
   page->setReadOnly(false);
 }
 
+/**
+ * Append a Markdown file inside the current entry.
+ */
 void MainWindow::importEntry() {
   QString fileName = QFileDialog::getOpenFileName(this,
                                                   tr("Open file"), saveDir, tr("Markdown Files (*.md)"));
@@ -633,8 +605,14 @@ void MainWindow::importEntry() {
   refresh();
 }
 
+//////////////// MainWindow refresh /////////////////////////////////
+
+/**
+ * Refresh the current entry.
+ * Keep the current scroll and cursor position and selection.
+ */
 void MainWindow::refresh() {
-  // Triggered the refresh. It will be completed by refreshCursor when getText signal
+  // Triggered the refresh. It will be completed by refreshCursor when setEntry signal
   // is triggered when data has finished loading.
   // Account for the network delay.
   cursorPosition = ui->entry->textCursor().position();
@@ -645,6 +623,11 @@ void MainWindow::refresh() {
   clock->display(time.toString("hh:mm"));
 }
 
+/**
+ * Refresh the cursor.
+ * Called after text refresh triggered by the refresh method to take into account the network
+ * delay in cloud mode.
+ */
 void MainWindow::refreshCursor() {
   // Refresh after entry completely downloaded
   QTextCursor cursor = ui->entry->textCursor();
@@ -654,32 +637,12 @@ void MainWindow::refreshCursor() {
   ui->entry->verticalScrollBar()->setSliderPosition(scrollPosition);
 }
 
-void MainWindow::about() {
-  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 2</a> license").arg("\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\"")));
-}
+//////////////// Smart properties, smart image insertion, alarms /////////////////////////////////
 
-void MainWindow::changeEvent(QEvent *event) {
-  if (event->type() == QEvent::LanguageChange) {
-    ui->retranslateUi(this);
-  }
-}
-
-void MainWindow::reboot() {
-  saveSettings();
-  qApp->quit();
-  QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
-}
-
-bool MainWindow::loadStyle(const QString path) {
-  QFile stylesheet(path);
-  if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {  // Read the theme file
-    qApp->setStyleSheet(stylesheet.readAll());
-    stylesheet.close();
-    return true;
-  }
-  return false;
-}
-
+/**
+ * Add an image inside journal database and change its reference inside the text.
+ * At display, the image will be saved in /tmp/ folder and deleted when unecessary or at closing.
+ */
 void MainWindow::addImage(QString text) {
   bool isTextChanged = false;
   int textSize = text.size();
@@ -737,6 +700,9 @@ void MainWindow::addImage(QString text) {
   }
 }
 
+/**
+ * Clear temporary files necessary to the rendering like images.
+ */
 void MainWindow::clearTemporaryFiles() {
   for (const auto &a : tmpFiles) {
     QFile::remove(a);
@@ -744,8 +710,10 @@ void MainWindow::clearTemporaryFiles() {
   tmpFiles.clear();
 }
 
+/**
+ * Synchronous downloading of a remote file.
+ */
 QByteArray MainWindow::downloadHttpFile(QUrl url) {
-  // Synchronous downloading of a file
   QByteArray downloadedData;
   QNetworkAccessManager *manager = new QNetworkAccessManager(this);
   QEventLoop eventLoop;
@@ -761,19 +729,152 @@ QByteArray MainWindow::downloadHttpFile(QUrl url) {
   return downloadedData;
 }
 
-void MainWindow::switchJournalMode(QString mode) {
-  if (mode == "local") {
-    page = pageLocal;
-    pageCloud->blockSignals(true);
-    pageLocal->blockSignals(false);
-    pageCloud->setEnabled(false);
-    pageLocal->setEnabled(true);
+/**
+ * Set an alarm with the given message at the given time.
+ */
+void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders) {
+  if (QDate::currentDate() != ui->calendar->selectedDate()) {
+    return;
   }
-  else if (mode == "cloud") {
-    page = pageCloud;
-    pageLocal->blockSignals(true);
-    pageCloud->blockSignals(false);
-    pageLocal->setEnabled(false);
-    pageCloud->setEnabled(true);
+  int end = 0;
+  while (end >= 0) {
+    int start = text.indexOf("setAlarm(", end);
+    if (start != -1) {
+      end = text.indexOf(");", start);
+      if (end != -1) {
+        QStringRef command = text.midRef(start + 9, end - start - 9);
+        // Planner exportation
+        QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
+        if (commands.length() == 2 && !reminders.contains(command.toString())) {
+          QVector<QStringRef> timeSet = commands[0].split(':');
+          int time = -QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
+          if (time > 0) {
+            QTimer *notification = new QTimer(this);
+            notification->setSingleShot(true);
+            notification->setInterval(time);
+            QString message = commands[1].toString();
+            connect(notification, &QTimer::timeout, [this, message]() {
+              trayIcon->showMessage(tr("Notification"), message, QSystemTrayIcon::Information, 214483648);
+              if (isSonore) {
+                alarmSound->play();
+              }
+            });
+            notification->start();
+            reminders.insert(command.toString(), notification);
+          }
+        }
+      }
+    }
+    else {
+      break;
+    }
   }
+}
+
+//////////////// OpenJournal settings /////////////////////////////////
+
+/**
+ * Save OpenJournal settings.
+ */
+void MainWindow::saveSettings() {
+  settings->setValue("mainwindow/lastJournal", plannerName);
+  settings->setValue("mainwindow/size", this->size());
+  settings->setValue("mainwindow/pos", this->pos());
+  settings->setValue("mainwindow/splitter", QVariant::fromValue(ui->splitter->sizes()));
+  settings->setValue("mainwindow/splitter_2", QVariant::fromValue(ui->splitter_2->sizes()));
+  settings->setValue("settings/privacy", isPrivate);
+  settings->setValue("settings/sonore", isSonore);
+  settings->setValue("settings/language", lang);
+  settings->setValue("settings/style", style);
+}
+
+/**
+ * Load OpenJournal style stored at a given path.
+ */
+bool MainWindow::loadStyle(const QString path) {
+  QFile stylesheet(path);
+  if (stylesheet.open(QIODevice::ReadOnly | QIODevice::Text)) {  // Read the theme file
+    qApp->setStyleSheet(stylesheet.readAll());
+    stylesheet.close();
+    return true;
+  }
+  return false;
+}
+
+void MainWindow::about() {
+  QMessageBox::about(this, tr("About OpenJournal"), QString("<p align='center'><big><b>%1 %2</b></big><br/>%3<br/><small>%4<br/>%5</small></p>").arg(tr("OpenJournal"), QApplication::applicationVersion(), tr("A simple note taking journal, planner, reminder and Markdown editor."), tr("Copyright &copy; 2019-%1 Benjamin Gallois").arg("2021"), tr("Released under the <a href=%1>GPL 2</a> license").arg("\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html\"")));
+}
+
+//////////////// MainWindow events and tray /////////////////////////////////
+
+/**
+ * Event triggered when SystemTrayIcon is clicked.
+ */
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
+  switch (reason) {
+    case QSystemTrayIcon::Trigger: {
+      break;
+    }
+    case QSystemTrayIcon::DoubleClick: {
+      refreshTimer->start();
+      ui->calendar->setSelectedDate(QDate::currentDate());
+      refresh();
+      this->setVisible(true);
+      break;
+    }
+    default:;
+  }
+}
+
+/**
+ * Event triggered when OpenJournal closing is requested.
+ * OpenJournal will close the MainWindow and stay in the tray, not updating any data except alarms.
+ */
+void MainWindow::closeEvent(QCloseEvent *event) {
+  trayIcon->show();
+  hide();
+  if (isHelp) {
+    trayIcon->showMessage(tr("Hey!"), tr("I'm there"), QIcon(), 1500);
+    isHelp = false;
+  }
+  refreshTimer->stop();
+  saveSettings();
+  event->ignore();
+}
+
+/**
+ * Blur the MainWindow when pointer exit window if privacy option is activated.
+ */
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+  if (isPrivate) {
+    if (event->type() == QEvent::Enter) {
+      this->setGraphicsEffect(nullptr);
+    }
+    else if (event->type() == QEvent::HoverLeave) {
+      QGraphicsBlurEffect *effect = new QGraphicsBlurEffect(this);
+      effect->setBlurRadius(40);
+      ui->preview->setGraphicsEffect(effect);
+      this->setGraphicsEffect(effect);
+    }
+  }
+  return false;
+}
+
+/**
+ * Translate a part of the ui when required.
+ * Necessary to reboot OpenJournal to translate the rest of the ui.
+ */
+void MainWindow::changeEvent(QEvent *event) {
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+  }
+}
+
+/**
+ * Trigger OpenJournal reboot.
+ */
+void MainWindow::reboot() {
+  saveSettings();
+  qApp->quit();
+  QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }

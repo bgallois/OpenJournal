@@ -103,11 +103,11 @@ class MainWindow : public QMainWindow {
   void newJournal(QString plannerName);
   void openJournal();
   void openJournal(QString plannerName);
-  void openCloud(QString username, QString password, QUrl endpoint);
   void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
   void loadJournal(const QDate date);
+  void openCloud(QString username, QString password, QUrl endpoint);
+  void switchJournalMode(QString mode);
   void clearJournal();
-  void saveSettings();
   void backup();
   void refresh();
   void refreshCursor();
@@ -115,17 +115,17 @@ class MainWindow : public QMainWindow {
   void exportCurrent();
   void saveCurrent();
   void importEntry();
-  void iconActivated(QSystemTrayIcon::ActivationReason reason);
-  void closeEvent(QCloseEvent *event);
-  void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
-  bool eventFilter(QObject *obj, QEvent *event);
-  void about();
-  void reboot();
+  void saveSettings();
   bool loadStyle(const QString path);
   void addImage(QString path);
   void clearTemporaryFiles();
+  void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
+  void iconActivated(QSystemTrayIcon::ActivationReason reason);
+  void closeEvent(QCloseEvent *event);
+  bool eventFilter(QObject *obj, QEvent *event);
+  void about();
+  void reboot();
   QByteArray downloadHttpFile(QUrl url);
-  void switchJournalMode(QString mode);
 
  signals:
   void exportLoadingFinished();
