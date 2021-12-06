@@ -460,7 +460,7 @@ void MainWindow::loadJournal(const QDate date) {
  * Clear and close the current journal.
  */
 void MainWindow::clearJournal() {
-  page->writeToDatabase();
+  ui->entry->forceBufferChange();
   page->close();
   db.close();
   ui->date->clear();
