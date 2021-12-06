@@ -116,6 +116,7 @@ class MainWindow : public QMainWindow {
   void saveCurrent();
   void importEntry();
   void saveSettings();
+  void loadLanguages();
   bool loadStyle(const QString path);
   void addImage(QString path);
   void clearTemporaryFiles();

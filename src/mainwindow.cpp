@@ -38,30 +38,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   ui->splitter_2->setSizes(settings->value("mainwindow/splitter_2", QVariant::fromValue(QList<int>{194, 483})).value<QList<int>>());
 
   // Translation
-  lang = settings->value("settings/language", "en").toString();
-  QString appDir = QCoreApplication::applicationDirPath();
-  QStringList translationLocation = {appDir, appDir + "/../Resources/", appDir + "/../share/openjournal/"};  // Windows, Macs bundle, Linux
-  for (auto const &a : translationLocation) {
-    QStringList availableLang = QDir(a).entryList({"*.qm"});
-    if (!availableLang.isEmpty()) {
-      translator.load("openjournal_" + lang, a);
-      QLocale::setDefault(QLocale(lang));
-      this->setLocale(QLocale(lang));
-      qApp->installTranslator(&translator);
-      for (const auto &i : availableLang) {  // Append one action by language
-        QAction *langAction = new QAction(i.mid(12, 2), this);
-        langAction->setCheckable(true);
-        if (lang == i.mid(12, 2)) {
-          langAction->setChecked(true);
-        }
-        connect(langAction, &QAction::triggered, [this, i]() {
-          lang = i.mid(12, 2);
-          reboot();
-        });
-        ui->menuLanguage->addAction(langAction);
-      }
-    }
-  }
+  this->loadLanguages();
 
   // Setup style
   style = settings->value("settings/style", "openjournal").toString();
@@ -800,6 +777,36 @@ bool MainWindow::loadStyle(const QString path) {
     return true;
   }
   return false;
+}
+
+/**
+ * Change OpenJournal language.
+ */
+void MainWindow::loadLanguages() {
+  lang = settings->value("settings/language", "en").toString();
+  QString appDir = QCoreApplication::applicationDirPath();
+  QStringList translationLocation = {appDir, appDir + "/../Resources/", appDir + "/../share/openjournal/"};  // Windows, Macs bundle, Linux
+  for (auto const &a : translationLocation) {
+    QStringList availableLang = QDir(a).entryList({"*.qm"});
+    if (!availableLang.isEmpty()) {
+      translator.load("openjournal_" + lang, a);
+      QLocale::setDefault(QLocale(lang));
+      this->setLocale(QLocale(lang));
+      qApp->installTranslator(&translator);
+      for (const auto &i : availableLang) {  // Append one action by language
+        QAction *langAction = new QAction(i.mid(12, 2), this);
+        langAction->setCheckable(true);
+        if (lang == i.mid(12, 2)) {
+          langAction->setChecked(true);
+        }
+        connect(langAction, &QAction::triggered, [this, i]() {
+          lang = i.mid(12, 2);
+          reboot();
+        });
+        ui->menuLanguage->addAction(langAction);
+      }
+    }
+  }
 }
 
 void MainWindow::about() {
