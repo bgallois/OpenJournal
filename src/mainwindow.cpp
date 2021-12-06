@@ -172,10 +172,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Journal page
   pageLocal = new Journal();
-  connect(ui->entry, &QPlainTextEdit::textChanged, pageLocal, [this]() {
-    QString entry = ui->entry->toPlainText();
-    pageLocal->setEntry(entry);
-  });
+  connect(ui->entry, &Editor::bufferChanged, pageLocal, &Journal::setEntry);
   connect(pageLocal, &Journal::getDate, ui->date, &QLabel::setText);
   connect(pageLocal, &Journal::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
   connect(pageLocal, &Journal::getEntry, this, &MainWindow::refreshCursor);
@@ -188,10 +185,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
   });
   pageCloud = new JournalCloud();
-  connect(ui->entry, &QPlainTextEdit::textChanged, pageCloud, [this]() {
-    QString entry = ui->entry->toPlainText();
-    pageCloud->setEntry(entry);
-  });
+  connect(ui->entry, &Editor::bufferChanged, pageCloud, &JournalCloud::setEntry);
   connect(pageCloud, &JournalCloud::getDate, ui->date, &QLabel::setText);
   connect(pageCloud, &JournalCloud::getEntry, ui->entry, &QPlainTextEdit::setPlainText);
   connect(pageCloud, &JournalCloud::networkStatus, [this](QString error) {
@@ -448,6 +442,7 @@ void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
  */
 void MainWindow::loadJournal(const QDate date) {
   if (page->isActive()) {
+    ui->entry->forceBufferChange();
     page->setReadOnly(true);  // Prevent erasing old entry
     ui->entry->clear();
     page->setReadOnly(false);

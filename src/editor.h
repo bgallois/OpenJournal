@@ -28,9 +28,11 @@ GNU General Public License for more details.
 class Editor : public QMarkdownTextEdit {
   Q_OBJECT
  public:
-  using QMarkdownTextEdit::QMarkdownTextEdit;
+  explicit Editor(QWidget *parent = 0, bool initHighlighter = true);
 
  protected:
+  int buffer;
+  void setBuffer();
   void dropEvent(QDropEvent *dropEvent) override;
  public slots:
   void addToolBarActions(QToolBar *toolBar, QStatusBar *statusBar = nullptr);
@@ -42,6 +44,9 @@ class Editor : public QMarkdownTextEdit {
   void insertListTemplate();
   void insertListNumberedTemplate();
   void insertFormulaTemplate();
+  void forceBufferChange();
+ signals:
+  void bufferChanged(QString text);
 };
 
 #endif  // EDITOR_H

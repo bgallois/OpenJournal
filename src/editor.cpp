@@ -14,6 +14,22 @@ GNU General Public License for more details.
 
 #include "editor.h"
 
+Editor::Editor(QWidget *parent, bool initHighlighter) : QMarkdownTextEdit(parent, initHighlighter) {
+  connect(this, &QPlainTextEdit::textChanged, this, &Editor::setBuffer);
+}
+
+void Editor::setBuffer() {
+  if (buffer++; buffer > 20) {
+    emit(bufferChanged(this->toPlainText()));
+    buffer = 0;
+  }
+}
+
+void Editor::forceBufferChange() {
+  emit(bufferChanged(this->toPlainText()));
+  buffer = 0;
+}
+
 void Editor::dropEvent(QDropEvent *dropEvent) {
   // Add functionnalities
   const QMimeData *mimeData = dropEvent->mimeData();
