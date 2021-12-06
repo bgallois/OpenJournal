@@ -488,7 +488,7 @@ void MainWindow::backup() {
 /**
  * Switch OpenJournal mode to the appropriate backend (local or cloud).
  */
-void MainWindow::switchJournalMode(QString mode) {
+void MainWindow::switchJournalMode(const QString mode) {
   if (mode == "local") {
     page = pageLocal;
     pageCloud->blockSignals(true);

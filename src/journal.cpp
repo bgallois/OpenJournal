@@ -18,13 +18,14 @@ Journal::Journal(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *p
   setDatabase(database);
   setDate(date);
   setReadOnly(isReadOnly);
+  isEnable = true;
 }
 
 Journal::~Journal() {
 }
 
 void Journal::setEntry(QString e) {
-  if (isEnable) {
+  if (isEnable && (entry != e)) {
     entry = e;
     writeToDatabase();
   }

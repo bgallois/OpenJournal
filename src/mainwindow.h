@@ -106,7 +106,7 @@ class MainWindow : public QMainWindow {
   void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
   void loadJournal(const QDate date);
   void openCloud(QString username, QString password, QUrl endpoint);
-  void switchJournalMode(QString mode);
+  void switchJournalMode(const QString mode);
   void clearJournal();
   void backup();
   void refresh();

@@ -23,6 +23,7 @@ JournalCloud::JournalCloud(QUrl url, QString username, QString password, bool is
   setDatabase(url, username, password, isReadOnly);
   setDate(date);
   setReadOnly(isReadOnly);
+  isEnable = true;
 }
 
 void JournalCloud::close() {
