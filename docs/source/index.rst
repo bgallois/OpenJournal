@@ -21,7 +21,7 @@ Welcome to OpenJournal's documentation!
 
 OpenJournal is a simple journal, note-taking, and assistant application supporting Markdown syntax and Markdown rendering thanks to qmarkdowntextedit. It is designed to be as simple as possible with complete Markdown syntax, smart drag'n drop, and keyboard shortcuts.
 
-OpenJournal is available for Linux, Windows, and macOS.
+OpenJournal is available for Linux, Windows, macOS and offers a cloud storage see more `on the website <https://gallois.cc/openjournal>`_.
 
 
 
@@ -40,4 +40,5 @@ OpenJournal is available for Linux, Windows, and macOS.
    formatting
    notification
    shortcut
+   cloud
    advanced
