@@ -167,7 +167,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
   // Connect calendar
   connect(ui->calendar, &QCalendarWidget::selectionChanged, [this]() {
-    loadJournal(ui->calendar->selectedDate());
+    loadEntry(ui->calendar->selectedDate());
   });
 
   // Journal page
@@ -267,7 +267,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(
       todayTimer, &QTimer::timeout, todayTimer, [this]() {
         ui->calendar->setSelectedDate(QDate::currentDate());
-        loadJournal(ui->calendar->selectedDate());
+        loadEntry(ui->calendar->selectedDate());
       });
   todayTimer->start(36000000);
 
@@ -342,9 +342,9 @@ void MainWindow::newJournal(QString fileName) {
     plannerName = plannerName;
     ui->entry->setEnabled(true);
     ui->actionBackup->setEnabled(true);
-    ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournal(QDate::currentDate());
+    page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
+    ui->calendar->setSelectedDate(QDate::currentDate());
   }
 }
 
@@ -377,9 +377,9 @@ void MainWindow::openJournal(QString plannerFile) {
   }
   else {
     plannerName = plannerFile;
-    ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournal(QDate::currentDate());
+    page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
+    ui->calendar->setSelectedDate(QDate::currentDate());
     statusMessage->setText(plannerName + tr(" journal is opened"));
     ui->actionBackup->setEnabled(true);
     ui->entry->setEnabled(true);
@@ -390,8 +390,8 @@ void MainWindow::openJournal(QString plannerFile) {
  * Open a remote journal.
  */
 void MainWindow::openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile) {
-  switchJournalMode("local");
   clearJournal();
+  switchJournalMode("local");
   ui->entry->setEnabled(false);
   db = QSqlDatabase::addDatabase("QMARIADB");
   db.setHostName(hostname);
@@ -416,9 +416,9 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     ui->actionBackup->setEnabled(false);
     statusMessage->setText(plannerName + tr(" journal is opened"));
     ui->entry->setEnabled(true);
-    ui->calendar->setSelectedDate(QDate::currentDate());
     page->setDatabase(db);
-    loadJournal(QDate::currentDate());
+    page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
+    ui->calendar->setSelectedDate(QDate::currentDate());
   }
   else {
     statusMessage->setText(tr("No journal is opened"));
@@ -431,20 +431,40 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
  */
 void MainWindow::openCloud(QString username, QString password, QUrl endpoint) {
   switchJournalMode("cloud");
-  ui->calendar->setSelectedDate(QDate::currentDate());
   page->setDatabase(endpoint, username, password);
-  loadJournal(QDate::currentDate());
+  page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
+  ui->calendar->setSelectedDate(QDate::currentDate());
   ui->actionBackup->setEnabled(false);
 }
 
 /**
- * Load a journal at a given date.
+ * Load a new entry at a given date.
  */
-void MainWindow::loadJournal(const QDate date) {
+void MainWindow::loadEntry(const QDate date) {
   if (page->isActive()) {
-    ui->entry->forceBufferChange();
-    page->setDate(date);
-    page->readFromDatabase();
+    page->setEntry(ui->entry->toPlainText());
+    ui->entry->setBusy(true);
+    page->requestEntry(date);
+  }
+  else {
+    statusMessage->setText(tr("No journal is opened"));
+    ui->entry->setEnabled(false);
+    ui->entry->clear();
+  }
+}
+
+/**
+ * Refresh current entry. If no user input during 20 secondes, refresh pull the database. Otherwise is force push.
+ */
+void MainWindow::refreshEntry() {
+  if (page->isActive()) {
+    if (ui->entry->isUsed()) {
+      ui->entry->forceBufferChange();
+    }
+    else {
+      ui->entry->setBusy(true);
+      page->requestEntry(ui->calendar->selectedDate());
+    }
   }
   else {
     statusMessage->setText(tr("No journal is opened"));
@@ -457,12 +477,13 @@ void MainWindow::loadJournal(const QDate date) {
  * Clear and close the current journal.
  */
 void MainWindow::clearJournal() {
-  ui->entry->forceBufferChange();
-  page->close();
+  refreshTimer->stop();
+  page->setEntry(ui->entry->toPlainText());
   db.close();
   ui->date->clear();
   ui->entry->clear();
   clearTemporaryFiles();
+  refreshTimer->start();
 }
 
 /**
@@ -588,7 +609,7 @@ void MainWindow::refresh() {
   cursorPosition = ui->entry->textCursor().position();
   cursorAnchor = ui->entry->textCursor().anchor();
   scrollPosition = ui->entry->verticalScrollBar()->sliderPosition();
-  loadJournal(ui->calendar->selectedDate());
+  refreshEntry();
   QTime time = QTime::currentTime();
   clock->display(time.toString("hh:mm"));
 }
@@ -605,6 +626,7 @@ void MainWindow::refreshCursor() {
   cursor.setPosition(cursorPosition, QTextCursor::KeepAnchor);
   ui->entry->setTextCursor(cursor);
   ui->entry->verticalScrollBar()->setSliderPosition(scrollPosition);
+  ui->entry->setBusy(false);
 }
 
 //////////////// Smart properties, smart image insertion, alarms /////////////////////////////////
@@ -831,6 +853,7 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason) {
  * OpenJournal will close the MainWindow and stay in the tray, not updating any data except alarms.
  */
 void MainWindow::closeEvent(QCloseEvent *event) {
+  ui->entry->forceBufferChange();
   trayIcon->show();
   hide();
   if (isHelp) {

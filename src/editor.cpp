@@ -16,18 +16,45 @@ GNU General Public License for more details.
 
 Editor::Editor(QWidget *parent, bool initHighlighter) : QMarkdownTextEdit(parent, initHighlighter) {
   connect(this, &QPlainTextEdit::textChanged, this, &Editor::setBuffer);
+  inUse = new QElapsedTimer();
+  inUse->start();
+}
+
+Editor::~Editor() {
+  delete inUse;
 }
 
 void Editor::setBuffer() {
+  inUse->restart();
   if (buffer++; buffer > 20) {
     emit(bufferChanged(this->toPlainText()));
     buffer = 0;
   }
 }
 
+bool Editor::isUsed() {
+  if (inUse->elapsed() < 20000) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
 void Editor::forceBufferChange() {
   emit(bufferChanged(this->toPlainText()));
   buffer = 0;
+}
+
+void Editor::setBusy(bool isBusy) {
+  this->isBusy = isBusy;
+  this->setEnabled(!isBusy);
+  if (isBusy) {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+  }
+  else {
+    QApplication::restoreOverrideCursor();
+  }
 }
 
 void Editor::dropEvent(QDropEvent *dropEvent) {

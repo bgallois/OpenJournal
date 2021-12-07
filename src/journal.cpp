@@ -31,6 +31,11 @@ void Journal::setEntry(QString e) {
   }
 }
 
+void Journal::requestEntry(QDate date) {
+  setDate(date);
+  readFromDatabase();
+}
+
 void Journal::close() {
   db = QSqlDatabase();
 }

@@ -28,31 +28,28 @@ TEST_F(JournalTest, testConst) {
     QObject::connect(&testJournal, &Journal::getEntry, [&entry](QString data) {
       entry = data;
     });
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 31));
     EXPECT_EQ(entry, entryRef);
 
     entryRef = "false";
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 31));
     EXPECT_NE(entry, entryRef);
 
-    testJournal.setDate(QDate(2021, 10, 30));
     entryRef = "test30";
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 30));
     EXPECT_EQ(entry, entryRef);
 
-    testJournal.setDate(QDate(2021, 11, 30));
     entryRef = "";
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 11, 30));
     EXPECT_EQ(entry, entryRef);
 
     entryRef = "false";
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 30));
     EXPECT_NE(entry, entryRef);
 
     QObject::connect(&testJournal, &Journal::getAll, [&entry](QString data) {
       entry = data;
     });
-    testJournal.setDate(QDate(2021, 10, 31));
     testJournal.readFromDatabaseAll();
     entryRef = QString("# 2021.10.29\ntest29\n\n# 2021.10.30\ntest30\n\n# 2021.10.31\ntest31\n\n");
     EXPECT_EQ(entry, entryRef);
@@ -79,13 +76,13 @@ TEST_F(JournalTest, testWrite) {
     // Test write
     entryRef = "test write";
     testJournal.setEntry(entryRef);
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 31));
     EXPECT_EQ(entry, entryRef);
     testJournal.setEntry("test31");
     // Test read-only
     testJournal.setReadOnly(true);
     testJournal.setEntry(entryRef);
-    testJournal.readFromDatabase();
+    testJournal.requestEntry(QDate(2021, 10, 31));
     EXPECT_EQ(entry, "test31");
   }
   else {

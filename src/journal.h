@@ -34,6 +34,7 @@ class Journal : public QObject {
   Journal(const Journal &) = delete;
   Journal &operator=(const Journal &) = delete;
   ~Journal();
+  virtual void readFromDatabaseAll();
 
  protected:
   QString entry;
@@ -41,10 +42,8 @@ class Journal : public QObject {
   QDate date;
   bool isReadOnly;
   bool isEnable;
-
- public:
+  void setDate(QDate date);
   virtual void readFromDatabase();
-  virtual void readFromDatabaseAll();
   virtual void writeToDatabase();
 
  signals:
@@ -56,7 +55,7 @@ class Journal : public QObject {
  public slots:
   void setEnabled(bool isEnable);
   void setEntry(QString entry);
-  void setDate(QDate date);
+  void requestEntry(QDate date);
   virtual void setDatabase(QSqlDatabase &database, bool isReadOnly = false);
   virtual void setDatabase(QUrl url, QString user, QString pass, bool readOnly = false){};      // Reserved for runtime polymorphisme
   virtual void setDatabase(QString path, QString user, QString pass, bool readOnly = false){};  // Reserved for runtime polymorphisme

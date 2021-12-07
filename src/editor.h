@@ -15,8 +15,10 @@ GNU General Public License for more details.
 #ifndef EDITOR_H
 #define EDITOR_H
 
+#include <QApplication>
 #include <QDebug>
 #include <QDropEvent>
+#include <QElapsedTimer>
 #include <QKeySequence>
 #include <QMimeData>
 #include <QMimeDatabase>
@@ -29,6 +31,11 @@ class Editor : public QMarkdownTextEdit {
   Q_OBJECT
  public:
   explicit Editor(QWidget *parent = 0, bool initHighlighter = true);
+  ~Editor();
+  bool isBusy;
+
+ private:
+  QElapsedTimer *inUse;
 
  protected:
   int buffer;
@@ -45,6 +52,8 @@ class Editor : public QMarkdownTextEdit {
   void insertListNumberedTemplate();
   void insertFormulaTemplate();
   void forceBufferChange();
+  void setBusy(bool isBusy);
+  bool isUsed();
  signals:
   void bufferChanged(QString text);
 };

@@ -104,7 +104,8 @@ class MainWindow : public QMainWindow {
   void openJournal();
   void openJournal(QString plannerName);
   void openJournal(QString hostname, QString port, QString username, QString password, QString plannerFile);
-  void loadJournal(const QDate date);
+  void loadEntry(const QDate date);
+  void refreshEntry();
   void openCloud(QString username, QString password, QUrl endpoint);
   void switchJournalMode(const QString mode);
   void clearJournal();
@@ -130,6 +131,7 @@ class MainWindow : public QMainWindow {
 
  signals:
   void exportLoadingFinished();
+  void getEntry(QDate date);
 };
 
 #endif  // MAINWINDOW_H
