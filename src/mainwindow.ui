@@ -230,6 +230,7 @@
     <addaction name="separator"/>
     <addaction name="actionSource"/>
     <addaction name="actionReport"/>
+    <addaction name="actionAsk"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -385,6 +386,11 @@
   <action name="actionCloud">
    <property name="text">
     <string>&amp;Cloud connection</string>
+   </property>
+  </action>
+  <action name="actionAsk">
+   <property name="text">
+    <string>Ask a Question</string>
    </property>
   </action>
  </widget>
