@@ -231,6 +231,8 @@
     <addaction name="actionSource"/>
     <addaction name="actionReport"/>
     <addaction name="actionAsk"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheckRel"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -391,6 +393,11 @@
   <action name="actionAsk">
    <property name="text">
     <string>Ask a Question</string>
+   </property>
+  </action>
+  <action name="actionCheckRel">
+   <property name="text">
+    <string>Check for new release</string>
    </property>
   </action>
  </widget>
