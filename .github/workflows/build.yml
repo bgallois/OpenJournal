@@ -82,7 +82,7 @@ jobs:
                wget https://github.com/bgallois/QMYSQL_driver_prebuilt/releases/download/5.15.2/QMYSQL_MSVC2019_5.15.2.zip
                unzip QMYSQL_MSVC2019_5.15.2.zip
                copy libmariadb.dll OpenJournal\
-               copy sqldrivers\* OpenJournal\sqldrivers\
+               copy plugins\sqldrivers\* OpenJournal\sqldrivers\
                7z a C:\OpenJournal.zip OpenJournal\
                cd ..
                makensis.exe /V3 resources/installer.nsi
