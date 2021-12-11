@@ -2,6 +2,10 @@ Design Philosophy
 =================
 OpenJournal is a simple note-taking application. Each day represents a separate entry that can be navigated using a calendar widget. Each journal is stored inside a database that can be either a local file (`*.jnl`) or a database inside a MariaDB server.
 
+- **For writers**: as detailed in *Description & Setting* by Ron Rozelle, keeping a writer's journal is a good way to improve writing abilities. Writers can record plots outlines, observations, descriptions, details, dialog lines, etc... 
+- **For anyone**: keeping a daily diary can help you achieve several goals. It can help you organize your thoughts, records daily success, and set your next goals to keep the insensitive high. Writing down feelings can help you self-reflect and relieve stress, keeping a trace of situations and feelings.
+- **For professionals**: writing down tasks to achieve and expected jobs duration can help you organize your day. The possibility to set alarms can help to manage available time and not forget any meeting.
+
 User Interface
 ----------------
 The user interface of OpenJournal is designed to be as simple as possible. It is constituted of 3 resizable panels:

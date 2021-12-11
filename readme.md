@@ -7,6 +7,12 @@ OpenJournal is a simple journal, note-taking, and assistant application supporti
 See the complete documentation at [https://openjournal.readthedocs.io/en/latest/](https://openjournal.readthedocs.io/en/latest/).
 See the presentation website at [https://gallois.cc/openjournal/](https://gallois.cc/openjournal/).
 
+## For who?
+
+* **For writers**: as detailed in *Description & Setting* by Ron Rozelle, keeping a writer's journal is a good way to improve writing abilities. Writers can record plots outlines, observations, descriptions, details, dialog lines, etc... 
+* **For anyone**: keeping a daily diary can help you achieve several goals. It can help you organize your thoughts, records daily success, and set your next goals to keep the insensitive high. Writing down feelings can help you self-reflect and relieve stress, keeping a trace of situations and feelings.
+* **For professionals**: writing down tasks to achieve and expected jobs duration can help you organize your day. The possibility to set alarms can help to manage available time and not forget any meeting.
+
 ## Technology
 
 OpenJournal uses a database to store and retrieve user notes. This flexible approach offers several advantages. Local journals can be created using [SQlite](https://www.sqlite.org/index.html) and stored in a single file that the user can copy and move between computers. Remote journals can be accessed using [MariaDB](https://mariadb.org/), first, the user has to create a database server, then OpenJournal can access the database server to store journals. In this way, a user can access its journal locally and add a layer of security by password protection.
