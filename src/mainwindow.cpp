@@ -200,6 +200,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       tmpFiles.append(imagePath);
       image.close();
     }
+    QApplication::restoreOverrideCursor();
+    ui->preview->reload();  // refresh web rendering
   });
   pageCloud = new JournalCloud();
   connect(ui->entry, &Editor::bufferChanged, pageCloud, &JournalCloud::setEntry);
@@ -221,11 +223,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(pageCloud, &Journal::getEntry, this, &MainWindow::refreshCursor);
   connect(pageCloud, &JournalCloud::getImage, [this](QByteArray imageData, QString imagePath) {
     QFile image(imagePath);
-    if (image.open(QIODevice::WriteOnly)) {
+    if (!imageData.isEmpty() && image.open(QIODevice::WriteOnly)) {  // Check if the image is empty to account for network delay
       image.write(imageData);
       tmpFiles.append(imagePath);
       image.close();
     }
+    QApplication::restoreOverrideCursor();
+    ui->preview->reload();  // refresh web rendering
   });
   switchJournalMode("local");
 
@@ -640,6 +644,7 @@ void MainWindow::refresh() {
   cursorPosition = ui->entry->textCursor().position();
   cursorAnchor = ui->entry->textCursor().anchor();
   scrollPosition = ui->entry->verticalScrollBar()->sliderPosition();
+  addImage(ui->entry->toPlainText());
   refreshEntry();
   QTime time = QTime::currentTime();
   clock->display(time.toString("hh:mm"));
@@ -705,13 +710,14 @@ void MainWindow::addImage(QString text) {
     // Save image in local temporary files
     imagePath.remove("file://");
     if (!tmpFiles.contains(imagePath) && imageLabel.contains("OpenJournal_Local_")) {
+      QApplication::setOverrideCursor(Qt::WaitCursor);
       page->retrieveImage(imageLabel, imagePath);
     }
   }
 
   // Update the text if changed
   if (isTextChanged) {
-    {
+    {  // Signal blocker scope
       const QSignalBlocker blocker(ui->entry);
       int cursorPosition = ui->entry->textCursor().position();
       int offset = text.size() - textSize;
