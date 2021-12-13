@@ -93,6 +93,9 @@ void JournalCloud::httpReply(QNetworkReply *reply) {
       emit(getImage(QByteArray::fromHex(replyData["content"].toString().toUtf8()), replyData["identifier"].toString()));
     }
   }
+  else if (replyData["type"].toString() == "query_all") {
+    emit(getAll(replyData["content"].toString()));
+  }
   reply->deleteLater();
 }
 

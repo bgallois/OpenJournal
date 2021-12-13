@@ -269,6 +269,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     doc.setText(data);
     emit(exportLoadingFinished());
   });
+  connect(pageCloud, &JournalCloud::getAll, [this](QString data) {
+    setEnabled(false);
+    refreshTimer->stop();
+    page->setReadOnly(true);
+    doc.setText(data);
+    emit(exportLoadingFinished());
+  });
   connect(this, &MainWindow::exportLoadingFinished, this, &MainWindow::exportAll);
 
   // Current entry exportation
