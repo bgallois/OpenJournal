@@ -266,6 +266,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     setEnabled(false);
     refreshTimer->stop();
     page->setReadOnly(true);
+    addImage(data);
     doc.setText(data);
     emit(exportLoadingFinished());
   });
@@ -273,6 +274,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     setEnabled(false);
     refreshTimer->stop();
     page->setReadOnly(true);
+    addImage(data);
     doc.setText(data);
     emit(exportLoadingFinished());
   });
