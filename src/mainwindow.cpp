@@ -258,7 +258,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   addToolBar(Qt::LeftToolBarArea, ui->toolBar);
 
   // Planner exportation
-  connect(ui->actionExport_planner, &QAction::triggered, page, &Journal::readFromDatabaseAll);
+  connect(ui->actionExport_planner, &QAction::triggered, [this]() {
+    ui->entry->forceBufferChange();
+    page->readFromDatabaseAll();
+  });
   connect(page, &Journal::getAll, [this](QString data) {
     setEnabled(false);
     refreshTimer->stop();
@@ -562,6 +565,7 @@ void MainWindow::exportAll() {
  * Export the current journal entry in PDF.
  */
 void MainWindow::exportCurrent() {
+  ui->entry->forceBufferChange();
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Save file"), saveDir, tr("Pdf Files (*.pdf)"));
   refreshTimer->stop();
@@ -579,6 +583,7 @@ void MainWindow::exportCurrent() {
  * Export the current journal entry in Markdown.
  */
 void MainWindow::saveCurrent() {
+  ui->entry->forceBufferChange();
   QString fileName = QFileDialog::getSaveFileName(this,
                                                   tr("Select file"), saveDir, tr("Markdown Files (*.md)"));
   refreshTimer->stop();

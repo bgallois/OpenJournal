@@ -119,7 +119,7 @@ void Journal::readFromDatabase() {
 
 void Journal::readFromDatabaseAll() {
   QSqlQuery query(db);
-  query.prepare("SELECT * FROM journalPage");
+  query.prepare("SELECT * FROM journalPage ORDER BY date");
   query.exec();
   QString data;
   while (query.next()) {
