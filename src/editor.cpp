@@ -24,6 +24,10 @@ Editor::~Editor() {
   delete inUse;
 }
 
+/**
+ * Set the text buffer.
+ * Text buffer is a level on top of textChanged of the original editor to reduce emitted signals.
+ */
 void Editor::setBuffer() {
   inUse->restart();
   if (buffer++; buffer > 20) {
@@ -32,6 +36,10 @@ void Editor::setBuffer() {
   }
 }
 
+/**
+ * Check if the journal is in use by the mean of a timer.
+ * Inactive journal status is defined by no modification during more than 20 seconds.
+ */
 bool Editor::isUsed() {
   if (inUse->elapsed() < 20000) {
     return true;
@@ -41,11 +49,17 @@ bool Editor::isUsed() {
   }
 }
 
+/**
+ * Commit then reset the text buffer.
+ */
 void Editor::forceBufferChange() {
   emit(bufferChanged(this->toPlainText()));
   buffer = 0;
 }
 
+/**
+ * Set the editor as busy to prevent any modification during loadings.
+ */
 void Editor::setBusy(bool isBusy) {
   this->isBusy = isBusy;
   this->setEnabled(!isBusy);
@@ -57,6 +71,9 @@ void Editor::setBusy(bool isBusy) {
   }
 }
 
+/**
+ * Drop event implementation for images and texts.
+ */
 void Editor::dropEvent(QDropEvent *dropEvent) {
   // Add functionnalities
   const QMimeData *mimeData = dropEvent->mimeData();
@@ -85,6 +102,9 @@ void Editor::dropEvent(QDropEvent *dropEvent) {
   setReadOnly(false);
 }
 
+/**
+ * Append editor actions in a toolbar.
+ */
 void Editor::addToolBarActions(QToolBar *toolBar, QStatusBar *statusBar) {
   QKeySequence keySequence = QKeySequence(Qt::CTRL + Qt::Key_B);
   QAction *actionBoldTemplate = new QAction(QIcon(":/bold.png"), tr("Bold ") + keySequence.toString(), this);

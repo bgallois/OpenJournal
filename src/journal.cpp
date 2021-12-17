@@ -24,6 +24,9 @@ Journal::Journal(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *p
 Journal::~Journal() {
 }
 
+/**
+ * Request an entry to be written in the journal.
+ */
 void Journal::setEntry(QString e) {
   if (isEnable && (entry != e)) {
     entry = e;
@@ -31,15 +34,24 @@ void Journal::setEntry(QString e) {
   }
 }
 
+/**
+ * Request an entry to be read from the journal.
+ */
 void Journal::requestEntry(QDate date) {
   setDate(date);
   readFromDatabase();
 }
 
+/**
+ * Close the current journal.
+ */
 void Journal::close() {
   db = QSqlDatabase();
 }
 
+/**
+ * Set the journal by opening a database.
+ */
 void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   db = database;
   QSqlQuery query(db);
@@ -60,14 +72,23 @@ void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
   setReadOnly(isReadOnly);
 }
 
+/**
+ * Set the current date.
+ */
 void Journal::setDate(QDate d) {
   date = d;
 }
 
+/**
+ * Set journal as read-only.
+ */
 void Journal::setReadOnly(bool isLocked) {
   isReadOnly = isLocked;
 }
 
+/**
+ * Private function to write in the database the current entry.
+ */
 void Journal::writeToDatabase() {
   if (isReadOnly) {
     return;
@@ -100,6 +121,9 @@ void Journal::writeToDatabase() {
   }
 }
 
+/**
+ * Private function to read from the database at the current date.
+ */
 void Journal::readFromDatabase() {
   // Reads from database the entry at date equal current date
   QSqlQuery query(db);
@@ -117,6 +141,9 @@ void Journal::readFromDatabase() {
   }
 }
 
+/**
+ * Read all the entry in the database.
+ */
 void Journal::readFromDatabaseAll() {
   QSqlQuery query(db);
   query.prepare("SELECT * FROM journalPage ORDER BY date");
@@ -128,6 +155,9 @@ void Journal::readFromDatabaseAll() {
   emit(getAll(data));
 }
 
+/**
+ * Insert an image in the database.
+ */
 void Journal::insertImage(QString name, QByteArray imageData) {
   QSqlQuery query(db);
   query.prepare(
@@ -138,6 +168,9 @@ void Journal::insertImage(QString name, QByteArray imageData) {
   query.exec();
 }
 
+/**
+ * Retrieve an image form the database.
+ */
 void Journal::retrieveImage(QString name, QString path) {
   QSqlQuery query(db);
   query.prepare("SELECT imagedata FROM asset WHERE filename = ?");
@@ -150,6 +183,9 @@ void Journal::retrieveImage(QString name, QString path) {
   emit(getImage(imageData, path));
 }
 
+/**
+ * Delete images that are not referenced in any entry.
+ */
 void Journal::clearUnusedImages() {
   QSqlQuery query(db);
   query.prepare("SELECT entry FROM journalPage");
@@ -171,12 +207,18 @@ void Journal::clearUnusedImages() {
   }
 }
 
+/**
+ * Check if the database connection is active.
+ */
 bool Journal::isActive() {
   QSqlQuery query(db);
   query.prepare("SELECT 1");
   return query.exec();
 }
 
+/**
+ * Set the journal enable.
+ */
 void Journal::setEnabled(bool isEnable) {
   this->isEnable = isEnable;
 }
