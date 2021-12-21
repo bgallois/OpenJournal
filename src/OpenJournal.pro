@@ -40,7 +40,6 @@ SOURCES += \
         qplaintexteditsearchwidget.cpp \
         previewpage.cpp \
         document.cpp \
-        addalarm.cpp \
 
 HEADERS += \
     dialog_cloud.h \
@@ -53,13 +52,11 @@ HEADERS += \
         qplaintexteditsearchwidget.h \
         previewpage.h \
         document.h \
-        addalarm.h \
 
 FORMS += \
     dialog_cloud.ui \
         mainwindow.ui\
         qplaintexteditsearchwidget.ui \
-        addalarm.ui \
 
 RESOURCES = \
             ../resources/openjournal.qrc

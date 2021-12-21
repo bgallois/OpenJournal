@@ -250,11 +250,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), tr("Add an alarm ") + keySequence.toString(), this);
   actionAddAlarm->setShortcut(keySequence);
   connect(actionAddAlarm, &QAction::triggered, [this]() {
-    ui->entry->moveCursor(QTextCursor::End);
-    AddAlarm *alarm = new AddAlarm();
-    connect(alarm, &AddAlarm::alarm, ui->entry, &QMarkdownTextEdit::appendPlainText);
-    alarm->exec();
-    delete alarm;
+    if (ui->entry->isEnabled()) {
+      QTextCursor cursor = ui->entry->textCursor();
+      ui->entry->insertPlainText("setAlarm(hh:mm,MESSAGE);");
+      cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 2);
+      cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, 7);
+      ui->entry->setTextCursor(cursor);
+    }
   });
   ui->toolBar->addAction(actionAddAlarm);
   ui->toolBar->addSeparator();
