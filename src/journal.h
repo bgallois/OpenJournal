@@ -30,7 +30,7 @@ class Journal : public QObject {
   Q_OBJECT
  public:
   Journal() = default;
-  Journal(QSqlDatabase &database, QDate date, bool isReadOnly = false, QObject *parent = nullptr);
+  Journal(QString dbConnection, QDate date, bool isReadOnly = false, QObject *parent = nullptr);
   Journal(const Journal &) = delete;
   Journal &operator=(const Journal &) = delete;
   ~Journal();
@@ -39,6 +39,7 @@ class Journal : public QObject {
  protected:
   QString entry;
   QSqlDatabase db;
+  QString dbConnection;
   QDate date;
   bool isReadOnly;
   bool isEnable;
@@ -56,7 +57,7 @@ class Journal : public QObject {
   void setEnabled(bool isEnable);
   void setEntry(QString entry);
   void requestEntry(QDate date);
-  virtual void setDatabase(QSqlDatabase &database, bool isReadOnly = false);
+  virtual void setDatabase(QString databaseName, bool isReadOnly = false);
   virtual void setDatabase(QUrl url, QString user, QString pass, bool readOnly = false){};      // Reserved for runtime polymorphisme
   virtual void setDatabase(QString path, QString user, QString pass, bool readOnly = false){};  // Reserved for runtime polymorphisme
   void setReadOnly(bool isLocked);

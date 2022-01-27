@@ -19,10 +19,10 @@ TEST_F(JournalTest, testConst) {
   QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
   QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  db = QSqlDatabase::addDatabase("QSQLITE", "test");
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
-    Journal testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal("test", QDate(2021, 10, 31));
     QString entryRef("test31");
     QString entry;
     QObject::connect(&testJournal, &Journal::getEntry, [&entry](QString data) {
@@ -64,10 +64,10 @@ TEST_F(JournalTest, testWrite) {
   QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
   QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  db = QSqlDatabase::addDatabase("QSQLITE", "test");
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
-    Journal testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal("test", QDate(2021, 10, 31));
     QString entry;
     QString entryRef;
     QObject::connect(&testJournal, &Journal::getEntry, [&entry](QString data) {
@@ -95,12 +95,12 @@ TEST_F(JournalTest, active) {
   QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
   QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  db = QSqlDatabase::addDatabase("QSQLITE", "test");
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
-    Journal testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal("test", QDate(2021, 10, 31));
     EXPECT_EQ(testJournal.isActive(), true);
-    db.close();
+    testJournal.close();
     EXPECT_EQ(testJournal.isActive(), false);
   }
   else {
@@ -122,10 +122,10 @@ TEST_F(JournalTest, insert_retrieveImage) {
   QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
   QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  db = QSqlDatabase::addDatabase("QSQLITE", "test");
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
-    Journal testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal("test", QDate(2021, 10, 31));
     QByteArray imageTest;
     QObject::connect(&testJournal, &Journal::getImage, [&imageTest](QByteArray image, QString name) {
       imageTest = image;
@@ -155,10 +155,10 @@ TEST_F(JournalTest, cleanImage) {
   QFile::copy(":/test.jnl", QDir::tempPath() + "/test.jnl");
   QFile::setPermissions(QDir::tempPath() + "/test.jnl", QFile::WriteOwner | QFile::ReadOwner);
   QSqlDatabase db;
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  db = QSqlDatabase::addDatabase("QSQLITE", "test");
   db.setDatabaseName(QDir::tempPath() + "/test.jnl");
   if (db.open()) {
-    Journal testJournal(db, QDate(2021, 10, 31));
+    Journal testJournal("test", QDate(2021, 10, 31));
     QByteArray imageTest;
     QObject::connect(&testJournal, &Journal::getImage, [&imageTest](QByteArray image, QString name) {
       imageTest = image;

@@ -14,8 +14,8 @@ GNU General Public License for more details.
 
 #include "journal.h"
 
-Journal::Journal(QSqlDatabase &database, QDate date, bool isReadOnly, QObject *parent) : QObject(parent) {
-  setDatabase(database);
+Journal::Journal(QString dbConnection, QDate date, bool isReadOnly, QObject *parent) : QObject(parent) {
+  setDatabase(dbConnection);
   setDate(date);
   setReadOnly(isReadOnly);
   isEnable = true;
@@ -46,14 +46,16 @@ void Journal::requestEntry(QDate date) {
  * Close the current journal.
  */
 void Journal::close() {
-  db = QSqlDatabase();
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
+  db.close();
 }
 
 /**
  * Set the journal by opening a database.
  */
-void Journal::setDatabase(QSqlDatabase &database, bool isReadOnly) {
-  db = database;
+void Journal::setDatabase(QString dbConnection, bool isReadOnly) {
+  this->dbConnection = dbConnection;
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("CREATE TABLE IF NOT EXISTS asset ( filename TEXT, imagedata LONGBLOB )");
   query.exec();
@@ -94,6 +96,7 @@ void Journal::writeToDatabase() {
     return;
   }
 
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   if (entry.isEmpty()) {
     query.prepare("DELETE FROM journalPage WHERE date = ? ");
@@ -126,6 +129,7 @@ void Journal::writeToDatabase() {
  */
 void Journal::readFromDatabase() {
   // Reads from database the entry at date equal current date
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("SELECT entry FROM journalPage WHERE date = ?");
   query.addBindValue(date.toString("yyyy.MM.dd"));
@@ -145,6 +149,7 @@ void Journal::readFromDatabase() {
  * Read all the entry in the database.
  */
 void Journal::readFromDatabaseAll() {
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("SELECT * FROM journalPage ORDER BY date");
   query.exec();
@@ -159,6 +164,7 @@ void Journal::readFromDatabaseAll() {
  * Insert an image in the database.
  */
 void Journal::insertImage(QString name, QByteArray imageData) {
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare(
       "INSERT INTO asset (filename, imagedata)"
@@ -172,6 +178,7 @@ void Journal::insertImage(QString name, QByteArray imageData) {
  * Retrieve an image form the database.
  */
 void Journal::retrieveImage(QString name, QString path) {
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("SELECT imagedata FROM asset WHERE filename = ?");
   query.addBindValue(name);
@@ -187,6 +194,7 @@ void Journal::retrieveImage(QString name, QString path) {
  * Delete images that are not referenced in any entry.
  */
 void Journal::clearUnusedImages() {
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("SELECT entry FROM journalPage");
   query.exec();
@@ -211,6 +219,7 @@ void Journal::clearUnusedImages() {
  * Check if the database connection is active.
  */
 bool Journal::isActive() {
+  QSqlDatabase db = QSqlDatabase::database(dbConnection, false);
   QSqlQuery query(db);
   query.prepare("SELECT 1");
   return query.exec();

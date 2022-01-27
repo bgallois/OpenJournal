@@ -70,7 +70,7 @@ class MainWindow : public QMainWindow {
   QString lang;
   QString style;
   QString saveDir;
-  QSqlDatabase db;
+  QString dbConnection;
   Journal *page;
   JournalCloud *pageCloud;
   Journal *pageLocal;

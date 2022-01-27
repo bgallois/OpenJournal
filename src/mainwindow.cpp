@@ -187,6 +187,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     loadEntry(ui->calendar->selectedDate());
   });
 
+  // Database connection
+  QSqlDatabase::addDatabase("QSQLITE", "local");
+  QSqlDatabase::addDatabase("QMARIADB", "remote");
+
   // Journal page
   pageLocal = new Journal();
   connect(ui->entry, &Editor::bufferChanged, pageLocal, &Journal::setEntry);
@@ -364,7 +368,7 @@ void MainWindow::newJournal() {
  */
 void MainWindow::newJournal(QString fileName) {
   switchJournalMode("local");
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  QSqlDatabase db = QSqlDatabase::database("local");
   db.setDatabaseName(fileName);
   ui->entry->setEnabled(false);
   if (!db.open()) {
@@ -377,7 +381,7 @@ void MainWindow::newJournal(QString fileName) {
     plannerName = plannerName;
     ui->entry->setEnabled(true);
     ui->actionBackup->setEnabled(true);
-    page->setDatabase(db);
+    page->setDatabase("local");
     page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
     ui->calendar->setSelectedDate(QDate::currentDate());
   }
@@ -404,7 +408,7 @@ void MainWindow::openJournal() {
  */
 void MainWindow::openJournal(QString plannerFile) {
   switchJournalMode("local");
-  db = QSqlDatabase::addDatabase("QSQLITE");
+  QSqlDatabase db = QSqlDatabase::database("local");
   db.setDatabaseName(plannerFile);
   if (!db.open()) {
     statusMessage->setText(plannerFile + tr(" journal failed to open"));
@@ -412,7 +416,7 @@ void MainWindow::openJournal(QString plannerFile) {
   }
   else {
     plannerName = plannerFile;
-    page->setDatabase(db);
+    page->setDatabase("local");
     page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
     ui->calendar->setSelectedDate(QDate::currentDate());
     statusMessage->setText(plannerName + tr(" journal is opened"));
@@ -428,21 +432,22 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
   clearJournal();
   switchJournalMode("local");
   ui->entry->setEnabled(false);
-  db = QSqlDatabase::addDatabase("QMARIADB");
+  QSqlDatabase db = QSqlDatabase::database("remote");
   db.setHostName(hostname);
   db.setPort(port.toInt());
   db.setUserName(username);
   db.setPassword(password);
+  db.setDatabaseName("");
   if (!db.open()) {  // Check authentification
     statusMessage->setText(tr("Authentification failed"));
     return;
   }
   db.setDatabaseName(plannerFile);
   if (!db.open()) {  // Create database if not exist
-    db.setDatabaseName("mysql");
+    db.setDatabaseName("");
     db.open();
     QSqlQuery query(db);
-    query.prepare(QString("CREATE DATABASE %1 ").arg(plannerFile));  // Normaly cannot used place holder for database and table name beware sql injection
+    query.prepare(QString("CREATE DATABASE %1 ").arg(plannerFile));  // Normally cannot used place holder for database and table name beware sql injection
     query.exec();
     db.setDatabaseName(plannerFile);
   }
@@ -451,7 +456,7 @@ void MainWindow::openJournal(QString hostname, QString port, QString username, Q
     ui->actionBackup->setEnabled(false);
     statusMessage->setText(plannerName + tr(" journal is opened"));
     ui->entry->setEnabled(true);
-    page->setDatabase(db);
+    page->setDatabase("remote");
     page->requestEntry(ui->calendar->selectedDate());  // Necessary to not overwrite the entry at loading
     ui->calendar->setSelectedDate(QDate::currentDate());
   }
@@ -514,7 +519,7 @@ void MainWindow::refreshEntry() {
 void MainWindow::clearJournal() {
   refreshTimer->stop();
   page->setEntry(ui->entry->toPlainText());
-  db.close();
+  page->close();
   ui->date->clear();
   ui->entry->clear();
   clearTemporaryFiles();
