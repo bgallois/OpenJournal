@@ -6,12 +6,34 @@ TARGET = Test
 TEMPLATE = app
 CONFIG += testcase
 CONFIG += no_testcase_installs
+CONFIG += c++17
 
 DESTDIR=build
 OBJECTS_DIR=build
 MOC_DIR=build
 UI_DIR=build
 RCC_DIR=build
+
+unix:!macx {
+    INCLUDEPATH += /usr/include/gtest
+    LIBS += -lgtest -lgtest_main
+}
+
+unix:macx {
+  QMAKE_LFLAGS_SONAME  = -Wl,-install_name,@executable_path/../Frameworks/
+  QT_CONFIG -= no-pkg-config
+  CONFIG  += link_pkgconfig
+  PKGCONFIG += gtest
+}
+
+win32 {
+  QMAKE_CFLAGS_RELEASE += /MT
+  QMAKE_CXXFLAGS_RELEASE += /MT
+  QMAKE_CFLAGS_RELEASE -= -MD
+  QMAKE_CXXFLAGS_RELEASE -= -MD
+  LIBS += -L"$$PWD/../googletest/build/install/lib" -lgtest -lgtest_main
+  INCLUDEPATH += "$$PWD/../googletest/build/install/include/"
+}
 
 SOURCES += \
         test.cpp \
@@ -24,17 +46,12 @@ SOURCES += \
 FORMS += \
         ../src/qplaintexteditsearchwidget.ui \
 
-QMAKE_CXXFLAGS += -std=c++17 -O3 -fopenmp -g
-
-INCLUDEPATH += /usr/include/gtest
-LIBS += -lgtest -lgtest_main
 HEADERS += \
         ../src/journal.h \
         ../src/qmarkdowntextedit.h \
         ../src/markdownhighlighter.h \
         ../src/editor.h \
         ../src/qplaintexteditsearchwidget.h \
-        /usr/include/gtest/gtest.h \
 
 RESOURCES += \
         resources.qrc\
