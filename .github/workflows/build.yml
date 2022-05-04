@@ -1,41 +1,44 @@
-name: Continous Builds
+name: continous_build
 
 on:
   push:
     branches: [ master ]
+env:
+  QT_VERSION: 5.15.2
 
 jobs:
-
-  job_1:
+  build_linux:
       runs-on: ubuntu-18.04
       steps:
         - uses: actions/checkout@v2
-        - name: install qt5
-          run: |
-             sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-bionic
-             sudo apt-get update
-             sudo apt-get install libgl1-mesa-dev qt515base qt515webengine qt515webchannel qt515multimedia qt515svg qt515translations qt515tools
-             sudo apt-get install libxcb-*
-             sudo apt-get install libxkb-*
+        - uses: actions/setup-python@v2
+          with:
+            python-version: '3.8'
+        - name: install_deps
+          run : |
+            pip install aqtinstall
+            sudo apt-get install libgl1-mesa-dev libpulse-dev libqgsttools-p1
+            sudo apt-get install libxcb-*
+            sudo apt-get install libxkb-*
+        - name: install_qt
+          run : |
+               python3 -m aqt install-qt -m qtwebengine -O ${{ github.workspace }}/Qt/ linux desktop ${{ env.QT_VERSION }}
+               echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/bin/ >> $GITHUB_PATH
         - name: build
           run: |
-              export QTDIR=/opt/qt515
-              export PATH=/opt/qt515/bin:$PATH
-              qmake src/OpenJournal.pro CONFIG+=released
+              ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/bin/qmake src/OpenJournal.pro CONFIG+=release
               make
         - name: appimage
           run: |
               cd build
-              export QTDIR=/opt/qt515
-              export PATH=/opt/qt515/bin:$PATH
-              export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/qt515/lib/
               wget -O deploy.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
               chmod +x deploy.AppImage
               mkdir appdir
               cp ../io.github.bgallois.openjournal.desktop appdir/
               cp ../resources/openjournal.png appdir
               cp openjournal appdir/
-              ./deploy.AppImage appdir/openjournal -no-translations -bundle-non-qt-libs -extra-plugins=platforms,sqldrivers/
+              export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/lib/
+              ./deploy.AppImage appdir/openjournal -no-translations -bundle-non-qt-libs -extra-plugins=platforms,sqldrivers/ -qmake=${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/bin/qmake
               mkdir -p appdir/usr/share/openjournal/
               cp *.qm appdir/usr/share/openjournal
               wget -O tool.AppImage https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
@@ -46,37 +49,34 @@ jobs:
           with:
             name: OpenJournalLinux
             path: ./build/OpenJournal-x86_64.AppImage
-  job_2:
+  build_win:
       runs-on: windows-latest
       steps:
-        - name: database
-          shell: cmd
+        - uses: actions/checkout@v2
+        - uses: ilammy/msvc-dev-cmd@v1
+        - uses: actions/setup-python@v2
+          with:
+            python-version: '3.8'
+        - name: install_deps
           run : |
                choco install wget -y
                choco install nsis -y
-        - uses: actions/checkout@v2
-        - uses: ilammy/msvc-dev-cmd@v1
-        - uses: jurplel/install-qt-action@v2
-          with:
-            host: 'windows'
-            version: '5.15.2'
-            target: 'desktop'
-            arch: 'win64_msvc2019_64'
-            dir: '${{ github.workspace }}/Qt/'
-            install-deps: 'true'
-            modules: 'qtwebengine qtmultimedia'
-            cached: 'false'
+               pip install aqtinstall
+        - name: install_qt
+          run : |
+               python3 -m aqt install-qt -m qtwebengine -O ${{ github.workspace }}/Qt/ windows desktop ${{ env.QT_VERSION }} win64_msvc2019_64
+               echo "${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/msvc2019_64/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         - name: build
           shell: cmd
           run : |
                cd src/
-               qmake OpenJournal.pro -spec win32-msvc -config release
+               qmake OpenJournal.pro -spec win32-msvc CONFIG+=release
                nmake release
                mkdir OpenJournal
                cp build/OpenJournal.exe OpenJournal/OpenJournal.exe
                cp build/*.qm OpenJournal/
-               windeployqt OpenJournal/OpenJournal.exe --release 
-               copy C:\Windows\System32\vccorlib140.dll OpenJournal\ 
+               windeployqt OpenJournal/OpenJournal.exe --release
+               copy C:\Windows\System32\vccorlib140.dll OpenJournal\
                copy C:\Windows\System32\msvcp140.dll OpenJournal\
                copy C:\Windows\System32\vcruntime140.dll OpenJournal\
                wget https://github.com/bgallois/QMYSQL_driver_prebuilt/releases/download/5.15.2/QMYSQL_MSVC2019_5.15.2.zip
@@ -97,22 +97,21 @@ jobs:
             name: OpenJournalWindowsInstaller
             path: C:\OpenJournalInstaller.exe
 
-  job_3:
+  build_mac:
       runs-on: macos-latest
       steps:
         - uses: actions/checkout@v2
-        - uses: jurplel/install-qt-action@v2
+        - uses: actions/setup-python@v2
           with:
-            host: 'mac'
-            target: 'desktop'
-            dir: '${{ github.workspace }}/Qt/'
-            install-deps: 'true'
-            modules: 'qtwebengine'
-            cached: 'false'
-            extra: '--external 7z'
-        - name: install
+            python-version: '3.8'
+        - name: install_deps
           run: |
               brew install sqlite mariadb
+              pip install aqtinstall
+        - name: install_qt
+          run : |
+               python3 -m aqt install-qt -m qtwebengine -O ${{ github.workspace }}/Qt/ mac desktop ${{ env.QT_VERSION }}
+               echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/clang_64/bin/ >> $GITHUB_PATH
         - name: build
           run: |
               qmake src/OpenJournal.pro
@@ -123,8 +122,6 @@ jobs:
               wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py
               #python2.7 macdeployqtfix.py OpenJournal.app/Contents/MacOS/OpenJournal ../../Qt/5.15.0/
               hdiutil create -volname OpenJournal -srcfolder OpenJournal.app -ov -format UDZO OpenJournal.dmg
-
-
         - name: Mac artefact
           uses: actions/upload-artifact@v1
           with:
