@@ -155,6 +155,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   connect(ui->actionSource, &QAction::triggered, [this]() {
     QDesktopServices::openUrl(QUrl("https://github.com/bgallois/OpenJournal", QUrl::TolerantMode));
   });
+  connect(ui->actionSupport, &QAction::triggered, []() {
+    QDesktopServices::openUrl(QUrl(QStringLiteral("https://ko-fi.com/bgallois"), QUrl::TolerantMode));
+  });
   connect(ui->actionReport, &QAction::triggered, [this]() {
     QDesktopServices::openUrl(QUrl("https://github.com/bgallois/OpenJournal/issues/", QUrl::TolerantMode));
   });
