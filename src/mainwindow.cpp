@@ -172,15 +172,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   });
   connect(ui->actionCheckRel, &QAction::triggered, [this]() {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QByteArray version = downloadHttpFile(QUrl("https://raw.githubusercontent.com/bgallois/OpenJournal/master/changelog.md")).left(9);
+    QByteArray version = downloadHttpFile(QUrl("https://raw.githubusercontent.com/bgallois/OpenJournal/master/changelog.md")).mid(3, 5);
     QApplication::restoreOverrideCursor();
     QString status;
-    if (QString(version).contains(QApplication::applicationVersion())) {
+    qInfo() << version << QApplication::applicationVersion();
+    if (version == QApplication::applicationVersion()) {
       status = tr("There is <b>NO</b> new stable release of OpenJournal.");
     }
+    else if (version > QApplication::applicationVersion()) {
+      status = tr("There is a new stable release of OpenJournal.<br>Download the new version at <a style='color:#ff61b0;' href='https://github.com/bgallois/OpenJournal/releases/latest'>https://github.com/bgallois/OpenJournal/releases/latest</a>.");
+    }
     else {
-      status = tr(
-          "There is a new stable release of OpenJournal.<br>Download the new version at <a style='color:#ff61b0;' href='https://github.com/bgallois/OpenJournal/releases/latest'>https://github.com/bgallois/OpenJournal/releases/latest</a>.");
+      status = tr("You are in the futur!");
     }
     QMessageBox::information(this, tr("Check for new release"), status);
   });
