@@ -1,3 +1,20 @@
+## 1.3.2
+
+Version 1.3.2 of OpenJOurnal comes with several internal fixes.
+
+### Fixes
+
+* GHSA-rrrm-qjm4-v8hf
+* Check for new release
+
+### Features
+
+* Support action
+* Win and Mac tests
+* Refactore database connection
+* Refactore window geometry ssaving
+
+
 ## 1.3.1
 
 Version 1.3.1 of OpenJournal comes with several fixes. Journal in the cloud can now be successfully exported as PDF. Exporting a journal with images in PDF is now possible. Image display for cloud journal is now improved and does not necessitate refreshing the page after first loading.
