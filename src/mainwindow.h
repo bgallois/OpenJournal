@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include <QDesktopServices>
 #include <QFile>
 #include <QFileDialog>
+#include <QFuture>
 #include <QGraphicsBlurEffect>
 #include <QIcon>
 #include <QInputDialog>
@@ -35,6 +36,7 @@ GNU General Public License for more details.
 #include <QRegularExpression>
 #include <QScrollBar>
 #include <QSettings>
+#include <QSignalBlocker>
 #include <QSoundEffect>
 #include <QSqlDatabase>
 #include <QSqlDriver>
@@ -49,11 +51,16 @@ GNU General Public License for more details.
 #include <QTranslator>
 #include <QUrl>
 #include <QWebChannel>
+#include <QtConcurrent/QtConcurrentRun>
 #include "dialog_cloud.h"
 #include "document.h"
 #include "journal.h"
 #include "journal_cloud.h"
 #include "previewpage.h"
+// Currently libqalculate can't be compiled with MSVC (required for qtwebengine).
+#ifndef Q_OS_WIN
+#include <libqalculate/qalculate.h>
+#endif
 
 namespace Ui {
 class MainWindow;
@@ -77,6 +84,9 @@ class MainWindow : public QMainWindow {
   QString plannerName;
   PreviewPage *previewPage;
   Document doc;
+#ifndef Q_OS_WIN
+  Calculator *calculator;
+#endif
   Ui::MainWindow *ui;
   QTimer *refreshTimer;
   QSystemTrayIcon *trayIcon;
@@ -118,9 +128,10 @@ class MainWindow : public QMainWindow {
   void saveSettings();
   void loadLanguages();
   bool loadStyle(const QString path);
-  void addImage(QString path);
+  void addImage(QString text);
   void clearTemporaryFiles();
-  void setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders);
+  void setTodayReminder(const QString &text, QMap<QString, QTimer *> &reminders);
+  void askQalculate(QString &text);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void closeEvent(QCloseEvent *event);
   bool eventFilter(QObject *obj, QEvent *event);

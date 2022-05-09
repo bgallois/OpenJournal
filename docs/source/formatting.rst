@@ -2,6 +2,15 @@
 Text formatting
 ***************
 
+Qalculate expression
+----------------
+
+Evaluate expression using .. _Qalculate: https://qalculate.github.io/manual/index.html syntax :
+
+.. code-block:: markdown
+
+    qalc{expression}
+
 Markdown text
 ----------------
 

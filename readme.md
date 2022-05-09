@@ -45,6 +45,8 @@ OpenJournal can be used to store journals locally. For digital nomads, OpenJourn
 - [x] Drag'n Drop images insertion
 - [x] Drag'n Drop text files insertion
 - [x] Smart Markdown insertion cursor
+- [x] LaTeX expression
+- [x] Qalculator expression
 
 ## Installation
 OpenJournal binary is available for Linux, Windows (installer and portable version), and MacOs.

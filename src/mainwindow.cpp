@@ -16,6 +16,9 @@ GNU General Public License for more details.
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+#ifndef Q_OS_WIN
+                                          calculator(new Calculator()),
+#endif
                                           ui(new Ui::MainWindow) {
   // ui set up
   ui->setupUi(this);
@@ -27,6 +30,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   clock->setSegmentStyle(QLCDNumber::Flat);
   ui->statusBar->addPermanentWidget(clock);
   isHelp = true;  // Will display help message the first time app is closed
+
+#ifndef Q_OS_WIN
+  // Set up libqalculate
+  calculator->loadExchangeRates();
+  calculator->loadGlobalDefinitions();
+  calculator->loadLocalDefinitions();
+#endif
 
   // Window geometry
   settings = new QSettings(this);
@@ -92,9 +102,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   previewPage = new PreviewPage(this);
   ui->preview->setPage(previewPage);
   connect(ui->entry, &QPlainTextEdit::textChanged, [this]() {
-    this->doc.setText(ui->entry->toPlainText());
-    this->setTodayReminder(ui->entry->toPlainText(), reminders);
-    this->addImage(ui->entry->toPlainText());
+    {
+      // There is at the current time only two types of posible modification:
+      // Modifications on the preview (by reference) or modification on the entry (by copy then set the entry with the modified text).
+      // Modifications on the preview have to come before modification on the entry
+      const QSignalBlocker blocker(ui->entry);
+      QString text = ui->entry->toPlainText();
+      this->setTodayReminder(text, reminders);  // No modification
+      this->addImage(text);                     // Modification on text entry
+      // Async text display to account for windows slow askQalculate
+      QFuture<void> future = QtConcurrent::run([this, text]() mutable {
+        this->askQalculate(text);
+        this->doc.setText(text);
+      });
+    }
   });
   QWebChannel *channel = new QWebChannel(this);
   channel->registerObject(QStringLiteral("content"), &doc);
@@ -269,6 +290,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     }
   });
   ui->toolBar->addAction(actionAddAlarm);
+
+  keySequence = QKeySequence(Qt::CTRL + Qt::Key_E);
+  QAction *actionQalculate = new QAction(QIcon(":/calc.png"), tr("Qalculate ") + keySequence.toString(), this);
+  actionQalculate->setShortcut(keySequence);
+  connect(actionQalculate, &QAction::triggered, [this]() {
+    if (ui->entry->isEnabled()) {
+      QTextCursor cursor = ui->entry->textCursor();
+      if (cursor.hasSelection()) {
+        ui->entry->insertPlainText(QString("qalc{%1}").arg(cursor.selectedText()));
+      }
+      else {
+        ui->entry->insertPlainText("qalc{}");
+        cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+      }
+      ui->entry->setTextCursor(cursor);
+    }
+  });
+  ui->toolBar->addAction(actionQalculate);
   ui->toolBar->addSeparator();
   ui->entry->addToolBarActions(ui->toolBar, ui->statusBar);
   addToolBar(Qt::LeftToolBarArea, ui->toolBar);
@@ -283,6 +322,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     refreshTimer->stop();
     page->setReadOnly(true);
     addImage(data);
+    askQalculate(data);
     doc.setText(data);
     emit(exportLoadingFinished());
   });
@@ -291,6 +331,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     refreshTimer->stop();
     page->setReadOnly(true);
     addImage(data);
+    askQalculate(data);
     doc.setText(data);
     emit(exportLoadingFinished());
   });
@@ -350,6 +391,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 MainWindow::~MainWindow() {
   delete ui;
   delete page;
+#ifndef Q_OS_WIN
+  delete calculator;
+#endif
 }
 
 //////////////// Journal creation, loading and dialog /////////////////////////////////
@@ -617,7 +661,9 @@ void MainWindow::saveCurrent() {
   QFile file(fileName);
   if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream stream(&file);
-    stream << ui->entry->toPlainText();
+    QString text = ui->entry->toPlainText();
+    askQalculate(text);
+    stream << text;
     file.close();
     saveDir = fileName;
   }
@@ -730,15 +776,12 @@ void MainWindow::addImage(QString text) {
 
   // Update the text if changed
   if (isTextChanged) {
-    {  // Signal blocker scope
-      const QSignalBlocker blocker(ui->entry);
-      int cursorPosition = ui->entry->textCursor().position();
-      int offset = text.size() - textSize;
-      ui->entry->setPlainText(text);
-      QTextCursor cursor = ui->entry->textCursor();
-      cursor.setPosition(cursorPosition + offset);
-      ui->entry->setTextCursor(cursor);
-    }
+    int cursorPosition = ui->entry->textCursor().position();
+    int offset = text.size() - textSize;
+    ui->entry->setPlainText(text);
+    QTextCursor cursor = ui->entry->textCursor();
+    cursor.setPosition(cursorPosition + offset);
+    ui->entry->setTextCursor(cursor);
   }
 }
 
@@ -774,7 +817,7 @@ QByteArray MainWindow::downloadHttpFile(QUrl url) {
 /**
  * Set an alarm with the given message at the given time.
  */
-void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &reminders) {
+void MainWindow::setTodayReminder(const QString &text, QMap<QString, QTimer *> &reminders) {
   if (QDate::currentDate() != ui->calendar->selectedDate()) {
     return;
   }
@@ -810,6 +853,31 @@ void MainWindow::setTodayReminder(const QString text, QMap<QString, QTimer *> &r
     else {
       break;
     }
+  }
+}
+
+void MainWindow::askQalculate(QString &text) {
+  bool isTextChanged = false;
+  QRegularExpression re("qalc\\{(.*)\\}");
+  QRegularExpressionMatchIterator matches = re.globalMatch(text);
+  while (matches.hasNext()) {
+    QRegularExpressionMatch match = matches.next();
+    QString question = match.captured(1);
+#ifndef Q_OS_WIN
+    EvaluationOptions eo;
+    MathStructure mstruct;
+    calculator->calculate(&mstruct, question.toStdString(), 2000, eo);
+    PrintOptions po;
+    mstruct.format(po);
+    text.replace(match.captured(0), QString(QString::fromStdString(mstruct.print(po))));
+#else
+    // Using call to CLI because liqalculate can't be compiled with MSVC
+    QProcess process(this);
+    process.start(QDir::currentPath() + "/qalculate/qalc.exe", {"-t", question});
+    process.waitForFinished();
+    QString result = QString(process.readAllStandardOutput());
+    text.replace(match.captured(0), result.remove("\r\n"));
+#endif
   }
 }
 
