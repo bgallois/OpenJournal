@@ -1,12 +1,12 @@
 # define installer name
 !define APPNAME "OpenJournal"
-!define COMPANYNAME "B&GInc"
+!define COMPANYNAME "Analysabl"
 !define DESCRIPTION "A simple journal, note taking, reminder application."
 
-!define VERSIONMAJOR 0
-!define VERSIONMINOR 0
-!define VERSIONBUILD 1
-OutFile "C:\OpenJournalInstaller.exe"
+!define VERSIONMAJOR 1
+!define VERSIONMINOR 3
+!define VERSIONBUILD 2
+OutFile "../src/OpenJournalInstaller.exe"
  
 # set desktop as install directory
 InstallDir "$PROGRAMFILES64\${APPNAME}"

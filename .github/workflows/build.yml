@@ -48,8 +48,8 @@ jobs:
               wget -O tool.AppImage https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
               chmod +x tool.AppImage
               ./tool.AppImage appdir/
-        - name: Linux artefact
-          uses: actions/upload-artifact@v1
+        - name: upload_artefact
+          uses: actions/upload-artifact@v2
           with:
             name: OpenJournalLinux
             path: ./build/OpenJournal-x86_64.AppImage
@@ -88,19 +88,18 @@ jobs:
                copy plugins\sqldrivers\* OpenJournal\sqldrivers\
                wget https://github.com/Qalculate/libqalculate/releases/download/v4.1.1/qalculate-4.1.1b-x64.zip
                unzip qalculate-4.1.1b-x64.zip -d OpenJournal/
-               7z a C:\OpenJournal.zip OpenJournal\
                cd ..
                makensis.exe /V3 resources/installer.nsi
-        - name: Windows artefact
-          uses: actions/upload-artifact@v1
+        - name: upload_artefact
+          uses: actions/upload-artifact@v2
           with:
-            name: OpenJournalWindows
-            path: C:\OpenJournal.zip
-        - name: Windows artefact installer
-          uses: actions/upload-artifact@v1
+            name: OpenJournalWin
+            path: src/OpenJournal/
+        - name: upload_installer_artefact
+          uses: actions/upload-artifact@v2
           with:
-            name: OpenJournalWindowsInstaller
-            path: C:\OpenJournalInstaller.exe
+            name: OpenJournalWinInstaller
+            path: src/OpenJournalInstaller.exe
 
   build_mac:
       runs-on: macos-latest
@@ -130,8 +129,8 @@ jobs:
               wget https://raw.githubusercontent.com/arl/macdeployqtfix/master/macdeployqtfix.py
               python2.7 macdeployqtfix.py OpenJournal.app/Contents/MacOS/OpenJournal ../../Qt/${{ env.QT_VERSION }}/
               hdiutil create -volname OpenJournal -srcfolder OpenJournal.app -ov -format UDZO OpenJournal.dmg
-        - name: Mac artefact
-          uses: actions/upload-artifact@v1
+        - name: upload_artefact
+          uses: actions/upload-artifact@v2
           with:
             name: OpenJournalMac
             path: ./build/OpenJournal.dmg
