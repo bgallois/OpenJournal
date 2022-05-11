@@ -21,21 +21,6 @@ unix:!macx {
   INCLUDEPATH += /usr/include/
   LIBS += -L/usr/lib -lqalculate
   TARGET = openjournal
-
-  # custom destination INSTALL_ROOT=$PWD/package_root make install
-  target.path = /usr/local/bin/
-  desktop.path = /usr/local/share/applications/
-  desktop.files = ../io.github.bgallois.openjournal.desktop
-  metainfo.path = /usr/local/share/metainfo/
-  metainfo.files = ../io.github.bgallois.openjournal.metainfo.xml
-  icon.path = /usr/local/share/icons/
-  icon.files = resources/openjournal.png
-  license.path = /usr/share/local/licenses/openjournal/
-  license.files = ../LICENSE
-  translation.path = /usr/local/share/openjournal/
-  translation.files = $$DESTDIR/openjournal_en.qm $$DESTDIR/openjournal_fr.qm
-  translation.CONFIG += no_check_exist
-  INSTALLS += target desktop metainfo icon license translation
 }
 
 DESTDIR=build
@@ -98,3 +83,20 @@ QMAKE_EXTRA_COMPILERS += updateqm
 
 ICON = ../resources/icon.icns
 RC_ICONS = ../resources/icon.ico
+
+unix:!macx {
+  # custom destination INSTALL_ROOT=$PWD/package_root make install
+  target.path = /usr/local/bin/
+  desktop.path = /usr/local/share/applications/
+  desktop.files = ../io.github.bgallois.openjournal.desktop
+  metainfo.path = /usr/local/share/metainfo/
+  metainfo.files = ../io.github.bgallois.openjournal.metainfo.xml
+  icon.path = /usr/local/share/icons/
+  icon.files = resources/openjournal.png
+  license.path = /usr/share/local/licenses/openjournal/
+  license.files = ../LICENSE
+  translation.path = /usr/local/share/openjournal/
+  translation.files = $$DESTDIR/openjournal_en.qm $$DESTDIR/openjournal_fr.qm
+  translation.CONFIG += no_check_exist
+  INSTALLS += target desktop metainfo icon license translation
+}
