@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>OpenJournal</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/sky.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <h3>OpenJournal</h3>
+                    <img class="r-stretch" src="img/presentation.png"></img>
+                </section>
+				<section>
+                    <h3>For who?</h3>
+                        <br>
+                    <ul style="font-size: smaller;">
+                        <li><b>For anyone:</b> 😊 keeping a daily diary can help you self-reflect and relieve stress, keeping a trace of situations and feelings.</li>
+                        <br>
+                        <li><b>For writers:</b> 🖊️ keeping a writer's journal is a good way to improve writing abilities. Writers can record plots outlines, observations, descriptions, details, dialog lines, etc...</li>
+                        <br>
+                        <li><b>For professionals:</b> 🤓 writing down tasks, setting alarms and performing calculations in one environement can help you organize your day better.</li>
+                    </ul>
+                </section>
+				<section>
+                    <h3>Full Markdown support</h3>
+                    <p>Smart Markdown editor | Full Markdown rendering</p>
+                    <img class="r-stretch" src="img/markdown.png"></img>
+                </section>
+				<section>
+                    <h3>Alerts</h3>
+                    Set alarms to trigger visual and sonore alerts
+                    <img class="r-stretch" src="img/alarm.png"></img>
+                </section>
+				<section>
+                    <h3>Smart calculator</h3>
+                    Calculator | Unit and currency conversion | LaTeX
+                    <img class="r-stretch" src="img/latex.png"></img>
+                </section>
+				<section>
+                    <h3>Storage</h3>
+                    <ul>
+                        <li> 💻 Local storage</li>
+                        <li> 🏢 Partaged local storage using MariaDB server</li>
+                        <li> ☁️ Cloud storage</li>
+                    </ul>
+                </section>
+				<section>
+                    <a href="https://gallois.cc/openjournal/">Try OpenJournal</a>
+                </section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+                autoSlide: 3000,
+                loop: true,
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
