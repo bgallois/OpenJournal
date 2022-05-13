@@ -807,7 +807,7 @@ QByteArray MainWindow::downloadHttpFile(QUrl url) {
   eventLoop.exec();
   downloadedData = reply->readAll();
   if (reply->error() != QNetworkReply::NoError) {
-    return QByteArray();
+    downloadedData = QByteArray();
   }
   reply->deleteLater();
   delete manager;
