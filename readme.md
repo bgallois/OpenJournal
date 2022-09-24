@@ -17,10 +17,6 @@ See the presentation website at [https://gallois.cc/openjournal/](https://galloi
 
 OpenJournal uses a database to store and retrieve user notes. This flexible approach offers several advantages. Local journals can be created using [SQlite](https://www.sqlite.org/index.html) and stored in a single file that the user can copy and move between computers. Remote journals can be accessed using [MariaDB](https://mariadb.org/), first, the user has to create a database server, then OpenJournal can access the database server to store journals. In this way, a user can access its journal locally and add a layer of security by password protection.
 
-## Cloud support
-
-OpenJournal can be used to store journals locally. For digital nomads, OpenJournal provides [free cloud support](https://gallois.cc/openjournal/pricing) currently in a development phase. You can register for an account at [https://openjournal.gallois.cc/register](https://openjournal.gallois.cc/register) (note that this is a beta testing, journal data will be backuped daily but the server can go under maintenance at any time).
-
 ## Screenshot
 
 ![preview](resources/readme.png)
