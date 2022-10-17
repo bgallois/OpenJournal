@@ -1,6 +1,6 @@
 # define installer name
 !define APPNAME "OpenJournal"
-!define COMPANYNAME "Analysabl"
+!define COMPANYNAME "Analyzable"
 !define DESCRIPTION "A simple journal, note taking, reminder application."
 
 !define VERSIONMAJOR 1

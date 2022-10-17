@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   }
 
   lock.open(QIODevice::WriteOnly | QIODevice::Text);
-  a.setOrganizationName("Analysabl");
+  a.setOrganizationName("Analyzable");
   a.setApplicationName("OpenJournal");
   a.setApplicationVersion("1.3.2");
   QFontDatabase::addApplicationFont(":/Lato.ttf");
