@@ -16,9 +16,6 @@ GNU General Public License for more details.
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
-#ifndef Q_OS_WIN
-                                          calculator(new Calculator()),
-#endif
                                           ui(new Ui::MainWindow) {
   // ui set up
   ui->setupUi(this);
@@ -32,10 +29,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   isHelp = true;  // Will display help message the first time app is closed
 
 #ifndef Q_OS_WIN
-  // Set up libqalculate
-  calculator->loadExchangeRates();
-  calculator->loadGlobalDefinitions();
-  calculator->loadLocalDefinitions();
+  // Set up libqalculate. Object access wit macro pointer. No delete needed.
+  new Calculator();
+  CALCULATOR->loadExchangeRates();
+  CALCULATOR->loadGlobalDefinitions();
+  CALCULATOR->loadLocalDefinitions();
 #endif
 
   // Window geometry
@@ -391,9 +389,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 MainWindow::~MainWindow() {
   delete ui;
   delete page;
-#ifndef Q_OS_WIN
-  delete calculator;
-#endif
 }
 
 //////////////// Journal creation, loading and dialog /////////////////////////////////
@@ -866,7 +861,7 @@ void MainWindow::askQalculate(QString &text) {
 #ifndef Q_OS_WIN
     EvaluationOptions eo;
     MathStructure mstruct;
-    calculator->calculate(&mstruct, question.toStdString(), 2000, eo);
+    CALCULATOR->calculate(&mstruct, question.toStdString(), 2000, eo);
     PrintOptions po;
     mstruct.format(po);
     text.replace(match.captured(0), QString(QString::fromStdString(mstruct.print(po))));

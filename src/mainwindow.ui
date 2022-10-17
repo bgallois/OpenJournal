@@ -130,14 +130,14 @@
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="QWebEngineView" name="preview">
+          <widget class="QWebEngineView" name="preview" native="true">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>2</verstretch>
             </sizepolicy>
            </property>
-           <property name="url">
+           <property name="url" stdset="0">
             <url>
              <string>about:blank</string>
             </url>
@@ -162,9 +162,7 @@
    </property>
    <property name="font">
     <font>
-     <family>Lato</family>
      <pointsize>11</pointsize>
-     <weight>50</weight>
      <italic>false</italic>
      <bold>false</bold>
     </font>
@@ -174,13 +172,14 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;Journal</string>
     </property>
     <widget class="QMenu" name="menu_Advanced">
      <property name="title">
       <string>&amp;Advanced</string>
      </property>
      <addaction name="actionConnect_planner"/>
+     <addaction name="actionCloud"/>
      <addaction name="actionBackup"/>
     </widget>
     <action name=""/>
@@ -188,14 +187,9 @@
     <addaction name="separator"/>
     <addaction name="actionNew_planner"/>
     <addaction name="actionOpen_planner"/>
-    <addaction name="separator"/>
-    <addaction name="actionCloud"/>
-    <addaction name="separator"/>
-    <addaction name="actionExport_current"/>
-    <addaction name="actionSave_current"/>
-    <addaction name="separator"/>
-    <addaction name="actionImport_entry"/>
     <addaction name="actionExport_planner"/>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="menu_Advanced"/>
     <addaction name="separator"/>
@@ -235,7 +229,17 @@
     <addaction name="separator"/>
     <addaction name="actionCheckRel"/>
    </widget>
+   <widget class="QMenu" name="menuEntry">
+    <property name="title">
+     <string>&amp;Entry</string>
+    </property>
+    <addaction name="actionExport_current"/>
+    <addaction name="actionSave_current"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_entry"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEntry"/>
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>

@@ -84,9 +84,6 @@ class MainWindow : public QMainWindow {
   QString plannerName;
   PreviewPage *previewPage;
   Document doc;
-#ifndef Q_OS_WIN
-  Calculator *calculator;
-#endif
   Ui::MainWindow *ui;
   QTimer *refreshTimer;
   QSystemTrayIcon *trayIcon;
