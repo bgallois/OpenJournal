@@ -167,6 +167,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
       statusMessage->setText(tr("No journal is opened"));
     }
   });
+  ui->menuOptions->addAction(ui->toolBar->toggleViewAction());
   connect(ui->actionBackup, &QAction::triggered, this, &MainWindow::backup);
   connect(ui->actionClose, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
@@ -194,7 +195,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     QByteArray version = downloadHttpFile(QUrl("https://raw.githubusercontent.com/bgallois/OpenJournal/master/changelog.md")).mid(3, 5);
     QApplication::restoreOverrideCursor();
     QString status;
-    qInfo() << version << QApplication::applicationVersion();
     if (version == QApplication::applicationVersion()) {
       status = tr("There is <b>NO</b> new stable release of OpenJournal.");
     }
