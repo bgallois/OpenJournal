@@ -18,6 +18,7 @@ GNU General Public License for more details.
 #include <QFile>
 #include <QFont>
 #include <QFontDatabase>
+#include <QLockFile>
 #include <QMessageBox>
 #include "mainwindow.h"
 
@@ -32,22 +33,17 @@ int main(int argc, char *argv[]) {
   // Register metatype
   qRegisterMetaTypeStreamOperators<QList<int>>("QList<int>");
   // Check if application is already running
-  QString path = QDir::tempPath() + "/OpenJournal.lock";
-  QFile lock(path);
-  if (lock.exists()) {
-    QMessageBox::information(nullptr, "An instance of OpenJournal is already running", "An instance of OpenJournal is already running.\nIf it is not the case delete " + path + " and restart OpenJournal");
+  QLockFile lock(QDir::tempPath() + "/OpenJournal_.lock");
+  if (!lock.tryLock(100)) {
+    QMessageBox::information(nullptr, "An instance of OpenJournal is already running", "An instance of OpenJournal is already running.");
     return 1;
   }
 
-  lock.open(QIODevice::WriteOnly | QIODevice::Text);
   a.setOrganizationName("Analyzable");
   a.setApplicationName("OpenJournal");
   a.setApplicationVersion("1.3.3");
   QFontDatabase::addApplicationFont(":/Lato.ttf");
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
-  QObject::connect(&a, &QApplication::aboutToQuit, &lock, [&lock]() {
-    lock.remove();
-  });
   MainWindow w;
   w.setWindowIcon(QIcon(":/openjournal.svg"));
   w.setStyleSheet("QWidget {font-family: 'Lato', sans-serif;}");
