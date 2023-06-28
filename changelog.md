@@ -1,6 +1,14 @@
+## 1.3.4
+
+Version 1.3.4 of OpenJournal comes with several internal fixes.
+
+### Fixes
+
+* Fix lock file
+
 ## 1.3.3
 
-Version 1.3.3 of OpenJOurnal comes with several internal fixes and the Qalculate support.
+Version 1.3.3 of OpenJournal comes with several internal fixes and the Qalculate support.
 
 ### Fixes
 
