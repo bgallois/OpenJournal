@@ -5,7 +5,7 @@
 
 !define VERSIONMAJOR 1
 !define VERSIONMINOR 3
-!define VERSIONBUILD 2
+!define VERSIONBUILD 3
 OutFile "../src/OpenJournalInstaller.exe"
  
 # set desktop as install directory

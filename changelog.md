@@ -1,6 +1,21 @@
+## 1.3.3
+
+Version 1.3.3 of OpenJOurnal comes with several internal fixes and the Qalculate support.
+
+### Fixes
+
+* Fix qalculate seg fault
+* Fix memory leaks
+* Fix Linux installation
+
+### Features
+
+* Support qalculate
+* New icon
+
 ## 1.3.2
 
-Version 1.3.2 of OpenJOurnal comes with several internal fixes.
+Version 1.3.2 of OpenJournal comes with several internal fixes.
 
 ### Fixes
 
@@ -12,7 +27,7 @@ Version 1.3.2 of OpenJOurnal comes with several internal fixes.
 * Support action
 * Win and Mac tests
 * Refactore database connection
-* Refactore window geometry ssaving
+* Refactore window geometry saving
 
 
 ## 1.3.1

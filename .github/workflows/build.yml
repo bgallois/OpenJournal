@@ -86,8 +86,8 @@ jobs:
                unzip QMYSQL_MSVC2019_5.15.2.zip
                copy libmariadb.dll OpenJournal\
                copy plugins\sqldrivers\* OpenJournal\sqldrivers\
-               wget https://github.com/Qalculate/libqalculate/releases/download/v4.1.1/qalculate-4.1.1b-x64.zip
-               unzip qalculate-4.1.1b-x64.zip -d OpenJournal/
+               wget https://github.com/Qalculate/libqalculate/releases/download/v4.6.1/qalculate-4.6.1-x64.zip
+               unzip qalculate-4.6.1-x64.zip -d OpenJournal/
                cd ..
                makensis.exe /V3 resources/installer.nsi
         - name: upload_artefact
