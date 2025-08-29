@@ -30,10 +30,6 @@ unix:macx {
 }
 
 win32 {
-  QMAKE_CFLAGS_RELEASE += /MT
-  QMAKE_CXXFLAGS_RELEASE += /MT
-  QMAKE_CFLAGS_RELEASE -= -MD
-  QMAKE_CXXFLAGS_RELEASE -= -MD
   LIBS += -L"$$PWD/../googletest/build/install/lib" -lgtest -lgtest_main
   INCLUDEPATH += "$$PWD/../googletest/build/install/include/"
 }
