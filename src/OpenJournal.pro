@@ -1,7 +1,6 @@
-QT       += core gui sql webenginewidgets webchannel multimedia
-QTPLUGIN += QSQLMYSQL
+QT       += core gui sql webenginewidgets webchannel multimedia widgets svg
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets sql svg
+QTPLUGIN += QSQLMYSQL
 
 TEMPLATE = app
 

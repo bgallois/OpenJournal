@@ -30,8 +30,6 @@ int main(int argc, char *argv[]) {
   // Handle SIGINT signal and perform clean up
   signal(SIGINT, handleSigint);
 
-  // Register metatype
-  qRegisterMetaTypeStreamOperators<QList<int>>("QList<int>");
   // Check if application is already running
   QLockFile lock(QDir::tempPath() + "/OpenJournal_.lock");
   if (!lock.tryLock(100)) {

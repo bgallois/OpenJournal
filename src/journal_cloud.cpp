@@ -52,7 +52,7 @@ void JournalCloud::writeToDatabase() {
 
 void JournalCloud::readFromDatabase() {
   httpRequest("query", "text", date.toString("yyyy.MM.dd"));
-  emit(getDate(date.toString(Qt::DefaultLocaleLongDate)));
+  emit(getDate(date.toString(QLocale().dateFormat(QLocale::LongFormat))));
 }
 
 void JournalCloud::readFromDatabaseAll() {

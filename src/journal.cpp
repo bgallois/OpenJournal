@@ -134,7 +134,7 @@ void Journal::readFromDatabase() {
   query.prepare("SELECT entry FROM journalPage WHERE date = ?");
   query.addBindValue(date.toString("yyyy.MM.dd"));
   query.exec();
-  emit(getDate(date.toString(Qt::DefaultLocaleLongDate)));
+  emit(getDate(date.toString(QLocale().dateFormat(QLocale::LongFormat))));
 
   if (query.first()) {
     entry = query.value(0).toString();

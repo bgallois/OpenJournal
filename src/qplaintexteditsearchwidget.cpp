@@ -161,7 +161,7 @@ bool QPlainTextEditSearchWidget::doReplace(bool forAll) {
   int searchMode = ui->modeComboBox->currentIndex();
   if (searchMode == RegularExpressionMode) {
     QString text = cursor.selectedText();
-    text.replace(QRegExp(ui->searchLineEdit->text()),
+    text.replace(QRegularExpression(ui->searchLineEdit->text()),
                  ui->replaceLineEdit->text());
     cursor.insertText(text);
   }
@@ -219,7 +219,7 @@ bool QPlainTextEditSearchWidget::doSearch(bool searchDown, bool allowRestartAtTo
     options |= QTextDocument::FindCaseSensitively;
   }
 
-  bool found = searchMode == RegularExpressionMode ? _textEdit->find(QRegExp(text), options) : _textEdit->find(text, options);
+  bool found = searchMode == RegularExpressionMode ? _textEdit->find(QRegularExpression(text), options) : _textEdit->find(text, options);
 
   if (found) {
     _currentSearchResult = std::min(searchDown ? ++_currentSearchResult : --_currentSearchResult,
@@ -232,7 +232,7 @@ bool QPlainTextEditSearchWidget::doSearch(bool searchDown, bool allowRestartAtTo
   if (!found && allowRestartAtTop) {
     _textEdit->moveCursor(
         searchDown ? QTextCursor::Start : QTextCursor::End);
-    found = searchMode == RegularExpressionMode ? _textEdit->find(QRegExp(text), options) : _textEdit->find(text, options);
+    found = searchMode == RegularExpressionMode ? _textEdit->find(QRegularExpression(text), options) : _textEdit->find(text, options);
 
     if (found) {
       _currentSearchResult = searchDown ? 1 : _searchResultCount;
@@ -290,7 +290,7 @@ void QPlainTextEditSearchWidget::doSearchCount() {
   _searchResultCount = 0;
 
   do {
-    found = searchMode == RegularExpressionMode ? _textEdit->find(QRegExp(text), options) : _textEdit->find(text, options);
+    found = searchMode == RegularExpressionMode ? _textEdit->find(QRegularExpression(text), options) : _textEdit->find(text, options);
     if (found) {
       _searchResultCount++;
     }

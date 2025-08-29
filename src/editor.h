@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include <QDebug>
 #include <QDropEvent>
 #include <QElapsedTimer>
+#include <QFile>
 #include <QKeySequence>
 #include <QMimeData>
 #include <QMimeDatabase>

@@ -275,7 +275,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
   }
 
   // Toolbar
-  QKeySequence keySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_A);
+  QKeySequence keySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_A);
   QAction *actionAddAlarm = new QAction(QIcon(":/clocks.png"), tr("Add an alarm ") + keySequence.toString(), this);
   actionAddAlarm->setShortcut(keySequence);
   connect(actionAddAlarm, &QAction::triggered, [this]() {
@@ -822,11 +822,11 @@ void MainWindow::setTodayReminder(const QString &text, QMap<QString, QTimer *> &
     if (start != -1) {
       end = text.indexOf(");", start);
       if (end != -1) {
-        QStringRef command = text.midRef(start + 9, end - start - 9);
+        QStringView command = text.mid(start + 9, end - start - 9);
         // Planner exportation
-        QVector<QStringRef> commands = command.split(',', QString::SkipEmptyParts);
+        QList<QStringView> commands = command.split(',', Qt::SkipEmptyParts);
         if (commands.length() == 2 && !reminders.contains(command.toString())) {
-          QVector<QStringRef> timeSet = commands[0].split(':');
+          QList<QStringView> timeSet = commands[0].split(':');
           int time = -QTime(timeSet[0].toDouble(), timeSet[1].toDouble()).msecsTo(QTime::currentTime());
           if (time > 0) {
             QTimer *notification = new QTimer(this);

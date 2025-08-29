@@ -1,6 +1,4 @@
-QT       += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets sql svg
+QT       += core gui widgets sql svg
 
 TARGET = Test
 TEMPLATE = app

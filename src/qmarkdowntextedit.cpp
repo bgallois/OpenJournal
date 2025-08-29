@@ -66,7 +66,7 @@ QMarkdownTextEdit::QMarkdownTextEdit(QWidget *parent, bool initHighlighter)
   // set the tab stop to the width of 4 spaces in the editor
   const int tabStop = 4;
   QFontMetrics metrics(font);
-  setTabStopWidth(tabStop * metrics.width(' '));
+  setTabStopDistance(tabStop * metrics.horizontalAdvance(' '));
 
   // add shortcuts for duplicating text
   //    new QShortcut( QKeySequence( "Ctrl+D" ), this, SLOT( duplicateText() ) );
@@ -75,7 +75,7 @@ QMarkdownTextEdit::QMarkdownTextEdit(QWidget *parent, bool initHighlighter)
   // add a layout to the widget
   auto *layout = new QVBoxLayout(this);
   layout->setContentsMargins(0, 0, 0, 0);
-  layout->setMargin(0);
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addStretch();
   this->setLayout(layout);
 
@@ -123,7 +123,7 @@ void QMarkdownTextEdit::adjustRightMargin() {
 }
 
 bool QMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
-  //qDebug() << event->type();
+  // qDebug() << event->type();
   if (event->type() == QEvent::HoverMove) {
     auto *mouseEvent = static_cast<QMouseEvent *>(event);
 
@@ -248,7 +248,7 @@ bool QMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
         if (cursor.block().length() <= 1)  // no content
           text = "\n";
         else {
-          //cursor.select(QTextCursor::BlockUnderCursor); // negative, it will include the previous paragraph separator
+          // cursor.select(QTextCursor::BlockUnderCursor); // negative, it will include the previous paragraph separator
           cursor.movePosition(QTextCursor::StartOfBlock);
           cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
           text = cursor.selectedText();
@@ -271,8 +271,9 @@ bool QMarkdownTextEdit::eventFilter(QObject *obj, QEvent *event) {
       }
     }
     else if (keyEvent == QKeySequence::Paste) {
-      if (qApp->clipboard()->ownsClipboard() &&
-          QRegExp("[^\n]*\n$").exactMatch(qApp->clipboard()->text())) {
+      QRegularExpression re("[^\n]*\n$");
+      QRegularExpressionMatch match = re.match(qApp->clipboard()->text());
+      if (match.hasMatch() && match.capturedLength() == qApp->clipboard()->text().length()) {
         QTextCursor cursor = this->textCursor();
         if (!cursor.hasSelection()) {
           cursor.movePosition(QTextCursor::StartOfLine);
@@ -441,7 +442,7 @@ bool QMarkdownTextEdit::handleBracketClosing(const QString &openingCharacter,
   }
 
   // Remove whitespace at start of string (e.g. in multilevel-lists).
-  text = text.remove(QRegExp("^\\s+"));
+  text = text.remove(QRegularExpression("^\\s+"));
 
   // Default positions to move the cursor back.
   int cursorSubtract = 1;
@@ -471,7 +472,9 @@ bool QMarkdownTextEdit::handleBracketClosing(const QString &openingCharacter,
 
   // Auto completion for ``` pair
   if (openingCharacter == "`") {
-    if (QRegExp("[^`]*``").exactMatch(text)) {
+    QRegularExpression re("[^`]*``");
+    QRegularExpressionMatch match = re.match(text);
+    if (match.hasMatch() && match.capturedLength() == text.length()) {
       cursor.insertText(openingCharacter);
       cursor.insertText(openingCharacter);
       cursorSubtract = 3;
