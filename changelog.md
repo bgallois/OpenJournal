@@ -1,3 +1,16 @@
+## 1.4.0
+
+Version 1.4.0 of OpenJournal modernizes the codebase by migrating the application to **Qt 6**, improves project documentation, and fixes the CI pipeline.
+
+### Features
+
+* Port to Qt 6
+* Update README
+
+### Fixes
+
+* Fix CI
+
 ## 1.3.4
 
 Version 1.3.4 of OpenJournal comes with several internal fixes.

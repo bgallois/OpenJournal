@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
   a.setOrganizationName("Analyzable");
   a.setApplicationName("OpenJournal");
-  a.setApplicationVersion("1.3.4");
+  a.setApplicationVersion("1.4.0");
   QFontDatabase::addApplicationFont(":/Lato.ttf");
   QFontDatabase::addApplicationFont(":/Caveat.ttf");
   MainWindow w;
