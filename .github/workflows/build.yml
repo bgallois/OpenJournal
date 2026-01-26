@@ -38,15 +38,33 @@ jobs:
             cd build
             wget https://github.com/bgallois/SoBundle/releases/download/continuous/so_bundle
             chmod +x so_bundle
-            ./so_bundle --exec openjournal --qt ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/ --bundle
-            mv openjournal.run OpenJournal-x86_64.run
+            ./so_bundle --exec openjournal --qt ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64/ -a openjournal.appdir
+            cp ../io.github.bgallois.openjournal.desktop openjournal.appdir/
+            cp ../resources/openjournal.png openjournal.appdir/
+
+            QT_PREFIX="${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/gcc_64"
+            mkdir -p openjournal.appdir/usr/libexec
+            cp -a "$QT_PREFIX/libexec/QtWebEngineProcess" openjournal.appdir/usr/libexec/
+            chmod +x openjournal.appdir/usr/libexec/QtWebEngineProcess
+            mkdir -p openjournal.appdir/usr/resources
+            cp -a "$QT_PREFIX/resources/"* openjournal.appdir/usr/resources/ || true
+            mkdir -p openjournal.appdir/usr/translations
+            cp -a "$QT_PREFIX/translations/"* openjournal.appdir/usr/translations/ || true
+            mkdir -p openjournal.appdir/usr/qtwebengine_locales
+            cp -a "$QT_PREFIX/resources/qtwebengine_locales" openjournal.appdir/usr/resources/ 2>/dev/null || true
+            grep -q 'QTWEBENGINEPROCESS_PATH' "openjournal.appdir/AppRun" || sed -i '$i export QTWEBENGINEPROCESS_PATH="$DIR/usr/libexec/QtWebEngineProcess"' "openjournal.appdir/AppRun"
+            grep -q 'QTWEBENGINE_RESOURCES_PATH' "openjournal.appdir/AppRun" || sed -i '$i export QTWEBENGINEPROCESS_PATH="$DIR/usr/resources"' "openjournal.appdir/AppRun"
+
+            curl -L -o appimagetool-x86_64.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+            chmod +x appimagetool-x86_64.AppImage
+            ./appimagetool-x86_64.AppImage openjournal.appdir
         - name: upload_artefact
           uses: actions/upload-artifact@v4
           with:
             name: OpenJournalLinux
-            path: ./build/OpenJournal-x86_64.run
+            path: ./build/OpenJournal-x86_64.AppImage
   build_win:
-      runs-on: windows-latest
+      runs-on: windows-2022
       steps:
         - uses: actions/checkout@v4
         - uses: ilammy/msvc-dev-cmd@v1
@@ -109,7 +127,7 @@ jobs:
         - name: install_qt
           run : |
                python3 -m aqt install-qt -m qtwebengine qtpositioning qtmultimedia qtwebchannel -O ${{ github.workspace }}/Qt/ mac desktop ${{ env.QT_VERSION }}
-               echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/clang_64/bin/ >> $GITHUB_PATH
+               echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/macos/bin/ >> $GITHUB_PATH
         - name: build
           run: |
               qmake6 src/OpenJournal.pro

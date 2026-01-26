@@ -83,7 +83,7 @@ jobs:
       - name: install_qt
         run : |
              python3 -m aqt install-qt -m qtwebengine qtpositioning qtmultimedia qtwebchannel -O ${{ github.workspace }}/Qt/ mac desktop ${{ env.QT_VERSION }}
-             echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/clang_64/bin/ >> $GITHUB_PATH
+             echo ${{ github.workspace }}/Qt/${{ env.QT_VERSION }}/macos/bin/ >> $GITHUB_PATH
       - name: install_gtest
         run: |
           brew update
